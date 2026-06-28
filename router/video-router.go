@@ -49,4 +49,14 @@ func SetVideoRouter(router *gin.Engine) {
 		// Maps to: /?Action=CVSync2AsyncSubmitTask&Version=2022-08-31 and /?Action=CVSync2AsyncGetResult&Version=2022-08-31
 		jimengOfficialGroup.POST("/", controller.RelayTask)
 	}
+
+	// doubao https://www.volcengine.com/docs/82379/1521309?lang=zh
+	assetV3Router := router.Group("/api/v3/asset")
+	assetV3Router.Use(middleware.RouteTag("relay"))
+	assetV3Router.Use(middleware.TokenAuth())
+	{
+		assetController := &controller.AssetController{}
+		assetV3Router.POST("", assetController.Action)
+		assetV3Router.POST("/", assetController.Action)
+	}
 }
