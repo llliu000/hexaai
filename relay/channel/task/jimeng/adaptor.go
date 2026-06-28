@@ -261,7 +261,7 @@ func (a *TaskAdaptor) FetchTask(baseUrl, key string, body map[string]any, proxy 
 }
 
 func (a *TaskAdaptor) GetModelList() []string {
-	return []string{"jimeng_vgfm_t2v_l20"}
+	return []string{}
 }
 
 func (a *TaskAdaptor) GetChannelName() string {
