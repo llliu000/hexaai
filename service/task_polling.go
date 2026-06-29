@@ -467,19 +467,22 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 	snap := task.Snapshot()
 
 	taskResult := &relaycommon.TaskInfo{}
-	// try parse as New API response format
-	var responseItems dto.TaskResponse[model.Task]
-	if err = common.Unmarshal(responseBody, &responseItems); err == nil && responseItems.IsSuccess() {
-		logger.LogDebug(ctx, "updateVideoSingleTask parsed as new api response format: %+v", responseItems)
-		t := responseItems.Data
-		taskResult.TaskID = t.TaskID
-		taskResult.Status = string(t.Status)
-		taskResult.Url = t.GetResultURL()
-		taskResult.Progress = t.Progress
-		taskResult.Reason = t.FailReason
-		task.Data = t.Data
-	} else if taskResult, err = adaptor.ParseTaskResult(responseBody); err != nil {
-		return fmt.Errorf("parseTaskResult failed for task %s: %w", taskId, err)
+	// 优先尝试官方平台解析相应
+	if taskResult, err = adaptor.ParseTaskResult(responseBody); err != nil {
+		// try parse as New API response format
+		var responseItems dto.TaskResponse[model.Task]
+		err = common.Unmarshal(responseBody, &responseItems)
+		if nil != err || !responseItems.IsSuccess() {
+			return fmt.Errorf("parseTaskResult failed for task %s: %w", taskId, err)
+		}
+		taskResult = &relaycommon.TaskInfo{
+			Status:   string(responseItems.Data.Status),
+			Url:      responseItems.Data.GetResultURL(),
+			Reason:   responseItems.Data.FailReason,
+			Progress: responseItems.Data.Progress,
+			TaskID:   responseItems.Data.TaskID,
+		}
+		task.Data = responseItems.Data.Data
 	}
 
 	task.Data = redactVideoResponseBody(responseBody)
