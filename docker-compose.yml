@@ -13,11 +13,11 @@ services:
       - ./data:/data
       - ./logs:/app/logs
     environment:
-      - SQL_DSN=postgresql://root:123456@postgres:5432/hexaai
-#      - LOG_SQL_DSN=postgresql://root:123456@postgres:5432/hexaai-log # OPTIONAL: If you want a separate database for logging, uncomment and set this
-#      - LOG_SQL_DSN=clickhouse://default:123456@clickhouse:9000/new_api_logs # OPTIONAL: Use ClickHouse for logs only; also uncomment clickhouse in depends_on and the clickhouse service below
+      - SQL_DSN=postgresql://root:pgsql@123!!@postgres:5432/hexaai
+#      - LOG_SQL_DSN=postgresql://root:pgsql@123!!@postgres:5432/hexaai-log # OPTIONAL: If you want a separate database for logging, uncomment and set this
+#      - LOG_SQL_DSN=clickhouse://default:ck@123123!@clickhouse:9000/hexaai_logs # OPTIONAL: Use ClickHouse for logs only; also uncomment clickhouse in depends_on and the clickhouse service below
 #      - LOG_SQL_CLICKHOUSE_TTL_DAYS=0 # OPTIONAL: ClickHouse log retention days. Unset or 0 disables automatic deletion; set to e.g. 30 to keep 30 days
-      - REDIS_CONN_STRING=redis://:123456@redis:6379
+      - REDIS_CONN_STRING=redis://:redis@123123!@redis:6379
       - TZ=Asia/Shanghai
       - ERROR_LOG_ENABLED=true # 是否启用错误日志记录 (Whether to enable error log recording)
       - BATCH_UPDATE_ENABLED=true  # 是否启用批量更新 (Whether to enable batch update)
@@ -46,7 +46,7 @@ services:
     image: redis:latest
     container_name: redis
     restart: always
-    command: ["redis-server", "--requirepass", "123456"]
+    command: ["redis-server", "--requirepass", "redis@123123!"]
     networks:
       - hexaai-network
 
@@ -56,7 +56,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: root
-      POSTGRES_PASSWORD: 123456
+      POSTGRES_PASSWORD: pgsql@123!!
       POSTGRES_DB: hexaai
     volumes:
       - pg_data:/var/lib/postgresql/data
@@ -70,9 +70,9 @@ services:
 #    container_name: clickhouse
 #    restart: always
 #    environment:
-#      CLICKHOUSE_DB: new_api_logs
+#      CLICKHOUSE_DB: hexaai_logs
 #      CLICKHOUSE_USER: default
-#      CLICKHOUSE_PASSWORD: 123456
+#      CLICKHOUSE_PASSWORD: ck@123123!
 #      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
 #    volumes:
 #      - clickhouse_data:/var/lib/clickhouse
