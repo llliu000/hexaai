@@ -1,7 +1,13 @@
 package doubao
 
-var ModelList = []string{}
+import (
+	"strings"
 
+	"github.com/QuantumNous/new-api/model"
+)
+
+var ModelList = []string{}
+var AssetPrefix = "asset://"
 var ChannelName = "doubao-video"
 
 type videoPriceKey struct {
@@ -103,4 +109,16 @@ func hasInfo(metadata map[string]interface{}) (hasVideo, hasAudio bool, resoluti
 		}
 	}
 	return
+}
+
+func resolveAssetURL(channelId int, raw string) string {
+	if !strings.HasPrefix(raw, AssetPrefix) {
+		return raw
+	}
+	assetId := strings.TrimPrefix(raw, AssetPrefix)
+	ac, err := model.GetAssetChannelByChannelIdAndAssetId(channelId, assetId)
+	if nil != err {
+		return raw
+	}
+	return AssetPrefix + ac.UpstreamAssertId
 }

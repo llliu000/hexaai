@@ -83,6 +83,17 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 	if err != nil {
 		return nil, errors.Wrap(err, "convert request payload failed")
 	}
+	for i := range body.Content {
+		if image := body.Content[i].ImageURL; image != nil {
+			body.Content[i].ImageURL.URL = resolveAssetURL(info.ChannelId, image.URL)
+		}
+		if video := body.Content[i].VideoURL; video != nil {
+			body.Content[i].VideoURL.URL = resolveAssetURL(info.ChannelId, video.URL)
+		}
+		if audio := body.Content[i].AudioURL; audio != nil {
+			body.Content[i].AudioURL.URL = resolveAssetURL(info.ChannelId, audio.URL)
+		}
+	}
 	if info.IsModelMapped {
 		body.Model = info.UpstreamModelName
 	} else {
