@@ -16,6 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
+var assetSyncWorkers = 64
 var assetSyncQueue = make(chan *assetSyncTask, 1024)
 var assetStatusSyncQueue = make(chan int, 1024)
 var assetChannelSyncQueue = make(chan int, 20)
@@ -26,14 +27,16 @@ type assetSyncTask struct {
 }
 
 func init() {
-	go func() {
-		for task := range assetSyncQueue {
-			log.Printf("新增豆包视频资源开始上游通过:local asset_id=%s\n", task.AssetId)
-			if err := syncAssetToUpstreams(task); err != nil {
-				common.SysError(fmt.Sprintf("asset sync failed, asset_id=%s: %s", task.AssetId, err.Error()))
+	for i := 0; i < assetSyncWorkers; i++ {
+		go func() {
+			for task := range assetSyncQueue {
+				log.Printf("新增豆包视频资源开始上游通过:local asset_id=%s\n", task.AssetId)
+				if err := syncAssetToUpstreams(task); err != nil {
+					common.SysError(fmt.Sprintf("asset sync failed, asset_id=%s: %s", task.AssetId, err.Error()))
+				}
 			}
-		}
-	}()
+		}()
+	}
 	go func() {
 		for abId := range assetStatusSyncQueue {
 			log.Printf("新增上游资源后开始同步上游状态到本地:asset_channel_id=%d\n", abId)
