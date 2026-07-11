@@ -232,7 +232,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             setModelDiscountsDialogOpen(true)
           }}
         >
-          {t('折扣配置')}
+          {t('Discount Settings')}
           <DropdownMenuShortcut>
             <Percent size={16} />
           </DropdownMenuShortcut>

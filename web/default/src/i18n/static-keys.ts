@@ -116,6 +116,14 @@ export const STATIC_I18N_KEYS = [
   'Failed to update user',
   'Failed to delete user',
   'No user selected',
+  'Discount Settings',
+  'Configure per-model discounts for {{username}}',
+  '10000 means 1.0. For example, 8000 means 0.8x price.',
+  'No discount settings configured',
+  'Discount Value',
+  'Discount settings updated',
+  'Failed to update discount settings',
+  'Please enter unique model names. Discount values must be positive integers.',
 
   // Redemption codes
   'Unused',

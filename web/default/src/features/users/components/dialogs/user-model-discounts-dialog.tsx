@@ -130,7 +130,11 @@ export function UserModelDiscountsDialog({
     if (!user) return
     const modelDiscounts = rowsToModelDiscounts(rows)
     if (!modelDiscounts) {
-      toast.error(t('请填写不重复的模型名称，折扣值必须是正整数'))
+      toast.error(
+        t(
+          'Please enter unique model names. Discount values must be positive integers.'
+        )
+      )
       return
     }
 
@@ -138,14 +142,14 @@ export function UserModelDiscountsDialog({
     try {
       const result = await updateUserModelDiscounts(user.id, modelDiscounts)
       if (result.success) {
-        toast.success(t('折扣配置已更新'))
+        toast.success(t('Discount settings updated'))
         onOpenChange(false)
         onSuccess?.()
       } else {
-        toast.error(result.message || t('折扣配置更新失败'))
+        toast.error(result.message || t('Failed to update discount settings'))
       }
     } catch {
-      toast.error(t('折扣配置更新失败'))
+      toast.error(t('Failed to update discount settings'))
     } finally {
       setSaving(false)
     }
@@ -158,12 +162,12 @@ export function UserModelDiscountsDialog({
       title={
         <>
           <Percent className='h-5 w-5' />
-          {t('折扣配置')}
+          {t('Discount Settings')}
         </>
       }
       description={
         user
-          ? t('为 {{username}} 配置按模型生效的价格折扣', {
+          ? t('Configure per-model discounts for {{username}}', {
               username: user.username,
             })
           : undefined
@@ -191,23 +195,23 @@ export function UserModelDiscountsDialog({
       <div className='space-y-3'>
         <div className='flex items-center justify-between gap-3'>
           <p className='text-muted-foreground text-sm'>
-            {t('10000 表示 1.0，例如 8000 表示 0.8 倍价格。')}
+            {t('10000 means 1.0. For example, 8000 means 0.8x price.')}
           </p>
           <Button type='button' size='sm' onClick={addRow}>
             <Plus className='h-4 w-4' />
-            {t('新增')}
+            {t('Add')}
           </Button>
         </div>
 
         {rows.length === 0 ? (
           <div className='text-muted-foreground rounded-md border border-dashed p-6 text-center text-sm'>
-            {t('暂无折扣配置')}
+            {t('No discount settings configured')}
           </div>
         ) : (
           <div className='space-y-2'>
             <div className='text-muted-foreground hidden grid-cols-[1fr_9rem_2rem] gap-2 px-1 text-xs sm:grid'>
-              <span>{t('模型名称')}</span>
-              <span>{t('折扣值')}</span>
+              <span>{t('Model Name')}</span>
+              <span>{t('Discount Value')}</span>
               <span />
             </div>
             {rows.map((row) => (
@@ -238,7 +242,7 @@ export function UserModelDiscountsDialog({
                   size='icon-sm'
                   className='text-destructive hover:text-destructive justify-self-end'
                   onClick={() => removeRow(row.id)}
-                  aria-label={t('删除')}
+                  aria-label={t('Delete')}
                 >
                   <Trash2 className='h-4 w-4' />
                 </Button>
