@@ -404,6 +404,10 @@ func updateVideoTasks(ctx context.Context, platform constant.TaskPlatform, chann
 	info.ChannelMeta = &relaycommon.ChannelMeta{
 		ChannelBaseUrl: cacheGetChannel.GetBaseURL(),
 	}
+	// 处理特殊渠道使用
+	if cacheGetChannel.OpenAIOrganization != nil {
+		info.Organization = *cacheGetChannel.OpenAIOrganization
+	}
 	info.ApiKey = cacheGetChannel.Key
 	adaptor.Init(info)
 	disablePollingSleep := cacheGetChannel.GetOtherSettings().DisableTaskPollingSleep
