@@ -1,17 +1,14 @@
 package ratio_setting
 
-import "sync"
-
-var (
-	userModelDiscountMu sync.RWMutex
-	userModelDiscounts  = map[int]map[string]int{}
+import (
+	"github.com/QuantumNous/new-api/types"
 )
 
-func GetUserModelDiscount(userId int, modelName string) float64 {
-	userModelDiscountMu.RLock()
-	defer userModelDiscountMu.RUnlock()
+// 用户ID-{模型-折扣}
+var userModelDiscounts = types.NewRWMap[int, map[string]int]()
 
-	modelDiscounts, ok := userModelDiscounts[userId]
+func GetUserModelDiscount(userId int, modelName string) float64 {
+	modelDiscounts, ok := userModelDiscounts.Get(userId)
 	if !ok {
 		return 1
 	}
@@ -23,14 +20,10 @@ func GetUserModelDiscount(userId int, modelName string) float64 {
 }
 
 func ReplaceUserModelDiscounts(userId int, modelDiscounts map[string]int) {
-	userModelDiscountMu.Lock()
-	defer userModelDiscountMu.Unlock()
-
 	if len(modelDiscounts) == 0 {
-		delete(userModelDiscounts, userId)
+		userModelDiscounts.Set(userId, modelDiscounts)
 		return
 	}
-
 	copiedModelDiscounts := make(map[string]int, len(modelDiscounts))
 	for modelName, discount := range modelDiscounts {
 		if modelName != "" && discount > 0 {
@@ -38,8 +31,8 @@ func ReplaceUserModelDiscounts(userId int, modelDiscounts map[string]int) {
 		}
 	}
 	if len(copiedModelDiscounts) == 0 {
-		delete(userModelDiscounts, userId)
+		userModelDiscounts.Set(userId, copiedModelDiscounts)
 		return
 	}
-	userModelDiscounts[userId] = copiedModelDiscounts
+	userModelDiscounts.Set(userId, copiedModelDiscounts)
 }
