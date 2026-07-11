@@ -16,15 +16,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Percent, Loader2 } from 'lucide-react'
+import { Percent, Loader2, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/design-system/button'
+import { Input } from '@/components/design-system/input'
 import { Dialog } from '@/components/dialog'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 
 import { updateUserModelDiscounts } from '../../api'
 import type { User, UserModelDiscounts } from '../../types'
@@ -34,6 +33,20 @@ interface Props {
   onOpenChange: (open: boolean) => void
   user: User | null
   onSuccess?: () => void
+}
+
+type DiscountRow = {
+  id: string
+  model: string
+  discount: string
+}
+
+function createRow(model = '', discount = '10000'): DiscountRow {
+  return {
+    id: `${Date.now()}-${Math.random()}`,
+    model,
+    discount,
+  }
 }
 
 function parseUserModelDiscounts(user: User | null): UserModelDiscounts {
@@ -55,37 +68,24 @@ function parseUserModelDiscounts(user: User | null): UserModelDiscounts {
   return {}
 }
 
-function formatModelDiscounts(user: User | null): string {
-  return JSON.stringify(parseUserModelDiscounts(user), null, 2)
+function modelDiscountsToRows(user: User | null): DiscountRow[] {
+  return Object.entries(parseUserModelDiscounts(user)).map(
+    ([model, discount]) => createRow(model, String(discount))
+  )
 }
 
-function normalizeModelDiscounts(value: string): UserModelDiscounts | null {
-  const trimmed = value.trim()
-  if (!trimmed) return {}
-
-  let parsed: unknown
-  try {
-    parsed = JSON.parse(trimmed)
-  } catch {
-    return null
-  }
-
-  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-    return null
-  }
-
+function rowsToModelDiscounts(rows: DiscountRow[]): UserModelDiscounts | null {
   const normalized: UserModelDiscounts = {}
-  for (const [modelName, discount] of Object.entries(parsed)) {
-    const key = modelName.trim()
-    if (
-      !key ||
-      typeof discount !== 'number' ||
-      !Number.isInteger(discount) ||
-      discount <= 0
-    ) {
+  for (const row of rows) {
+    const model = row.model.trim()
+    const discount = Number(row.discount)
+    if (!model || !Number.isInteger(discount) || discount <= 0) {
       return null
     }
-    normalized[key] = discount
+    if (normalized[model] !== undefined) {
+      return null
+    }
+    normalized[model] = discount
   }
   return normalized
 }
@@ -97,22 +97,40 @@ export function UserModelDiscountsDialog({
   onSuccess,
 }: Props) {
   const { t } = useTranslation()
-  const [value, setValue] = useState('{}')
+  const [rows, setRows] = useState<DiscountRow[]>([])
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (open) {
-      setValue(formatModelDiscounts(user))
+      setRows(modelDiscountsToRows(user))
     }
   }, [open, user])
 
+  const updateRow = (
+    id: string,
+    field: 'model' | 'discount',
+    value: string
+  ) => {
+    setRows((currentRows) =>
+      currentRows.map((row) =>
+        row.id === id ? { ...row, [field]: value } : row
+      )
+    )
+  }
+
+  const addRow = () => {
+    setRows((currentRows) => [...currentRows, createRow()])
+  }
+
+  const removeRow = (id: string) => {
+    setRows((currentRows) => currentRows.filter((row) => row.id !== id))
+  }
+
   const handleSave = async () => {
     if (!user) return
-    const modelDiscounts = normalizeModelDiscounts(value)
+    const modelDiscounts = rowsToModelDiscounts(rows)
     if (!modelDiscounts) {
-      toast.error(
-        t('Model price config must be a JSON object with positive integer values')
-      )
+      toast.error(t('请填写不重复的模型名称，折扣值必须是正整数'))
       return
     }
 
@@ -120,14 +138,14 @@ export function UserModelDiscountsDialog({
     try {
       const result = await updateUserModelDiscounts(user.id, modelDiscounts)
       if (result.success) {
-        toast.success(t('Model price config updated'))
+        toast.success(t('折扣配置已更新'))
         onOpenChange(false)
         onSuccess?.()
       } else {
-        toast.error(result.message || t('Failed to update model price config'))
+        toast.error(result.message || t('折扣配置更新失败'))
       }
     } catch {
-      toast.error(t('Failed to update model price config'))
+      toast.error(t('折扣配置更新失败'))
     } finally {
       setSaving(false)
     }
@@ -140,17 +158,17 @@ export function UserModelDiscountsDialog({
       title={
         <>
           <Percent className='h-5 w-5' />
-          {t('Model Price Config')}
+          {t('折扣配置')}
         </>
       }
       description={
         user
-          ? t('Configure per-model price multipliers for {{username}}', {
+          ? t('为 {{username}} 配置按模型生效的价格折扣', {
               username: user.username,
             })
           : undefined
       }
-      contentClassName='sm:max-w-xl'
+      contentClassName='sm:max-w-2xl'
       titleClassName='flex items-center gap-2'
       bodyClassName='space-y-3'
       footer={
@@ -170,21 +188,64 @@ export function UserModelDiscountsDialog({
         </>
       }
     >
-      <div className='space-y-2'>
-        <Label htmlFor='user-model-discounts'>
-          {t('model_discounts JSON')}
-        </Label>
-        <Textarea
-          id='user-model-discounts'
-          rows={10}
-          className='font-mono text-xs'
-          value={value}
-          onChange={(event) => setValue(event.target.value)}
-          placeholder='{"gpt-4o": 8000}'
-        />
-        <p className='text-muted-foreground text-xs'>
-          {t('Use 10000 as 1.0. For example, 8000 means 0.8x.')}
-        </p>
+      <div className='space-y-3'>
+        <div className='flex items-center justify-between gap-3'>
+          <p className='text-muted-foreground text-sm'>
+            {t('10000 表示 1.0，例如 8000 表示 0.8 倍价格。')}
+          </p>
+          <Button type='button' size='sm' onClick={addRow}>
+            <Plus className='h-4 w-4' />
+            {t('新增')}
+          </Button>
+        </div>
+
+        {rows.length === 0 ? (
+          <div className='text-muted-foreground rounded-md border border-dashed p-6 text-center text-sm'>
+            {t('暂无折扣配置')}
+          </div>
+        ) : (
+          <div className='space-y-2'>
+            <div className='text-muted-foreground hidden grid-cols-[1fr_9rem_2rem] gap-2 px-1 text-xs sm:grid'>
+              <span>{t('模型名称')}</span>
+              <span>{t('折扣值')}</span>
+              <span />
+            </div>
+            {rows.map((row) => (
+              <div
+                key={row.id}
+                className='grid gap-2 rounded-md border p-2 sm:grid-cols-[1fr_9rem_2rem] sm:border-0 sm:p-0'
+              >
+                <Input
+                  value={row.model}
+                  onChange={(event) =>
+                    updateRow(row.id, 'model', event.target.value)
+                  }
+                  placeholder='gpt-4o'
+                />
+                <Input
+                  type='number'
+                  min='1'
+                  step='1'
+                  value={row.discount}
+                  onChange={(event) =>
+                    updateRow(row.id, 'discount', event.target.value)
+                  }
+                  placeholder='10000'
+                />
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon-sm'
+                  className='text-destructive hover:text-destructive justify-self-end'
+                  onClick={() => removeRow(row.id)}
+                  aria-label={t('删除')}
+                >
+                  <Trash2 className='h-4 w-4' />
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </Dialog>
   )

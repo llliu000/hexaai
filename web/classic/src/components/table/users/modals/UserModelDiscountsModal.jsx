@@ -18,10 +18,24 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useEffect, useState } from 'react';
-import { Modal, TextArea, Typography } from '@douyinfe/semi-ui';
+import {
+  Button,
+  Empty,
+  Input,
+  InputNumber,
+  Modal,
+  Typography,
+} from '@douyinfe/semi-ui';
+import { IconDelete, IconPlus } from '@douyinfe/semi-icons';
 import { API, showError, showSuccess } from '../../../../helpers';
 
 const { Text } = Typography;
+
+const createRow = (model = '', discount = 10000) => ({
+  id: `${Date.now()}-${Math.random()}`,
+  model,
+  discount,
+});
 
 const parseModelDiscounts = (user) => {
   if (!user?.setting) {
@@ -42,56 +56,61 @@ const parseModelDiscounts = (user) => {
   return {};
 };
 
-const normalizeModelDiscounts = (value) => {
-  const trimmed = value.trim();
-  if (!trimmed) {
-    return {};
-  }
+const modelDiscountsToRows = (user) => {
+  return Object.entries(parseModelDiscounts(user)).map(([model, discount]) =>
+    createRow(model, discount),
+  );
+};
 
-  let parsed;
-  try {
-    parsed = JSON.parse(trimmed);
-  } catch (e) {
-    return null;
-  }
-
-  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-    return null;
-  }
-
+const normalizeModelDiscounts = (rows) => {
   const normalized = {};
-  for (const [modelName, discount] of Object.entries(parsed)) {
-    const key = modelName.trim();
-    if (
-      !key ||
-      typeof discount !== 'number' ||
-      !Number.isInteger(discount) ||
-      discount <= 0
-    ) {
+  for (const row of rows) {
+    const model = row.model.trim();
+    const discount = Number(row.discount);
+    if (!model || !Number.isInteger(discount) || discount <= 0) {
       return null;
     }
-    normalized[key] = discount;
+    if (normalized[model] !== undefined) {
+      return null;
+    }
+    normalized[model] = discount;
   }
   return normalized;
 };
 
 const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
-  const [value, setValue] = useState('{}');
+  const [rows, setRows] = useState([]);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (visible) {
-      setValue(JSON.stringify(parseModelDiscounts(user), null, 2));
+      setRows(modelDiscountsToRows(user));
     }
   }, [visible, user]);
+
+  const addRow = () => {
+    setRows((currentRows) => [...currentRows, createRow()]);
+  };
+
+  const updateRow = (id, field, value) => {
+    setRows((currentRows) =>
+      currentRows.map((row) =>
+        row.id === id ? { ...row, [field]: value } : row,
+      ),
+    );
+  };
+
+  const removeRow = (id) => {
+    setRows((currentRows) => currentRows.filter((row) => row.id !== id));
+  };
 
   const handleSave = async () => {
     if (!user?.id) {
       return;
     }
-    const modelDiscounts = normalizeModelDiscounts(value);
+    const modelDiscounts = normalizeModelDiscounts(rows);
     if (!modelDiscounts) {
-      showError(t('模型价格配置必须是 JSON 对象，且值为正整数'));
+      showError(t('请填写不重复的模型名称，折扣值必须是正整数'));
       return;
     }
 
@@ -102,7 +121,7 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
       });
       const { success, message } = res.data;
       if (success) {
-        showSuccess(t('模型价格配置已更新'));
+        showSuccess(t('折扣配置已更新'));
         onSuccess?.();
         onCancel?.();
       } else {
@@ -117,7 +136,7 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
 
   return (
     <Modal
-      title={t('模型价格配置')}
+      title={t('折扣配置')}
       visible={visible}
       onCancel={onCancel}
       onOk={handleSave}
@@ -132,15 +151,65 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
             {t('目标用户：{{username}}', { username: user.username })}
           </Text>
         ) : null}
-        <TextArea
-          value={value}
-          onChange={setValue}
-          autosize={{ minRows: 10, maxRows: 16 }}
-          placeholder='{"gpt-4o": 8000}'
-          style={{ fontFamily: 'monospace' }}
-        />
+        <div className='flex items-center justify-between gap-3'>
+          <Text type='tertiary' size='small'>
+            {t('10000 表示 1.0，例如 8000 表示 0.8 倍价格。')}
+          </Text>
+          <Button
+            icon={<IconPlus />}
+            theme='solid'
+            type='primary'
+            onClick={addRow}
+          >
+            {t('新增')}
+          </Button>
+        </div>
+        {rows.length === 0 ? (
+          <Empty description={t('暂无折扣配置')} style={{ padding: '32px 0' }} />
+        ) : (
+          <div className='space-y-2'>
+            <div className='grid grid-cols-[1fr_150px_36px] gap-2 text-xs px-1'>
+              <Text type='tertiary'>{t('模型名称')}</Text>
+              <Text type='tertiary'>{t('折扣值')}</Text>
+              <span />
+            </div>
+            {rows.map((row) => (
+              <div
+                key={row.id}
+                className='grid grid-cols-[1fr_150px_36px] gap-2 items-center'
+              >
+                <Input
+                  value={row.model}
+                  placeholder='gpt-4o'
+                  onChange={(value) => updateRow(row.id, 'model', value)}
+                />
+                <InputNumber
+                  value={row.discount}
+                  min={1}
+                  step={1}
+                  precision={0}
+                  placeholder='10000'
+                  onChange={(value) =>
+                    updateRow(
+                      row.id,
+                      'discount',
+                      value === '' || value == null ? '' : value,
+                    )
+                  }
+                  style={{ width: '100%' }}
+                />
+                <Button
+                  theme='borderless'
+                  type='danger'
+                  icon={<IconDelete />}
+                  onClick={() => removeRow(row.id)}
+                />
+              </div>
+            ))}
+          </div>
+        )}
         <Text type='tertiary' size='small'>
-          {t('10000 表示 1.0，例如 8000 表示 0.8 倍价格。留空或填写 {} 可清空配置。')}
+          {t('删除所有行并保存即可清空配置。')}
         </Text>
       </div>
     </Modal>
