@@ -721,6 +721,46 @@ func UpdateUser(c *gin.Context) {
 	return
 }
 
+func UpdateUserModelDiscounts(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id == 0 {
+		common.ApiErrorI18n(c, i18n.MsgInvalidParams)
+		return
+	}
+
+	modelDiscounts := make(map[string]int)
+	if err = c.ShouldBindJSON(&modelDiscounts); err != nil {
+		common.ApiErrorI18n(c, i18n.MsgInvalidParams)
+		return
+	}
+
+	user, err := model.GetUserById(id, false)
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+
+	myRole := c.GetInt("role")
+	if !canManageTargetRole(myRole, user.Role) {
+		common.ApiErrorI18n(c, i18n.MsgUserNoPermissionHigherLevel)
+		return
+	}
+
+	userSetting := user.GetSetting()
+	userSetting.ModelDiscounts = modelDiscounts
+	if err = model.UpdateUserSetting(user.Id, userSetting); err != nil {
+		common.ApiErrorI18n(c, i18n.MsgUpdateFailed)
+		return
+	}
+
+	recordManageAuditFor(c, user.Id, "user.model_discounts_update", map[string]interface{}{
+		"username": user.Username,
+		"id":       user.Id,
+		"models":   len(modelDiscounts),
+	})
+	common.ApiSuccessI18n(c, i18n.MsgUpdateSuccess, nil)
+}
+
 func AdminClearUserBinding(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -1438,6 +1478,10 @@ func UpdateUserSetting(c *gin.Context) {
 		UpstreamModelUpdateNotifyEnabled: upstreamModelUpdateNotifyEnabled,
 		AcceptUnsetRatioModel:            req.AcceptUnsetModelRatioModel,
 		RecordIpLog:                      req.RecordIpLog,
+		SidebarModules:                   existingSettings.SidebarModules,
+		BillingPreference:                existingSettings.BillingPreference,
+		Language:                         existingSettings.Language,
+		ModelDiscounts:                   existingSettings.ModelDiscounts,
 	}
 
 	// 如果是webhook类型,添加webhook相关设置

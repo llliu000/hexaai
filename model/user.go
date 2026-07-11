@@ -113,6 +113,7 @@ func UpdateUserSetting(userId int, setting dto.UserSetting) error {
 	if err = DB.Model(&User{}).Where("id = ?", userId).Update("setting", settingValue).Error; err != nil {
 		return err
 	}
+	ratio_setting.ReplaceUserModelDiscounts(userId, setting.ModelDiscounts)
 	return updateUserSettingCache(userId, settingValue)
 }
 
