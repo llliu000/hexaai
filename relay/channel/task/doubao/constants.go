@@ -1,7 +1,5 @@
 package doubao
 
-import "strings"
-
 var ModelList = []string{
 	"doubao-seedance-1-0-pro-250528",
 	"doubao-seedance-1-0-lite-t2v",
@@ -13,44 +11,103 @@ var ModelList = []string{
 
 var ChannelName = "doubao-video"
 
-// videoPriceKey 价格表的键：输出分辨率档（is1080p/is4k 均为 false 即 480p/720p 基准档）、输入是否含视频。
 type videoPriceKey struct {
-	is1080p  bool
-	is4k     bool
-	hasVideo bool
+	Resolution string // 480p、720p、1080p、4k
+	HasVideo   bool   // 输入是否包含视频
+	HasAudio   bool   // 输出是否有声音
 }
 
-// videoPriceTable 各模型在不同 (输出分辨率档, 是否含视频输入) 下的单价（元/百万 token）。
-// 其中零值键 {480p/720p, 不含视频} 为基准价，等于管理员应配置的 ModelRatio；
-// 计费时取 实际单价/基准价 作为 OtherRatio。
 var videoPriceTable = map[string]map[videoPriceKey]float64{
 	"doubao-seedance-2-0-260128": {
-		{hasVideo: false}:                46.0,
-		{hasVideo: true}:                 28.0,
-		{is1080p: true, hasVideo: false}: 51.0,
-		{is1080p: true, hasVideo: true}:  31.0,
-		{is4k: true, hasVideo: false}:    26.0,
-		{is4k: true, hasVideo: true}:     16.0,
+		{Resolution: "480p", HasVideo: false}: 46,
+		{Resolution: "480p", HasVideo: true}:  28,
+
+		{Resolution: "720p", HasVideo: false}: 46,
+		{Resolution: "720p", HasVideo: true}:  28,
+
+		{Resolution: "1080p", HasVideo: false}: 51,
+		{Resolution: "1080p", HasVideo: true}:  31,
+
+		{Resolution: "4k", HasVideo: false}: 26,
+		{Resolution: "4k", HasVideo: true}:  16,
 	},
 	"doubao-seedance-2-0-fast-260128": {
-		{hasVideo: false}: 37.0,
-		{hasVideo: true}:  22.0,
+		{Resolution: "480p", HasVideo: false}: 37,
+		{Resolution: "480p", HasVideo: true}:  22,
+
+		{Resolution: "720p", HasVideo: false}: 37,
+		{Resolution: "720p", HasVideo: true}:  22,
+	},
+	"doubao-seedance-2-0-mini-250928": {
+		{Resolution: "480p", HasVideo: false}: 23,
+		{Resolution: "480p", HasVideo: true}:  14,
+
+		{Resolution: "720p", HasVideo: false}: 23,
+		{Resolution: "720p", HasVideo: true}:  14,
+	},
+	"doubao-seedance-1-5-pro-250528": {
+		{HasAudio: false}: 8,
+		{HasAudio: true}:  16,
+	},
+	"doubao-seedance-1-0-pro-250528": {
+		{HasAudio: false}: 15,
+		{HasAudio: true}:  15,
+	},
+	"doubao-seedance-1.0-pro-fast-250528": {
+		{HasAudio: false}: 4.2,
+		{HasAudio: true}:  4.2,
 	},
 }
 
-// GetVideoInputRatio 返回指定模型在给定输出分辨率/是否含视频输入下，相对基准价的计费倍率。
-// 第二个返回值表示该模型是否配置了价格表；倍率为 1.0 时调用方可忽略该 OtherRatio。
-func GetVideoInputRatio(modelName, resolution string, hasVideo bool) (float64, bool) {
-	prices, ok := videoPriceTable[modelName]
-	base := prices[videoPriceKey{}] // 零值键 = {480p/720p, 不含视频} 基准价
-	if !ok || base <= 0 {
+func GetVideoInputRatio(model string, metadata map[string]interface{}) (float64, bool) {
+	hasVideo, hasAudio, resolution := hasInfo(metadata)
+	prices, ok := videoPriceTable[model]
+	if !ok {
 		return 0, false
 	}
-	res := strings.ToLower(strings.TrimSpace(resolution))
-	price, ok := prices[videoPriceKey{is1080p: res == "1080p", is4k: res == "4k", hasVideo: hasVideo}]
-	if !ok {
-		// 未配置的组合（如 fast 无 1080p/4k，上游会自行报错）按基准价计费即可。
-		return 1.0, true
+	// 模型实际价格
+	key := videoPriceKey{
+		Resolution: resolution,
+		HasVideo:   hasVideo,
+		HasAudio:   hasAudio,
 	}
-	return price / base, true
+	price, ok := prices[key]
+	if !ok {
+		return 0, false
+	}
+	// 基准价格
+	if key.Resolution != "" {
+		key.HasVideo = true
+		key.HasAudio = false
+	} else {
+		key.HasAudio = false
+	}
+	basePrice, ok := prices[key]
+	if !ok || basePrice == 0 {
+		return 0, false
+	}
+	return price / basePrice, true
+}
+
+func hasInfo(metadata map[string]interface{}) (hasVideo, hasAudio bool, resolution string) {
+	if resolution, _ = metadata["resolution"].(string); resolution == "" {
+		resolution = "720p"
+	}
+	content, ok := metadata["content"].([]interface{})
+	if !ok {
+		return
+	}
+	for _, v := range content {
+		item, ok := v.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if item["type"] == "video_url" || item["video_url"] != nil {
+			hasVideo = true
+		}
+		if item["type"] == "audio_url" || item["audio_url"] != nil {
+			hasAudio = true
+		}
+	}
+	return
 }

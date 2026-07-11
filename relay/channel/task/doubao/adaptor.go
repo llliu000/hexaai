@@ -65,42 +65,11 @@ func (a *TaskAdaptor) EstimateBilling(c *gin.Context, info *relaycommon.RelayInf
 	if err != nil {
 		return nil
 	}
-	hasVideo := hasVideoInMetadata(req.Metadata)
-	resolution, _ := req.Metadata["resolution"].(string)
-	ratio, ok := GetVideoInputRatio(info.OriginModelName, resolution, hasVideo)
+	ratio, ok := GetVideoInputRatio(info.OriginModelName, req.Metadata)
 	if !ok || ratio == 1.0 {
 		return nil
 	}
 	return map[string]float64{"video_input": ratio}
-}
-
-// hasVideoInMetadata 直接检查 metadata 的 content 数组是否包含 video_url 条目，
-// 避免构建完整的上游 requestPayload。
-func hasVideoInMetadata(metadata map[string]interface{}) bool {
-	if metadata == nil {
-		return false
-	}
-	contentRaw, ok := metadata["content"]
-	if !ok {
-		return false
-	}
-	contentSlice, ok := contentRaw.([]interface{})
-	if !ok {
-		return false
-	}
-	for _, item := range contentSlice {
-		itemMap, ok := item.(map[string]interface{})
-		if !ok {
-			continue
-		}
-		if itemMap["type"] == "video_url" {
-			return true
-		}
-		if _, has := itemMap["video_url"]; has {
-			return true
-		}
-	}
-	return false
 }
 
 // BuildRequestBody converts request into Doubao specific format.
