@@ -56,20 +56,11 @@ func init() {
 }
 
 func enqueueAssetSync(assetId string, update bool) {
-	task := assetSyncTask{AssetId: assetId, Update: update}
-	select {
-	case assetSyncQueue <- &task:
-	default:
-		common.SysError(fmt.Sprintf("asset sync queue is full, skip asset_id=%s", task.AssetId))
-	}
+	assetSyncQueue <- &assetSyncTask{AssetId: assetId, Update: update}
 }
 
 func EnqueueChannelAssetSync(chId int) {
-	select {
-	case assetChannelSyncQueue <- chId:
-	default:
-		common.SysError(fmt.Sprintf("channel asset sync queue is full, skip ch_id=%d", chId))
-	}
+	assetChannelSyncQueue <- chId
 }
 
 func syncAssetToUpstreams(task *assetSyncTask) error {
@@ -128,13 +119,12 @@ func syncAssetStatusToLocal(acId int) error {
 	}
 	if asset.Status == "Processing" {
 		go func() {
-			<-time.After(time.Second * 3)
+			<-time.After(time.Second)
 			assetStatusSyncQueue <- acId
 		}()
 		return nil
 	}
 	err = model.UpdateAssetById(ab.AssetId, asset.Status)
-	// TODO 同步映射状态
 	return err
 }
 
