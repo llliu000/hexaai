@@ -28,6 +28,7 @@ import {
   ShieldAlert,
   Link2,
   CreditCard,
+  Percent,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -58,6 +59,7 @@ import {
 import { getUserActionMessage } from '../lib'
 import type { User, ManageUserAction } from '../types'
 import { UserBindingDialog } from './dialogs/user-binding-dialog'
+import { UserModelDiscountsDialog } from './dialogs/user-model-discounts-dialog'
 import { useUsers } from './users-provider'
 
 interface DataTableRowActionsProps {
@@ -71,6 +73,8 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const [resetPasskeyOpen, setResetPasskeyOpen] = useState(false)
   const [resetTwoFAOpen, setResetTwoFAOpen] = useState(false)
   const [bindingDialogOpen, setBindingDialogOpen] = useState(false)
+  const [modelDiscountsDialogOpen, setModelDiscountsDialogOpen] =
+    useState(false)
   const [subscriptionsDialogOpen, setSubscriptionsDialogOpen] = useState(false)
 
   const handleEdit = () => {
@@ -222,6 +226,18 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </DropdownMenuShortcut>
         </DropdownMenuItem>
 
+        <DropdownMenuItem
+          onSelect={(event) => {
+            event.preventDefault()
+            setModelDiscountsDialogOpen(true)
+          }}
+        >
+          {t('Model Pricing')}
+          <DropdownMenuShortcut>
+            <Percent size={16} />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
@@ -299,6 +315,13 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         open={subscriptionsDialogOpen}
         onOpenChange={setSubscriptionsDialogOpen}
         user={{ id: user.id, username: user.username }}
+        onSuccess={triggerRefresh}
+      />
+
+      <UserModelDiscountsDialog
+        open={modelDiscountsDialogOpen}
+        onOpenChange={setModelDiscountsDialogOpen}
+        user={user}
         onSuccess={triggerRefresh}
       />
     </div>
