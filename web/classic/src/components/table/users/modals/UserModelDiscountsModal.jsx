@@ -116,9 +116,10 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
 
     setSaving(true);
     try {
-      const res = await API.put(`/api/user/${user.id}/model_discounts`, {
-        model_discounts: modelDiscounts,
-      });
+      const res = await API.put(
+        `/api/user/${user.id}/model_discounts`,
+        modelDiscounts,
+      );
       const { success, message } = res.data;
       if (success) {
         showSuccess(t('折扣配置已更新'));

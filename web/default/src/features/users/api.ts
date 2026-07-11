@@ -151,9 +151,7 @@ export async function updateUserModelDiscounts(
   id: number,
   modelDiscounts: UserModelDiscounts
 ): Promise<ApiResponse> {
-  const res = await api.put(`/api/user/${id}/model_discounts`, {
-    model_discounts: modelDiscounts,
-  })
+  const res = await api.put(`/api/user/${id}/model_discounts`, modelDiscounts)
   return res.data
 }
 
