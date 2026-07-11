@@ -41,7 +41,7 @@ import type {
 export async function getUsers(
   params: GetUsersParams = {}
 ): Promise<GetUsersResponse> {
-  const { p = 1, page_size = 20 } = params
+  const { p = 1, page_size = 10 } = params
   const res = await api.get(`/api/user/?p=${p}&page_size=${page_size}`)
   return res.data
 }
@@ -58,7 +58,7 @@ export async function searchUsers(
     role = '',
     status = '',
     p = 1,
-    page_size = 20,
+    page_size = 10,
   } = params
   const queryParams = new URLSearchParams()
   queryParams.set('keyword', keyword)
