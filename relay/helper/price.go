@@ -146,22 +146,21 @@ func ModelPriceHelper(c *gin.Context, info *relaycommon.RelayInfo, promptTokens 
 			}
 		}
 	}
-	discount := ratio_setting.GetUserModelDiscount(info.UserId, info.OriginModelName)
 
 	priceData := types.PriceData{
 		FreeModel:            freeModel,
-		ModelPrice:           modelPrice * discount,
-		ModelRatio:           modelRatio * discount,
-		CompletionRatio:      completionRatio * discount,
+		ModelPrice:           modelPrice,
+		ModelRatio:           modelRatio,
+		CompletionRatio:      completionRatio,
 		GroupRatioInfo:       groupRatioInfo,
 		UsePrice:             usePrice,
-		CacheRatio:           cacheRatio * discount,
-		ImageRatio:           imageRatio * discount,
-		AudioRatio:           audioRatio * discount,
-		AudioCompletionRatio: audioCompletionRatio * discount,
-		CacheCreationRatio:   cacheCreationRatio * discount,
-		CacheCreation5mRatio: cacheCreationRatio5m * discount,
-		CacheCreation1hRatio: cacheCreationRatio1h * discount,
+		CacheRatio:           cacheRatio,
+		ImageRatio:           imageRatio,
+		AudioRatio:           audioRatio,
+		AudioCompletionRatio: audioCompletionRatio,
+		CacheCreationRatio:   cacheCreationRatio,
+		CacheCreation5mRatio: cacheCreationRatio5m,
+		CacheCreation1hRatio: cacheCreationRatio1h,
 		QuotaToPreConsume:    preConsumedQuota,
 	}
 	if usePrice {
@@ -240,12 +239,11 @@ func ModelPriceHelperPerCall(c *gin.Context, info *relaycommon.RelayInfo) (types
 			}
 		}
 	}
-	discount := ratio_setting.GetUserModelDiscount(info.UserId, info.OriginModelName)
 
 	priceData := types.PriceData{
 		FreeModel:      freeModel,
-		ModelPrice:     modelPrice * discount,
-		ModelRatio:     modelRatio * discount,
+		ModelPrice:     modelPrice,
+		ModelRatio:     modelRatio,
 		UsePrice:       usePrice,
 		Quota:          quota,
 		GroupRatioInfo: groupRatioInfo,
