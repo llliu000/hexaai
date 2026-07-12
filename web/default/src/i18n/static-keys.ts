@@ -119,11 +119,13 @@ export const STATIC_I18N_KEYS = [
   'Discount Settings',
   'Configure per-model discounts for {{username}}',
   '10000 means 1.0. For example, 8000 means 0.8x price.',
+  'Enter decimal discount values. For example, 1 means full price and 0.8 means 80% price.',
   'No discount settings configured',
   'Discount Value',
   'Discount settings updated',
   'Failed to update discount settings',
   'Please enter unique model names. Discount values must be positive integers.',
+  'Please enter unique model names. Discount values must be positive numbers with up to 2 decimal places.',
 
   // Redemption codes
   'Unused',

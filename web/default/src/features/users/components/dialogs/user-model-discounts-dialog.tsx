@@ -41,7 +41,15 @@ type DiscountRow = {
   discount: string
 }
 
-function createRow(model = '', discount = '10000'): DiscountRow {
+const DISCOUNT_SCALE = 10000
+const DECIMAL_DISCOUNT_PATTERN = /^\d+(\.\d{0,2})?$/
+const DISCOUNT_INPUT_PATTERN = /^\d*(\.\d{0,2})?$/
+
+function formatStoredDiscount(discount: number): string {
+  return String(Number((discount / DISCOUNT_SCALE).toFixed(2)))
+}
+
+function createRow(model = '', discount = '1'): DiscountRow {
   return {
     id: `${Date.now()}-${Math.random()}`,
     model,
@@ -70,7 +78,7 @@ function parseUserModelDiscounts(user: User | null): UserModelDiscounts {
 
 function modelDiscountsToRows(user: User | null): DiscountRow[] {
   return Object.entries(parseUserModelDiscounts(user)).map(
-    ([model, discount]) => createRow(model, String(discount))
+    ([model, discount]) => createRow(model, formatStoredDiscount(discount))
   )
 }
 
@@ -78,14 +86,20 @@ function rowsToModelDiscounts(rows: DiscountRow[]): UserModelDiscounts | null {
   const normalized: UserModelDiscounts = {}
   for (const row of rows) {
     const model = row.model.trim()
-    const discount = Number(row.discount)
-    if (!model || !Number.isInteger(discount) || discount <= 0) {
+    const discountText = row.discount.trim()
+    const discount = Number(discountText)
+    if (
+      !model ||
+      !DECIMAL_DISCOUNT_PATTERN.test(discountText) ||
+      !Number.isFinite(discount) ||
+      discount <= 0
+    ) {
       return null
     }
     if (normalized[model] !== undefined) {
       return null
     }
-    normalized[model] = discount
+    normalized[model] = Math.round(discount * DISCOUNT_SCALE)
   }
   return normalized
 }
@@ -122,6 +136,12 @@ export function UserModelDiscountsDialog({
     setRows((currentRows) => [...currentRows, createRow()])
   }
 
+  const updateDiscount = (id: string, value: string) => {
+    if (DISCOUNT_INPUT_PATTERN.test(value)) {
+      updateRow(id, 'discount', value)
+    }
+  }
+
   const removeRow = (id: string) => {
     setRows((currentRows) => currentRows.filter((row) => row.id !== id))
   }
@@ -132,7 +152,7 @@ export function UserModelDiscountsDialog({
     if (!modelDiscounts) {
       toast.error(
         t(
-          'Please enter unique model names. Discount values must be positive integers.'
+          'Please enter unique model names. Discount values must be positive numbers with up to 2 decimal places.'
         )
       )
       return
@@ -195,7 +215,9 @@ export function UserModelDiscountsDialog({
       <div className='space-y-3'>
         <div className='flex items-center justify-between gap-3'>
           <p className='text-muted-foreground text-sm'>
-            {t('10000 means 1.0. For example, 8000 means 0.8x price.')}
+            {t(
+              'Enter decimal discount values. For example, 1 means full price and 0.8 means 80% price.'
+            )}
           </p>
           <Button type='button' size='sm' onClick={addRow}>
             <Plus className='h-4 w-4' />
@@ -227,14 +249,13 @@ export function UserModelDiscountsDialog({
                   placeholder='gpt-4o'
                 />
                 <Input
-                  type='number'
-                  min='1'
-                  step='1'
+                  type='text'
+                  inputMode='decimal'
                   value={row.discount}
                   onChange={(event) =>
-                    updateRow(row.id, 'discount', event.target.value)
+                    updateDiscount(row.id, event.target.value)
                   }
-                  placeholder='10000'
+                  placeholder='1'
                 />
                 <Button
                   type='button'

@@ -31,7 +31,14 @@ import { API, showError, showSuccess } from '../../../../helpers';
 
 const { Text } = Typography;
 
-const createRow = (model = '', discount = 10000) => ({
+const DISCOUNT_SCALE = 10000;
+const DECIMAL_DISCOUNT_PATTERN = /^\d+(\.\d{0,2})?$/;
+
+const formatStoredDiscount = (discount) => {
+  return Number((Number(discount) / DISCOUNT_SCALE).toFixed(2));
+};
+
+const createRow = (model = '', discount = 1) => ({
   id: `${Date.now()}-${Math.random()}`,
   model,
   discount,
@@ -58,7 +65,7 @@ const parseModelDiscounts = (user) => {
 
 const modelDiscountsToRows = (user) => {
   return Object.entries(parseModelDiscounts(user)).map(([model, discount]) =>
-    createRow(model, discount),
+    createRow(model, formatStoredDiscount(discount)),
   );
 };
 
@@ -66,14 +73,20 @@ const normalizeModelDiscounts = (rows) => {
   const normalized = {};
   for (const row of rows) {
     const model = row.model.trim();
-    const discount = Number(row.discount);
-    if (!model || !Number.isInteger(discount) || discount <= 0) {
+    const discountText = String(row.discount).trim();
+    const discount = Number(discountText);
+    if (
+      !model ||
+      !DECIMAL_DISCOUNT_PATTERN.test(discountText) ||
+      !Number.isFinite(discount) ||
+      discount <= 0
+    ) {
       return null;
     }
     if (normalized[model] !== undefined) {
       return null;
     }
-    normalized[model] = discount;
+    normalized[model] = Math.round(discount * DISCOUNT_SCALE);
   }
   return normalized;
 };
@@ -110,7 +123,7 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
     }
     const modelDiscounts = normalizeModelDiscounts(rows);
     if (!modelDiscounts) {
-      showError(t('请填写不重复的模型名称，折扣值必须是正整数'));
+      showError(t('请填写不重复的模型名称，折扣值必须是最多两位小数的正数'));
       return;
     }
 
@@ -154,7 +167,7 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
         ) : null}
         <div className='flex items-center justify-between gap-3'>
           <Text type='tertiary' size='small'>
-            {t('10000 表示 1.0，例如 8000 表示 0.8 倍价格。')}
+            {t('请输入小数折扣值，例如 1 表示原价，0.8 表示 0.8 倍价格。')}
           </Text>
           <Button
             icon={<IconPlus />}
@@ -186,10 +199,10 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
                 />
                 <InputNumber
                   value={row.discount}
-                  min={1}
-                  step={1}
-                  precision={0}
-                  placeholder='10000'
+                  min={0.01}
+                  step={0.01}
+                  precision={2}
+                  placeholder='1'
                   onChange={(value) =>
                     updateRow(
                       row.id,
