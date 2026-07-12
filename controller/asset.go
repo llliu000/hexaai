@@ -154,3 +154,7 @@ func (a *AssetController) DeleteAssetGroup(c *gin.Context) (*dto.DeleteAssetGrou
 	userId := c.GetInt("id")
 	return service.DeleteAssetGroup(userId, &req)
 }
+
+func (a *AssetController) ManualAsset(c *gin.Context) {
+	service.ManualAsset(c)
+}

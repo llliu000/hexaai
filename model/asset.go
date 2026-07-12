@@ -74,6 +74,21 @@ func ListAssetsByPage(pageNumber int, pageSize int) (assets []Asset, err error) 
 	return
 }
 
+func ListProcessingAssetsByPage(pageNumber int, pageSize int) (assets []Asset, err error) {
+	if pageNumber < 1 {
+		pageNumber = 1
+	}
+	if pageSize < 1 {
+		pageSize = 100
+	}
+	err = DB.Where("status=?", "Processing").Order("create_time ASC").
+		Order("id ASC").
+		Limit(pageSize).
+		Offset((pageNumber - 1) * pageSize).
+		Find(&assets).Error
+	return
+}
+
 func GetAssetById(id string) (asset Asset, err error) {
 	err = DB.Where("id = ?", id).First(&asset).Error
 	return
@@ -114,6 +129,11 @@ func GetAssetChannelById(id int) (ab AssertChannel, err error) {
 
 func DeleteAssertChannelByAssetId(assetId string) error {
 	return DB.Where("asset_id = ?", assetId).Delete(&AssertChannel{}).Error
+}
+
+func GetAssetChannelByAssetId(assetId string) (ab AssertChannel, err error) {
+	err = DB.Model(&AssertChannel{}).Where("asset_id = ?", assetId).First(&ab).Error
+	return
 }
 
 type ChannelUpstreamAssetGroup struct {

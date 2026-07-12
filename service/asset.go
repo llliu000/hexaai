@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/model"
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -319,6 +321,39 @@ func UpdateAsset(userId int, req *dto.UpdateAssetRequest) (*dto.UpdateAssetRespo
 func DeleteAsset(userId int, req *dto.DeleteAssetRequest) (*dto.DeleteAssetResponse, error) {
 	err := model.DB.Where("user_id = ? AND id = ?", userId, req.Id).Delete(&model.Asset{}).Error
 	return &dto.DeleteAssetResponse{}, err
+}
+
+func ManualAsset(ctx *gin.Context) {
+	go func() {
+		for page := 1; ; page++ {
+			log.Printf("manual asset page: %d", page)
+			assets, err := model.ListProcessingAssetsByPage(page, 500)
+			if err != nil {
+				log.Printf("异常重启恢复资源同步任务错误:%v", err)
+				break
+			}
+			if len(assets) == 0 {
+				break
+			}
+
+			for i := range assets {
+				if assets[i].Status != "Processing" {
+					continue
+				}
+				ab, err := model.GetAssetChannelByAssetId(assets[i].Id)
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					enqueueAssetSync(assets[i].Id, false)
+					continue
+				}
+				if err != nil {
+					log.Printf("异常重启恢复资源同步任务错误:%v", err)
+					continue
+				}
+				assetStatusSyncQueue <- ab.Id
+			}
+			time.Sleep(time.Second * 3)
+		}
+	}()
 }
 
 func validateAssetGroupFields(name string, description string, groupType string) error {

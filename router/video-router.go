@@ -58,6 +58,7 @@ func SetVideoRouter(router *gin.Engine) {
 		assetController := &controller.AssetController{}
 		assetV3Router.POST("", assetController.Action)
 		assetV3Router.POST("/", assetController.Action)
+		assetV3Router.POST("/manual", assetController.ManualAsset)
 	}
 
 	doubaoV3Router := router.Group("/api/v3")
