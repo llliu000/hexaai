@@ -49,6 +49,7 @@ type AliVideoInput struct {
 	Media          []AliVideoMedia `json:"media,omitempty"`           // 媒体列表（wan2.7-i2v新协议）
 	NegativePrompt string          `json:"negative_prompt,omitempty"` // 反向提示词
 	Template       string          `json:"template,omitempty"`        // 视频特效模板
+	ReferenceUrls  []string        `json:"reference_urls,omitempty"`  // 参看视频、图片
 }
 
 // AliVideoParameters 视频参数
@@ -200,42 +201,9 @@ func sizeToResolution(size string) (string, error) {
 
 func ProcessAliOtherRatios(aliReq *AliVideoRequest) (map[string]float64, error) {
 	otherRatios := make(map[string]float64)
-	aliRatios := map[string]map[string]float64{
-		"wan2.6-i2v": {
-			"720P":  1,
-			"1080P": 1 / 0.6,
-		},
-		"wan2.5-t2v-preview": {
-			"480P":  1,
-			"720P":  2,
-			"1080P": 1 / 0.3,
-		},
-		"wan2.2-t2v-plus": {
-			"480P":  1,
-			"1080P": 0.7 / 0.14,
-		},
-		"wan2.5-i2v-preview": {
-			"480P":  1,
-			"720P":  2,
-			"1080P": 1 / 0.3,
-		},
-		"wan2.2-i2v-plus": {
-			"480P":  1,
-			"1080P": 0.7 / 0.14,
-		},
-		"wan2.2-kf2v-flash": {
-			"480P":  1,
-			"720P":  2,
-			"1080P": 4.8,
-		},
-		"wan2.2-i2v-flash": {
-			"480P": 1,
-			"720P": 2,
-		},
-		"wan2.2-s2v": {
-			"480P": 1,
-			"720P": 0.9 / 0.5,
-		},
+	modelRatio, ok := priceRatio[aliReq.Model]
+	if !ok {
+		return otherRatios, nil
 	}
 	var resolution string
 
@@ -252,11 +220,28 @@ func ProcessAliOtherRatios(aliReq *AliVideoRequest) (map[string]float64, error) 
 			resolution = resolution + "P"
 		}
 	}
-	if otherRatio, ok := aliRatios[aliReq.Model]; ok {
-		if ratio, ok := otherRatio[resolution]; ok {
-			otherRatios[fmt.Sprintf("resolution-%s", resolution)] = ratio
+	// 对应分辨率价格倍率
+	otherRatio, ok := modelRatio[resolution]
+	if !ok {
+		return otherRatios, nil
+	}
+	var ratio float64
+	switch or := otherRatio.(type) {
+	case float64:
+		ratio = or
+	case map[string]float64:
+		// 判断是否有声,如果没有传值,默认有声
+		audio := aliReq.Parameters.Audio
+		if audio == nil || *audio {
+			ratio = or["audio"]
+		} else {
+			ratio = or["silent"]
 		}
 	}
+	if ratio == 0 {
+		ratio = 1.0
+	}
+	otherRatios[fmt.Sprintf("resolution-%s", resolution)] = ratio
 	return otherRatios, nil
 }
 
