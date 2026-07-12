@@ -143,7 +143,7 @@ func (a *Adaptor) ListAssets(req *dto.ListAssetsRequest) (*dto.ListAssetsRespons
 	items := make([]dto.GetAssetResponse, 0, len(response.Items))
 	for i := range response.Items {
 		item := response.Items[i]
-		items = append(items, dto.GetAssetResponse{
+		ar := dto.GetAssetResponse{
 			Id:          item.Id,
 			GroupId:     item.GroupId,
 			URL:         item.URL,
@@ -153,7 +153,9 @@ func (a *Adaptor) ListAssets(req *dto.ListAssetsRequest) (*dto.ListAssetsRespons
 			Status:      item.Status,
 			CreateTime:  item.CreateTime,
 			UpdateTime:  item.UpdateTime,
-		})
+		}
+		ar.Error = item.Error
+		items = append(items, ar)
 	}
 	return &dto.ListAssetsResponse{
 		Items:      items,

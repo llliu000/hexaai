@@ -36,4 +36,8 @@ type assetItem struct {
 	ProjectName string `json:"ProjectName"`
 	CreateTime  string `json:"CreateTime"`
 	UpdateTime  string `json:"UpdateTime"`
+	Error       *struct {
+		Code    string `json:"Code,omitempty"`
+		Message string `json:"Message,omitempty"`
+	} `json:"Error,omitempty"`
 }

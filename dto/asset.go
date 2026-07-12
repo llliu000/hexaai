@@ -131,6 +131,10 @@ type GetAssetResponse struct {
 	Status      string `json:"Status"`
 	CreateTime  string `json:"CreateTime"`
 	UpdateTime  string `json:"UpdateTime"`
+	Error       *struct {
+		Code    string `json:"Code,omitempty"`
+		Message string `json:"Message,omitempty"`
+	} `json:"Error,omitempty"`
 }
 
 type GetAssetGroupResponse struct {

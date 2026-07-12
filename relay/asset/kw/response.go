@@ -43,4 +43,8 @@ type kwAssetItem struct {
 	Status      string `json:"Status"`
 	CreatedTime string `json:"createTime"`
 	UpdatedTime string `json:"updateTime"`
+	Error       *struct {
+		Code    string `json:"Code,omitempty"`
+		Message string `json:"Message,omitempty"`
+	} `json:"Error,omitempty"`
 }
