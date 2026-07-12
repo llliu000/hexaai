@@ -431,6 +431,7 @@ func RecordTaskBillingLog(params RecordTaskBillingLogParams) {
 	if discount := ratio_setting.GetUserModelDiscount(params.UserId, params.ModelName); discount != 1 {
 		params.Other["discount"] = discount
 		params.Other["origin_quota"] = params.Quota
+		params.Quota = int(float64(params.Quota) * discount)
 	}
 	username, _ := GetUsernameById(params.UserId, false)
 	tokenName := ""
