@@ -2,6 +2,7 @@ package doubao
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -252,8 +253,15 @@ func (a *TaskAdaptor) ConvertToOpenAIVideo(originTask *model.Task) ([]byte, erro
 func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, error) {
 	var responseItems dto.TaskResponse[model.Task]
 	_ = common.Unmarshal(originTask.Data, &responseItems)
+	var data = originTask.Data
 	if responseItems.Code != "" {
-		return responseItems.Data.Data.MarshalJSON()
+		data = responseItems.Data.Data
 	}
-	return originTask.Data.MarshalJSON()
+	var rt responseTask
+	if err := json.Unmarshal(data, &rt); nil != err {
+		return data.MarshalJSON()
+	}
+	rt.ID = originTask.TaskID
+	rt.Model = originTask.Properties.OriginModelName
+	return json.Marshal(rt)
 }
