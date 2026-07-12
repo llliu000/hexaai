@@ -17,14 +17,14 @@ type videoPriceKey struct {
 }
 
 var videoPriceTable = map[string]map[videoPriceKey]float64{
-	"doubao-seedance-2-0-mini-260615": {
+	"doubao-seedance-2-0-mini": {
 		{Resolution: "480p", HasVideo: false}: 23,
 		{Resolution: "480p", HasVideo: true}:  14,
 
 		{Resolution: "720p", HasVideo: false}: 23,
 		{Resolution: "720p", HasVideo: true}:  14,
 	},
-	"doubao-seedance-2-0-260128": {
+	"doubao-seedance-2-0": {
 		{Resolution: "480p", HasVideo: false}: 46,
 		{Resolution: "480p", HasVideo: true}:  28,
 
@@ -37,22 +37,22 @@ var videoPriceTable = map[string]map[videoPriceKey]float64{
 		{Resolution: "4k", HasVideo: false}: 26,
 		{Resolution: "4k", HasVideo: true}:  16,
 	},
-	"doubao-seedance-2-0-fast-260128": {
+	"doubao-seedance-2-0-fast": {
 		{Resolution: "480p", HasVideo: false}: 37,
 		{Resolution: "480p", HasVideo: true}:  22,
 
 		{Resolution: "720p", HasVideo: false}: 37,
 		{Resolution: "720p", HasVideo: true}:  22,
 	},
-	"doubao-seedance-1-5-pro-251215": {
+	"doubao-seedance-1-5-pro": {
 		{HasAudio: false}: 8,
 		{HasAudio: true}:  16,
 	},
-	"doubao-seedance-1-0-pro-fast-251015": {
+	"doubao-seedance-1-0-pro-fast": {
 		{HasAudio: false}: 4.2,
 		{HasAudio: true}:  4.2,
 	},
-	"doubao-seedance-1-0-pro-250528": {
+	"doubao-seedance-1-0-pro": {
 		{HasAudio: false}: 15,
 		{HasAudio: true}:  15,
 	},
