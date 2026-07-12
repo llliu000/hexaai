@@ -14,7 +14,7 @@ import (
 
 const (
 	ThirdAnyFast = "anyfast"
-	Official     = "official"
+	Official     = "volc"
 	ThirdKWJM    = "kwjm"
 )
 
