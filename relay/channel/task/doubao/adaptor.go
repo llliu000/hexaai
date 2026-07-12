@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/samber/lo"
@@ -55,7 +54,7 @@ func (a *TaskAdaptor) BuildRequestURL(_ *relaycommon.RelayInfo) (string, error) 
 	case ThirdAnyFast:
 		return fmt.Sprintf("%s/v1/video/generations", a.baseURL), nil
 	case ThirdKWJM:
-		return fmt.Sprintf("%s/v1/videos/generations", a.baseURL), nil
+		return fmt.Sprintf("%s/v3/contents/generations/tasks", a.baseURL), nil
 	default:
 		return fmt.Sprintf("%s/api/v3/contents/generations/tasks", a.baseURL), nil
 	}
@@ -137,14 +136,7 @@ func (a *TaskAdaptor) DoResponse(c *gin.Context, resp *http.Response, info *rela
 	if taskErr != nil {
 		return
 	}
-
-	ov := dto.NewOpenAIVideo()
-	ov.ID = info.PublicTaskID
-	ov.TaskID = info.PublicTaskID
-	ov.CreatedAt = time.Now().Unix()
-	ov.Model = info.OriginModelName
-
-	c.JSON(http.StatusOK, ov)
+	c.JSON(http.StatusOK, map[string]any{"id": info.PublicTaskID})
 	return upstreamTaskId, responseBody, nil
 }
 
@@ -159,7 +151,7 @@ func (a *TaskAdaptor) FetchTask(baseUrl, key string, body map[string]any, proxy 
 	case ThirdAnyFast:
 		api = fmt.Sprintf("%s/v1/video/generations/%s", baseUrl, taskID)
 	case ThirdKWJM:
-		api = fmt.Sprintf("%s/v1/videos/generations/%s", baseUrl, taskID)
+		api = fmt.Sprintf("%s/v3/contents/generations/tasks/%s", baseUrl, taskID)
 	default:
 		api = fmt.Sprintf("%s/api/v3/contents/generations/tasks/%s", baseUrl, taskID)
 	}
@@ -255,4 +247,13 @@ func (a *TaskAdaptor) ConvertToOpenAIVideo(originTask *model.Task) ([]byte, erro
 	}
 
 	return common.Marshal(openAIVideo)
+}
+
+func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, error) {
+	var responseItems dto.TaskResponse[model.Task]
+	_ = common.Unmarshal(originTask.Data, &responseItems)
+	if responseItems.Code != "" {
+		return responseItems.Data.Data.MarshalJSON()
+	}
+	return originTask.Data.MarshalJSON()
 }

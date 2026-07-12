@@ -621,6 +621,10 @@ func (a *TaskAdaptor) ConvertToOpenAIVideo(task *model.Task) ([]byte, error) {
 	return common.Marshal(openAIResp)
 }
 
+func (a *TaskAdaptor) ConvertToAliVideo(task *model.Task) ([]byte, error) {
+	return task.Data.MarshalJSON()
+}
+
 func convertAliStatus(aliStatus string) string {
 	switch aliStatus {
 	case "PENDING":
