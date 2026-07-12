@@ -8,7 +8,7 @@ type responseTask struct {
 	ID      string `json:"id,omitempty"`
 	Model   string `json:"model,omitempty"`
 	Status  string `json:"status,omitempty"`
-	Content struct {
+	Content *struct {
 		VideoURL string `json:"video_url,omitempty"`
 	} `json:"content,omitempty"`
 	Seed            int    `json:"seed,omitempty"`
@@ -20,14 +20,14 @@ type responseTask struct {
 	Tools           []struct {
 		Type string `json:"type,omitempty"`
 	} `json:"tools,omitempty"`
-	Usage struct {
+	Usage *struct {
 		CompletionTokens int `json:"completion_tokens,omitempty"`
 		TotalTokens      int `json:"total_tokens,omitempty"`
 		ToolUsage        struct {
 			WebSearch int `json:"web_search,omitempty"`
 		} `json:"tool_usage,omitempty"`
 	} `json:"usage,omitempty"`
-	Error struct {
+	Error *struct {
 		Code    string `json:"code,omitempty"`
 		Message string `json:"message,omitempty"`
 	} `json:"error,omitempty"`
