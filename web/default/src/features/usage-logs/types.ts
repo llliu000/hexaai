@@ -172,6 +172,8 @@ export interface LogOtherData {
   model_price?: number
   group_ratio?: number
   user_group_ratio?: number
+  discount?: number
+  origin_quota?: number
   cache_ratio?: number
   cache_creation_ratio?: number
   cache_creation_ratio_5m?: number

@@ -126,6 +126,7 @@ export const STATIC_I18N_KEYS = [
   'Failed to update discount settings',
   'Please enter unique model names. Discount values must be positive integers.',
   'Please enter unique model names. Discount values must be positive numbers with up to 2 decimal places.',
+  'Original Cost',
 
   // Redemption codes
   'Unused',
