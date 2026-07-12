@@ -352,6 +352,8 @@ func RecordConsumeLog(c *gin.Context, userId int, params RecordConsumeLogParams)
 	createdAt := common.GetTimestamp()
 	// 记录用户折扣信息
 	if discount := ratio_setting.GetUserModelDiscount(userId, params.ModelName); discount != 1 {
+		params.Quota = int(float64(params.Quota) * discount)
+		params.Other["origin_quota"] = params.Quota
 		params.Other["discount"] = discount
 	}
 	otherStr := common.MapToJsonStr(params.Other)
@@ -427,6 +429,8 @@ func RecordTaskBillingLog(params RecordTaskBillingLogParams) {
 	}
 	// 记录用户折扣信息
 	if discount := ratio_setting.GetUserModelDiscount(params.UserId, params.ModelName); discount != 1 {
+		params.Quota = int(float64(params.Quota) * discount)
+		params.Other["origin_quota"] = params.Quota
 		params.Other["discount"] = discount
 	}
 	username, _ := GetUsernameById(params.UserId, false)
