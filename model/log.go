@@ -9,6 +9,7 @@ import (
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/logger"
+	"github.com/QuantumNous/new-api/setting/ratio_setting"
 	"github.com/QuantumNous/new-api/types"
 
 	"github.com/gin-gonic/gin"
@@ -349,6 +350,10 @@ func RecordConsumeLog(c *gin.Context, userId int, params RecordConsumeLogParams)
 	requestId := c.GetString(common.RequestIdKey)
 	upstreamRequestId := c.GetString(common.UpstreamRequestIdKey)
 	createdAt := common.GetTimestamp()
+	// 记录用户折扣信息
+	if discount := ratio_setting.GetUserModelDiscount(userId, params.ModelName); discount != 1 {
+		params.Other["discount"] = discount
+	}
 	otherStr := common.MapToJsonStr(params.Other)
 	// 判断是否需要记录 IP
 	needRecordIp := false
@@ -419,6 +424,10 @@ type RecordTaskBillingLogParams struct {
 func RecordTaskBillingLog(params RecordTaskBillingLogParams) {
 	if params.LogType == LogTypeConsume && !common.LogConsumeEnabled {
 		return
+	}
+	// 记录用户折扣信息
+	if discount := ratio_setting.GetUserModelDiscount(params.UserId, params.ModelName); discount != 1 {
+		params.Other["discount"] = discount
 	}
 	username, _ := GetUsernameById(params.UserId, false)
 	tokenName := ""

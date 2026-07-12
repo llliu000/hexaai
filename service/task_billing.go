@@ -204,6 +204,10 @@ func RecalculateTaskQuota(ctx context.Context, task *model.Task, actualQuota int
 	}
 	preConsumedQuota := task.Quota
 	quotaDelta := actualQuota - preConsumedQuota
+	// 查询用户模型折扣
+	modelName := taskModelName(task)
+	discount := ratio_setting.GetUserModelDiscount(task.UserId, modelName)
+	quotaDelta = int(float64(quotaDelta) * discount)
 
 	if quotaDelta == 0 {
 		logger.LogInfo(ctx, fmt.Sprintf("任务 %s 预扣费准确（%s，%s）",
