@@ -262,6 +262,11 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 		return data.MarshalJSON()
 	}
 	rt.ID = originTask.TaskID
+	rt.CreatedAt = originTask.CreatedAt
+	rt.UpdatedAt = originTask.UpdatedAt
 	rt.Model = originTask.Properties.OriginModelName
+	if rt.Status == "" {
+		rt.Status = "queued"
+	}
 	return json.Marshal(rt)
 }
