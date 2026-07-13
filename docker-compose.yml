@@ -13,7 +13,7 @@ services:
       - ./data:/data
       - ./logs:/app/logs
     environment:
-      - SQL_DSN=postgresql://root:pgsql@123!!@postgres:5432/hexaai
+      - SQL_DSN=postgresql://root:hexaiai@123!!@postgres:5432/hexaai
 #      - LOG_SQL_DSN=postgresql://root:pgsql@123!!@postgres:5432/hexaai-log # OPTIONAL: If you want a separate database for logging, uncomment and set this
 #      - LOG_SQL_DSN=clickhouse://default:ck@123123!@clickhouse:9000/hexaai_logs # OPTIONAL: Use ClickHouse for logs only; also uncomment clickhouse in depends_on and the clickhouse service below
 #      - LOG_SQL_CLICKHOUSE_TTL_DAYS=0 # OPTIONAL: ClickHouse log retention days. Unset or 0 disables automatic deletion; set to e.g. 30 to keep 30 days
@@ -58,7 +58,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: root
-      POSTGRES_PASSWORD: pgsql@123!!
+      POSTGRES_PASSWORD: hexaiai@123!!
       POSTGRES_DB: hexaai
     volumes:
       - pg_data:/var/lib/postgresql/data
