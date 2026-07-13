@@ -2,6 +2,7 @@ package kw
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -104,15 +105,24 @@ func (a *Adaptor) GetAsset(req *dto.GetAssetRequest) (*dto.GetAssetResponse, err
 	if err := a.post("GetAsset", request, &response); err != nil {
 		return nil, err
 	}
-	return &dto.GetAssetResponse{
+	ar := dto.GetAssetResponse{
 		Id:        response.Id,
 		GroupId:   response.GroupId,
 		URL:       response.URL,
 		Name:      response.Name,
 		AssetType: response.AssetType,
 		Status:    response.Status,
-		Error:     response.Error,
-	}, nil
+	}
+	if response.Error.Code != "" || response.Error.Message != "" {
+		marshal, _ := json.Marshal(map[string]string{
+			"Code":    response.Error.Code,
+			"Message": response.Error.Message,
+		})
+		raw := json.RawMessage(marshal)
+		ar.Error = &raw
+	}
+
+	return &ar, nil
 }
 
 func (a *Adaptor) ListAssets(req *dto.ListAssetsRequest) (*dto.ListAssetsResponse, error) {
