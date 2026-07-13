@@ -104,16 +104,15 @@ func (a *Adaptor) GetAsset(req *dto.GetAssetRequest) (*dto.GetAssetResponse, err
 	if err := a.post("GetAsset", request, &response); err != nil {
 		return nil, err
 	}
-	ar := dto.GetAssetResponse{
+	return &dto.GetAssetResponse{
 		Id:        response.Id,
 		GroupId:   response.GroupId,
 		URL:       response.URL,
 		Name:      response.Name,
 		AssetType: response.AssetType,
 		Status:    response.Status,
-	}
-	ar.Error = response.Error
-	return &ar, nil
+		Error:     response.Error,
+	}, nil
 }
 
 func (a *Adaptor) ListAssets(req *dto.ListAssetsRequest) (*dto.ListAssetsResponse, error) {

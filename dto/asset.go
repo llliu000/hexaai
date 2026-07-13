@@ -1,5 +1,7 @@
 package dto
 
+import "encoding/json"
+
 type BaseAssetRequest struct {
 	ProjectName *string `json:"ProjectName" binding:"omitempty,oneof=default"`
 }
@@ -122,19 +124,16 @@ type ListAssetsResponse struct {
 }
 
 type GetAssetResponse struct {
-	Id          string `json:"Id"`
-	GroupId     string `json:"GroupId"`
-	URL         string `json:"URL"`
-	Name        string `json:"Name"`
-	AssetType   string `json:"AssetType"`
-	ProjectName string `json:"ProjectName"`
-	Status      string `json:"Status"`
-	CreateTime  string `json:"CreateTime"`
-	UpdateTime  string `json:"UpdateTime"`
-	Error       *struct {
-		Code    string `json:"Code,omitempty"`
-		Message string `json:"Message,omitempty"`
-	} `json:"Error,omitempty"`
+	Id          string           `json:"Id"`
+	GroupId     string           `json:"GroupId"`
+	URL         string           `json:"URL"`
+	Name        string           `json:"Name"`
+	AssetType   string           `json:"AssetType"`
+	ProjectName string           `json:"ProjectName"`
+	Status      string           `json:"Status"`
+	CreateTime  string           `json:"CreateTime"`
+	UpdateTime  string           `json:"UpdateTime"`
+	Error       *json.RawMessage `json:"Error,omitempty"`
 }
 
 type GetAssetGroupResponse struct {

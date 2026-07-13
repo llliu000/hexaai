@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"gorm.io/datatypes"
 	"gorm.io/gorm/clause"
 )
 
@@ -25,17 +26,18 @@ func (AssetGroup) TableName() string {
 
 // Asset 资源
 type Asset struct {
-	Id          string    `json:"id" gorm:"type:varchar(191);uniqueIndex"` // 资源ID，如 Asset-2026**********-*****
-	UserId      int       `json:"user_id" gorm:"index"`
-	GroupId     string    `json:"group_id" gorm:"type:varchar(191);not null;index"`  // 分组ID
-	URL         string    `json:"url" gorm:"type:text;not null"`                     // 资源地址
-	Name        string    `json:"name" gorm:"type:varchar(191);not null;index"`      // 名称，上限为 64 个字符
-	AssetType   string    `json:"asset_type" gorm:"type:varchar(50);not null;index"` // 资源类型，如 Image、Video、Audio
-	ProjectName string    `json:"project_name" gorm:"type:varchar(191);index"`       // 项目名称，如 default
-	Status      string    `json:"status" gorm:"type:varchar(50);not null;index"`     // 任务状态，如 Active、Processing、Failed
-	Moderation  *string   `json:"moderation" gorm:"type:varchar(200)"`               // 审核配置 {"Strategy": "Skip"}
-	CreateTime  time.Time `json:"create_time" gorm:"bigint"`
-	UpdateTime  time.Time `json:"update_time" gorm:"bigint"`
+	Id          string          `json:"id" gorm:"type:varchar(191);uniqueIndex"` // 资源ID，如 Asset-2026**********-*****
+	UserId      int             `json:"user_id" gorm:"index"`
+	GroupId     string          `json:"group_id" gorm:"type:varchar(191);not null;index"`  // 分组ID
+	URL         string          `json:"url" gorm:"type:text;not null"`                     // 资源地址
+	Name        string          `json:"name" gorm:"type:varchar(191);not null;index"`      // 名称，上限为 64 个字符
+	AssetType   string          `json:"asset_type" gorm:"type:varchar(50);not null;index"` // 资源类型，如 Image、Video、Audio
+	ProjectName string          `json:"project_name" gorm:"type:varchar(191);index"`       // 项目名称，如 default
+	Status      string          `json:"status" gorm:"type:varchar(50);not null;index"`     // 任务状态，如 Active、Processing、Failed
+	Moderation  *string         `json:"moderation" gorm:"type:varchar(200)"`               // 审核配置 {"Strategy": "Skip"}
+	Error       *datatypes.JSON `json:"error" gorm:"type:jsonb"`                           // 错误信息
+	CreateTime  time.Time       `json:"create_time" gorm:"bigint"`
+	UpdateTime  time.Time       `json:"update_time" gorm:"bigint"`
 }
 
 func (*Asset) TableName() string {
@@ -94,8 +96,12 @@ func GetAssetById(id string) (asset Asset, err error) {
 	return
 }
 
-func UpdateAssetById(id, status string) (err error) {
-	return DB.Model(&Asset{}).Where("id = ?", id).Update("status", status).Error
+func UpdateAssetById(id, status string, errMsg *json.RawMessage) (err error) {
+	return DB.Model(&Asset{}).Where("id = ?", id).
+		Updates(map[string]any{
+			"status": status,
+			"error":  errMsg,
+		}).Error
 }
 
 type AssertChannel struct {

@@ -255,6 +255,7 @@ func ListAssets(userId int, req *dto.ListAssetsRequest) (*dto.ListAssetsResponse
 			AssetType:   assets[i].AssetType,
 			ProjectName: assets[i].ProjectName,
 			Status:      assets[i].Status,
+			Error:       (*json.RawMessage)(assets[i].Error),
 			CreateTime:  assets[i].CreateTime.UTC().Format(time.RFC3339),
 			UpdateTime:  assets[i].UpdateTime.UTC().Format(time.RFC3339),
 		})
@@ -280,6 +281,7 @@ func GetAsset(userId int, req *dto.GetAssetRequest) (*dto.GetAssetResponse, erro
 		AssetType:   asset.AssetType,
 		ProjectName: asset.ProjectName,
 		Status:      asset.Status,
+		Error:       (*json.RawMessage)(asset.Error),
 		CreateTime:  asset.CreateTime.UTC().Format(time.RFC3339),
 		UpdateTime:  asset.UpdateTime.UTC().Format(time.RFC3339),
 	}, nil

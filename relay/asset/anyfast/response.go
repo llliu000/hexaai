@@ -1,5 +1,7 @@
 package anyfast
 
+import "encoding/json"
+
 type createResponse struct {
 	Id string `json:"Id"`
 }
@@ -27,17 +29,14 @@ type listAssetsResponse struct {
 }
 
 type assetItem struct {
-	Id          string `json:"Id"`
-	Name        string `json:"Name"`
-	URL         string `json:"URL"`
-	AssetType   string `json:"AssetType"`
-	GroupId     string `json:"GroupId"`
-	Status      string `json:"Status"`
-	ProjectName string `json:"ProjectName"`
-	CreateTime  string `json:"CreateTime"`
-	UpdateTime  string `json:"UpdateTime"`
-	Error       *struct {
-		Code    string `json:"Code,omitempty"`
-		Message string `json:"Message,omitempty"`
-	} `json:"Error,omitempty"`
+	Id          string           `json:"Id"`
+	Name        string           `json:"Name"`
+	URL         string           `json:"URL"`
+	AssetType   string           `json:"AssetType"`
+	GroupId     string           `json:"GroupId"`
+	Status      string           `json:"Status"`
+	ProjectName string           `json:"ProjectName"`
+	CreateTime  string           `json:"CreateTime"`
+	UpdateTime  string           `json:"UpdateTime"`
+	Error       *json.RawMessage `json:"Error,omitempty"`
 }

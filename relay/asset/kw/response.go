@@ -1,5 +1,7 @@
 package kw
 
+import "encoding/json"
+
 type kwCreateResponse struct {
 	IdLower string `json:"id"`
 	IdUpper string `json:"Id"`
@@ -35,16 +37,13 @@ type kwListAssetsResponse struct {
 }
 
 type kwAssetItem struct {
-	Id          string `json:"Id"`
-	Name        string `json:"Name"`
-	URL         string `json:"URL"`
-	GroupId     string `json:"GroupId"`
-	AssetType   string `json:"AssetType"`
-	Status      string `json:"Status"`
-	CreatedTime string `json:"createTime"`
-	UpdatedTime string `json:"updateTime"`
-	Error       *struct {
-		Code    string `json:"Code,omitempty"`
-		Message string `json:"Message,omitempty"`
-	} `json:"Error,omitempty"`
+	Id          string           `json:"Id"`
+	Name        string           `json:"Name"`
+	URL         string           `json:"URL"`
+	GroupId     string           `json:"GroupId"`
+	AssetType   string           `json:"AssetType"`
+	Status      string           `json:"Status"`
+	CreatedTime string           `json:"createTime"`
+	UpdatedTime string           `json:"updateTime"`
+	Error       *json.RawMessage `json:"Error,omitempty"`
 }

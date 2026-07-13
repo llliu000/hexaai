@@ -124,7 +124,7 @@ func syncAssetStatusToLocal(acId int) error {
 		}()
 		return nil
 	}
-	err = model.UpdateAssetById(ab.AssetId, asset.Status)
+	err = model.UpdateAssetById(ab.AssetId, asset.Status, asset.Error)
 	return err
 }
 
