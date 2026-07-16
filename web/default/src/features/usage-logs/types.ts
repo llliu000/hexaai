@@ -347,6 +347,18 @@ export interface GetLogStatsResponse {
   data?: LogStatistics
 }
 
+export interface ExportLogsParams {
+  type?: number
+  username?: string
+  token_name?: string
+  model_name?: string
+  start_timestamp?: number
+  end_timestamp?: number
+  channel?: number
+  group?: string
+  request_id?: string
+}
+
 // ============================================================================
 // Drawing Log Types
 // ============================================================================

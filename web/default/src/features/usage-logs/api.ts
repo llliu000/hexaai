@@ -20,6 +20,7 @@ import { api } from '@/lib/api'
 
 import { buildQueryParams } from './lib/utils'
 import type {
+  ExportLogsParams,
   GetLogsParams,
   GetLogsResponse,
   GetLogStatsParams,
@@ -83,6 +84,18 @@ export const getLogStats = (params: GetLogStatsParams = {}) =>
 export const getUserLogStats = (
   params: Omit<GetLogStatsParams, 'username' | 'channel'> = {}
 ) => fetchLogStats('/api/log', params, false)
+
+export const exportLogs = (params: ExportLogsParams = {}) => {
+  const queryParams = buildQueryParams(params as Record<string, unknown>)
+  const query = queryParams.toString()
+
+  return api.get(`/api/log/export${query ? `?${query}` : ''}`, {
+    responseType: 'blob',
+    skipBusinessError: true,
+    skipErrorHandler: true,
+    disableDuplicate: true,
+  })
+}
 
 export async function getUserInfo(
   userId: number
