@@ -357,9 +357,7 @@ func ModelRatio2JSONString() string {
 	return modelRatioMap.MarshalJSONString()
 }
 
-var defaultImageRatio = map[string]float64{
-	"gpt-image-1": 2,
-}
+var defaultImageRatio = map[string]float64{}
 var imageRatioMap = types.NewRWMap[string, float64]()
 var audioRatioMap = types.NewRWMap[string, float64]()
 var audioCompletionRatioMap = types.NewRWMap[string, float64]()
