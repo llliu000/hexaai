@@ -192,6 +192,21 @@ export function useUsersColumns(): ColumnDef<User>[] {
       meta: { mobileOrder: 30 },
     },
     {
+      accessorKey: 'register_ip',
+      header: t('IP'),
+      cell: ({ row }) => {
+        const ip = row.getValue('register_ip') as string | undefined
+        return (
+          <LongText className='text-muted-foreground max-w-[150px] font-mono text-sm'>
+            {ip || '-'}
+          </LongText>
+        )
+      },
+      enableSorting: false,
+      size: 170,
+      meta: { mobileHidden: true },
+    },
+    {
       accessorKey: 'role',
       header: t('Role'),
       cell: ({ row }) => {

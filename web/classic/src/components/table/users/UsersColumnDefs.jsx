@@ -353,6 +353,11 @@ export const getUsersColumns = ({
       },
     },
     {
+      title: t('IP'),
+      dataIndex: 'register_ip',
+      render: (text) => text || '-',
+    },
+    {
       title: t('角色'),
       dataIndex: 'role',
       render: (text, record, index) => {
