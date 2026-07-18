@@ -27,6 +27,7 @@ import type {
   UserFormData,
   ManageUserAction,
   ManageUserQuotaPayload,
+  UserModelDiscounts,
   ApiResponse,
 } from './types'
 
@@ -151,6 +152,17 @@ export async function resetUserPasskey(id: number): Promise<ApiResponse> {
  */
 export async function resetUserTwoFA(id: number): Promise<ApiResponse> {
   const res = await api.delete(`/api/user/${id}/2fa`)
+  return res.data
+}
+
+/**
+ * Update a user's per-model price discounts. Values use 10000 = 1.0.
+ */
+export async function updateUserModelDiscounts(
+  id: number,
+  modelDiscounts: UserModelDiscounts
+): Promise<ApiResponse> {
+  const res = await api.put(`/api/user/${id}/model_discounts`, modelDiscounts)
   return res.data
 }
 

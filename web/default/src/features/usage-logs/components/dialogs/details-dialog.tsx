@@ -367,6 +367,20 @@ function BillingBreakdown(props: {
     })
   }
 
+  if (other.origin_quota != null && Number.isFinite(other.origin_quota)) {
+    rows.push({
+      label: t('Original Cost'),
+      value: formatLogQuota(other.origin_quota),
+    })
+  }
+
+  if (other.discount != null && Number.isFinite(other.discount)) {
+    rows.push({
+      label: t('Discount Value'),
+      value: `${formatRatio(other.discount)}x`,
+    })
+  }
+
   rows.push({
     label: t('Total Cost'),
     value: formatLogQuota(log.quota),

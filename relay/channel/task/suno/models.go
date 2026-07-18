@@ -1,7 +1,5 @@
 package suno
 
-var ModelList = []string{
-	"suno_music", "suno_lyrics",
-}
+var ModelList = []string{}
 
 var ChannelName = "suno"

@@ -33,6 +33,7 @@ import {
   TIMING_LOG_TYPES,
 } from '../constants'
 import type {
+  ExportLogsParams,
   GetLogsParams,
   GetLogsResponse,
   FetchLogsConfig,
@@ -247,6 +248,32 @@ export function buildApiParams(config: {
   }
 
   return params
+}
+
+export function buildExportApiParams(config: {
+  searchParams: Record<string, unknown>
+  columnFilters?: Array<{ id: string; value: unknown }>
+  isAdmin: boolean
+}): ExportLogsParams {
+  const params = buildApiParams({
+    page: 1,
+    pageSize: 1,
+    searchParams: config.searchParams,
+    columnFilters: config.columnFilters,
+    isAdmin: config.isAdmin,
+  })
+
+  return {
+    type: params.type,
+    username: params.username,
+    token_name: params.token_name,
+    model_name: params.model_name,
+    start_timestamp: params.start_timestamp,
+    end_timestamp: params.end_timestamp,
+    channel: params.channel,
+    group: params.group,
+    request_id: params.request_id,
+  }
 }
 
 // ============================================================================

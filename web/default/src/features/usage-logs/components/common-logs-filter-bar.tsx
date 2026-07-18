@@ -19,9 +19,10 @@ For commercial licensing, please contact support@quantumnous.com
 import { useQueryClient, useIsFetching } from '@tanstack/react-query'
 import { useNavigate, getRouteApi } from '@tanstack/react-router'
 import type { Table } from '@tanstack/react-table'
-import { Eye, EyeOff } from 'lucide-react'
+import { Download, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useState, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -38,9 +39,10 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
+import { exportLogs } from '../api'
 import { LOG_TYPE_ALL_VALUE, LOG_TYPE_FILTERS } from '../constants'
 import { buildSearchParams } from '../lib/filter'
-import { getDefaultTimeRange } from '../lib/utils'
+import { buildExportApiParams, getDefaultTimeRange } from '../lib/utils'
 import type { CommonLogFilters } from '../types'
 import { CommonLogsStats } from './common-logs-stats'
 import { CompactDateTimeRangePicker } from './compact-date-time-range-picker'
@@ -105,6 +107,62 @@ function buildSearchSourceKey(values: {
     .join('\u001f')
 }
 
+function getExportFilename(contentDisposition: unknown): string | undefined {
+  if (typeof contentDisposition !== 'string') return undefined
+
+  const encodedFilename = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i)
+  if (encodedFilename?.[1]) {
+    try {
+      return decodeURIComponent(encodedFilename[1])
+    } catch {
+      return encodedFilename[1]
+    }
+  }
+
+  const quotedFilename = contentDisposition.match(/filename="([^"]+)"/i)
+  if (quotedFilename?.[1]) return quotedFilename[1]
+
+  return contentDisposition.match(/filename=([^;]+)/i)?.[1]?.trim()
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
+}
+
+async function getExportErrorMessage(
+  error: unknown,
+  fallbackMessage: string
+): Promise<string> {
+  const responseData =
+    typeof error === 'object' &&
+    error !== null &&
+    'response' in error &&
+    typeof error.response === 'object' &&
+    error.response !== null &&
+    'data' in error.response
+      ? error.response.data
+      : undefined
+
+  if (responseData instanceof Blob) {
+    try {
+      const text = await responseData.text()
+      const parsed = JSON.parse(text) as { message?: string }
+      return parsed.message || fallbackMessage
+    } catch {
+      return fallbackMessage
+    }
+  }
+
+  return fallbackMessage
+}
+
 interface CommonLogsFilterBarProps<TData> {
   table: Table<TData>
 }
@@ -119,6 +177,7 @@ export function CommonLogsFilterBar<TData>(
   const { isAdminView: isAdmin } = useLogsViewScope()
   const { sensitiveVisible, setSensitiveVisible } = useUsageLogsContext()
   const fetchingLogs = useIsFetching({ queryKey: ['logs'] })
+  const [exporting, setExporting] = useState(false)
 
   const searchState = useMemo<CommonLogDraft>(() => {
     const { start, end } = getDefaultTimeRange()
@@ -233,6 +292,36 @@ export function CommonLogsFilterBar<TData>(
     [handleApply]
   )
 
+  const handleExport = useCallback(async () => {
+    if (!isAdmin) return
+
+    setExporting(true)
+    try {
+      const exportSearchParams = {
+        ...buildSearchParams(filters, 'common'),
+        type: [logType],
+      }
+      const response = await exportLogs(
+        buildExportApiParams({
+          searchParams: exportSearchParams,
+          columnFilters: [],
+          isAdmin: true,
+        })
+      )
+      const filename =
+        getExportFilename(response.headers['content-disposition']) ||
+        'logs_export.xlsx'
+      downloadBlob(response.data as Blob, filename)
+      toast.success(t('Export completed'))
+    } catch (error) {
+      toast.error(
+        await getExportErrorMessage(error, t('Failed to export logs'))
+      )
+    } finally {
+      setExporting(false)
+    }
+  }, [filters, isAdmin, logType, t])
+
   const hasExpandedFilters =
     !!filters.token ||
     !!filters.username ||
@@ -288,6 +377,17 @@ export function CommonLogsFilterBar<TData>(
       </TooltipContent>
     </Tooltip>
   )
+  const exportButton = isAdmin ? (
+    <Button
+      type='button'
+      variant='outline'
+      onClick={handleExport}
+      disabled={exporting}
+    >
+      {exporting ? <Loader2 className='animate-spin' /> : <Download />}
+      {t('Export')}
+    </Button>
+  ) : null
 
   const dateRangeFilter = (
     <LogsFilterField wide>
@@ -413,7 +513,12 @@ export function CommonLogsFilterBar<TData>(
     <LogsFilterToolbar
       table={props.table}
       stats={statsBar}
-      actionStart={sensitiveToggle}
+      actionStart={
+        <>
+          {sensitiveToggle}
+          {exportButton}
+        </>
+      }
       primaryFilters={
         <>
           {dateRangeFilter}

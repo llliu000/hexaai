@@ -21,6 +21,7 @@ import (
 	"github.com/QuantumNous/new-api/relay/helper"
 	"github.com/QuantumNous/new-api/service"
 	"github.com/QuantumNous/new-api/setting"
+	"github.com/QuantumNous/new-api/setting/ratio_setting"
 	"github.com/QuantumNous/new-api/setting/system_setting"
 
 	"github.com/gin-gonic/gin"
@@ -252,8 +253,12 @@ func RelaySwapFace(c *gin.Context, info *relaycommon.RelayInfo) *dto.MidjourneyR
 				Group:     info.UsingGroup,
 				Other:     other,
 			})
-			model.UpdateUserUsedQuotaAndRequestCount(info.UserId, priceData.Quota)
-			model.UpdateChannelUsedQuota(info.ChannelId, priceData.Quota)
+			// 计算折扣后的价格
+			discount := ratio_setting.GetUserModelDiscount(info.UserId, info.OriginModelName)
+			discountQuota := int(float64(priceData.Quota) * discount)
+
+			model.UpdateUserUsedQuotaAndRequestCount(info.UserId, discountQuota)
+			model.UpdateChannelUsedQuota(info.ChannelId, discountQuota)
 		}
 	}()
 	midjResponse := &mjResp.Response
@@ -558,8 +563,12 @@ func RelayMidjourneySubmit(c *gin.Context, relayInfo *relaycommon.RelayInfo) *dt
 				Group:     relayInfo.UsingGroup,
 				Other:     other,
 			})
-			model.UpdateUserUsedQuotaAndRequestCount(relayInfo.UserId, priceData.Quota)
-			model.UpdateChannelUsedQuota(relayInfo.ChannelId, priceData.Quota)
+			// 计算折扣后的价格
+			discount := ratio_setting.GetUserModelDiscount(relayInfo.UserId, relayInfo.OriginModelName)
+			discountQuota := int(float64(priceData.Quota) * discount)
+
+			model.UpdateUserUsedQuotaAndRequestCount(relayInfo.UserId, discountQuota)
+			model.UpdateChannelUsedQuota(relayInfo.ChannelId, discountQuota)
 		}
 	}()
 

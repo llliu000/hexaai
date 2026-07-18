@@ -15,6 +15,7 @@ import (
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/logger"
 	"github.com/QuantumNous/new-api/types"
+	"github.com/go-playground/validator/v10"
 )
 
 func MidjourneyErrorWrapper(code int, desc string) *dto.MidjourneyResponse {
@@ -220,4 +221,24 @@ func TaskErrorFromAPIError(apiErr *types.NewAPIError) *dto.TaskError {
 		StatusCode: apiErr.StatusCode,
 		Error:      apiErr.Err,
 	}
+}
+
+func TranslateValidationErrors(errs validator.ValidationErrors) string {
+	messages := make([]string, 0, len(errs))
+	for _, e := range errs {
+		field := e.Field()
+		switch e.Tag() {
+		case "required":
+			messages = append(messages,
+				fmt.Sprintf("%s is required", field))
+		case "oneof":
+			values := strings.ReplaceAll(e.Param(), " ", ", ")
+			messages = append(messages,
+				fmt.Sprintf("%s must be one of [%s]", field, values))
+		default:
+			messages = append(messages, e.Error())
+		}
+	}
+
+	return strings.Join(messages, "; ")
 }

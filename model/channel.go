@@ -49,7 +49,7 @@ type Channel struct {
 	Setting           *string `json:"setting" gorm:"type:text"` // 渠道额外设置
 	ParamOverride     *string `json:"param_override" gorm:"type:text"`
 	HeaderOverride    *string `json:"header_override" gorm:"type:text"`
-	Remark            *string `json:"remark" gorm:"type:varchar(255)" validate:"max=255"`
+	Remark            *string `json:"remark" gorm:"type:varchar(1000)" validate:"max=1000"`
 	// add after v0.8.5
 	ChannelInfo ChannelInfo `json:"channel_info" gorm:"type:json"`
 
@@ -1127,4 +1127,10 @@ func CountChannelsGroupByType() (map[int64]int64, error) {
 		counts[r.Type] = r.Count
 	}
 	return counts, nil
+}
+
+func ListChannelsByOpenAIOrganization() (chs []Channel, err error) {
+	err = DB.Where("open_ai_organization in ?", []string{"kwjm", "anyfast", "volc"}).
+		Where("type=?", constant.ChannelTypeDoubaoVideo).Find(&chs).Error
+	return
 }

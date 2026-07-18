@@ -330,6 +330,7 @@ func InitResources() error {
 
 	// Initialize options, should after model.InitDB()
 	model.InitOptionMap()
+	model.InitUserDiscount()
 
 	// 清理旧的磁盘缓存文件
 	common.CleanupOldCacheFiles()

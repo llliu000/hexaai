@@ -4,17 +4,7 @@ const (
 	ChannelName = "hailuo-video"
 )
 
-var ModelList = []string{
-	"MiniMax-Hailuo-2.3",
-	"MiniMax-Hailuo-2.3-Fast",
-	"MiniMax-Hailuo-02",
-	"T2V-01-Director",
-	"T2V-01",
-	"I2V-01-Director",
-	"I2V-01-live",
-	"I2V-01",
-	"S2V-01",
-}
+var ModelList = []string{}
 
 const (
 	TextToVideoEndpoint = "/v1/video_generation"

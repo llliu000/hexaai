@@ -62,8 +62,12 @@ func LogTaskConsumption(c *gin.Context, info *relaycommon.RelayInfo) {
 		Group:     info.UsingGroup,
 		Other:     other,
 	})
-	model.UpdateUserUsedQuotaAndRequestCount(info.UserId, info.PriceData.Quota)
-	model.UpdateChannelUsedQuota(info.ChannelId, info.PriceData.Quota)
+	// 计算折扣后的价格
+	discount := ratio_setting.GetUserModelDiscount(info.UserId, info.OriginModelName)
+	discountQuota := int(float64(info.PriceData.Quota) * discount)
+
+	model.UpdateUserUsedQuotaAndRequestCount(info.UserId, discountQuota)
+	model.UpdateChannelUsedQuota(info.ChannelId, discountQuota)
 }
 
 // ---------------------------------------------------------------------------
@@ -203,7 +207,11 @@ func RecalculateTaskQuota(ctx context.Context, task *model.Task, actualQuota int
 		return
 	}
 	preConsumedQuota := task.Quota
-	quotaDelta := actualQuota - preConsumedQuota
+	originQuotaDelta := actualQuota - preConsumedQuota
+	// 查询用户模型折扣
+	modelName := taskModelName(task)
+	discount := ratio_setting.GetUserModelDiscount(task.UserId, modelName)
+	quotaDelta := int(float64(originQuotaDelta) * discount)
 
 	if quotaDelta == 0 {
 		logger.LogInfo(ctx, fmt.Sprintf("任务 %s 预扣费准确（%s，%s）",
@@ -237,12 +245,12 @@ func RecalculateTaskQuota(ctx context.Context, task *model.Task, actualQuota int
 	var logQuota int
 	if quotaDelta > 0 {
 		logType = model.LogTypeConsume
-		logQuota = quotaDelta
+		logQuota = originQuotaDelta
 		model.UpdateUserUsedQuotaAndRequestCount(task.UserId, quotaDelta)
 		model.UpdateChannelUsedQuota(task.ChannelId, quotaDelta)
 	} else {
 		logType = model.LogTypeRefund
-		logQuota = -quotaDelta
+		logQuota = -originQuotaDelta
 	}
 	other := taskBillingOther(task)
 	other["task_id"] = task.TaskID

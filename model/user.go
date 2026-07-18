@@ -11,6 +11,7 @@ import (
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/logger"
 	"github.com/QuantumNous/new-api/setting/operation_setting"
+	"github.com/QuantumNous/new-api/setting/ratio_setting"
 
 	"github.com/bytedance/gopkg/util/gopool"
 	"gorm.io/gorm"
@@ -153,6 +154,7 @@ func (user *User) SetSetting(setting dto.UserSetting) {
 		return
 	}
 	user.Setting = string(settingBytes)
+	ratio_setting.ReplaceUserModelDiscounts(user.Id, setting.ModelDiscounts)
 }
 
 func UpdateUserSetting(userId int, setting dto.UserSetting) error {
@@ -167,6 +169,7 @@ func UpdateUserSetting(userId int, setting dto.UserSetting) error {
 	if err = DB.Model(&User{}).Where("id = ?", userId).Update("setting", settingValue).Error; err != nil {
 		return err
 	}
+	ratio_setting.ReplaceUserModelDiscounts(userId, setting.ModelDiscounts)
 	return updateUserSettingCache(userId, settingValue)
 }
 
@@ -1322,4 +1325,56 @@ func RootUserExists() bool {
 		return false
 	}
 	return true
+}
+
+func InitUserDiscount() {
+	type userDiscountSetting struct {
+		Id      int
+		Setting string
+	}
+	lastId := 0
+	totalUsers := 0
+	loadedUsers := 0
+	userDiscountInitBatchSize := 500
+
+	for {
+		users := make([]userDiscountSetting, 0, userDiscountInitBatchSize)
+		err := DB.Model(&User{}).
+			Select("id", "setting").
+			Where("id > ?", lastId).
+			Order("id ASC").
+			Limit(userDiscountInitBatchSize).
+			Find(&users).Error
+		if err != nil {
+			common.SysLog("failed to init user discounts: " + err.Error())
+			return
+		}
+		if len(users) == 0 {
+			break
+		}
+
+		for _, user := range users {
+			lastId = user.Id
+			totalUsers++
+
+			if strings.TrimSpace(user.Setting) == "" {
+				continue
+			}
+			userSetting := dto.UserSetting{}
+			if err := common.Unmarshal([]byte(user.Setting), &userSetting); err != nil {
+				common.SysLog(fmt.Sprintf("failed to unmarshal user setting for user %d: %s", user.Id, err.Error()))
+				continue
+			}
+			if len(userSetting.ModelDiscounts) == 0 {
+				continue
+			}
+			ratio_setting.ReplaceUserModelDiscounts(user.Id, userSetting.ModelDiscounts)
+			loadedUsers++
+		}
+
+		if len(users) < userDiscountInitBatchSize {
+			break
+		}
+	}
+	common.SysLog(fmt.Sprintf("initialized user discounts: users=%d, loaded=%d", totalUsers, loadedUsers))
 }

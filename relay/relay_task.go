@@ -14,6 +14,8 @@ import (
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/relay/channel"
+	"github.com/QuantumNous/new-api/relay/channel/task/ali"
+	"github.com/QuantumNous/new-api/relay/channel/task/doubao"
 	"github.com/QuantumNous/new-api/relay/channel/task/taskcommon"
 	relaycommon "github.com/QuantumNous/new-api/relay/common"
 	relayconstant "github.com/QuantumNous/new-api/relay/constant"
@@ -391,6 +393,21 @@ func videoFetchByIDRespBodyBuilder(c *gin.Context) (respBody []byte, taskResp *d
 	if realtimeResp := tryRealtimeFetch(originTask, isOpenAIVideoAPI); len(realtimeResp) > 0 {
 		respBody = realtimeResp
 		return
+	}
+
+	// 兼容处理官方API
+	if strings.HasPrefix(c.Request.RequestURI, "/api/v3/contents/generations/tasks/") {
+		if adaptor, ok := GetTaskAdaptor(originTask.Platform).(*doubao.TaskAdaptor); ok {
+			if respBody, err = adaptor.ConvertToDoubaoVideo(originTask); nil == err {
+				return // 兼容marshall错误
+			}
+		}
+	} else if strings.HasPrefix(c.Request.RequestURI, "/api/v1/tasks/") {
+		if adaptor, ok := GetTaskAdaptor(originTask.Platform).(*ali.TaskAdaptor); ok {
+			if respBody, err = adaptor.ConvertToAliVideo(originTask); nil == err {
+				return // 兼容marshall错误
+			}
+		}
 	}
 
 	// OpenAI Video API 格式: 走各 adaptor 的 ConvertToOpenAIVideo
