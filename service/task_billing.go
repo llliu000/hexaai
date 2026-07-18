@@ -62,8 +62,12 @@ func LogTaskConsumption(c *gin.Context, info *relaycommon.RelayInfo) {
 		Group:     info.UsingGroup,
 		Other:     other,
 	})
-	model.UpdateUserUsedQuotaAndRequestCount(info.UserId, info.PriceData.Quota)
-	model.UpdateChannelUsedQuota(info.ChannelId, info.PriceData.Quota)
+	// 计算折扣后的价格
+	discount := ratio_setting.GetUserModelDiscount(info.UserId, info.OriginModelName)
+	discountQuota := int(float64(info.PriceData.Quota) * discount)
+
+	model.UpdateUserUsedQuotaAndRequestCount(info.UserId, discountQuota)
+	model.UpdateChannelUsedQuota(info.ChannelId, discountQuota)
 }
 
 // ---------------------------------------------------------------------------
