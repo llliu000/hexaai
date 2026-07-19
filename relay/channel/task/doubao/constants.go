@@ -10,109 +10,129 @@ var ModelList = []string{}
 var AssetPrefix = "asset://"
 var ChannelName = "doubao-video"
 
+type videoPriceConfig struct {
+	BasePrice float64
+	Prices    map[videoPriceKey]float64
+}
+
 type videoPriceKey struct {
 	Resolution string // 480p、720p、1080p、4k
 	HasVideo   bool   // 输入是否包含视频
 	HasAudio   bool   // 输出是否有声音
 }
 
-var videoPriceTable = map[string]map[videoPriceKey]float64{
+var videoPriceTable = map[string]*videoPriceConfig{
 	"doubao-seedance-2-0-mini": {
-		{Resolution: "480p", HasVideo: false}: 23,
-		{Resolution: "480p", HasVideo: true}:  14,
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "480p", HasVideo: false}: 23,
+			{Resolution: "480p", HasVideo: true}:  14,
 
-		{Resolution: "720p", HasVideo: false}: 23,
-		{Resolution: "720p", HasVideo: true}:  14,
+			{Resolution: "720p", HasVideo: false}: 23,
+			{Resolution: "720p", HasVideo: true}:  14,
+		},
+		BasePrice: 14,
 	},
 	"doubao-seedance-2-0": {
-		{Resolution: "480p", HasVideo: false}: 46,
-		{Resolution: "480p", HasVideo: true}:  28,
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "480p", HasVideo: false}: 46,
+			{Resolution: "480p", HasVideo: true}:  28,
 
-		{Resolution: "720p", HasVideo: false}: 46,
-		{Resolution: "720p", HasVideo: true}:  28,
+			{Resolution: "720p", HasVideo: false}: 46,
+			{Resolution: "720p", HasVideo: true}:  28,
 
-		{Resolution: "1080p", HasVideo: false}: 51,
-		{Resolution: "1080p", HasVideo: true}:  31,
+			{Resolution: "1080p", HasVideo: false}: 51,
+			{Resolution: "1080p", HasVideo: true}:  31,
 
-		{Resolution: "4k", HasVideo: false}: 26,
-		{Resolution: "4k", HasVideo: true}:  16,
+			{Resolution: "4k", HasVideo: false}: 26,
+			{Resolution: "4k", HasVideo: true}:  16,
+		},
+		BasePrice: 16,
 	},
 	"doubao-seedance-2-0-fast": {
-		{Resolution: "480p", HasVideo: false}: 37,
-		{Resolution: "480p", HasVideo: true}:  22,
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "480p", HasVideo: false}: 37,
+			{Resolution: "480p", HasVideo: true}:  22,
 
-		{Resolution: "720p", HasVideo: false}: 37,
-		{Resolution: "720p", HasVideo: true}:  22,
+			{Resolution: "720p", HasVideo: false}: 37,
+			{Resolution: "720p", HasVideo: true}:  22,
+		},
+		BasePrice: 22,
 	},
 	"dreamina-seedance-2-0-mini": {
-		{Resolution: "480p", HasVideo: false}: 3.5,
-		{Resolution: "480p", HasVideo: true}:  2.1,
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "480p", HasVideo: false}: 3.5,
+			{Resolution: "480p", HasVideo: true}:  2.1,
 
-		{Resolution: "720p", HasVideo: false}: 3.5,
-		{Resolution: "720p", HasVideo: true}:  2.1,
+			{Resolution: "720p", HasVideo: false}: 3.5,
+			{Resolution: "720p", HasVideo: true}:  2.1,
+		},
+		BasePrice: 2.1,
 	},
 	"dreamina-seedance-2-0": {
-		{Resolution: "480p", HasVideo: false}: 7.0,
-		{Resolution: "480p", HasVideo: true}:  4.3,
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "480p", HasVideo: false}: 7.0,
+			{Resolution: "480p", HasVideo: true}:  4.3,
 
-		{Resolution: "720p", HasVideo: false}: 7.0,
-		{Resolution: "720p", HasVideo: true}:  4.3,
+			{Resolution: "720p", HasVideo: false}: 7.0,
+			{Resolution: "720p", HasVideo: true}:  4.3,
 
-		{Resolution: "1080p", HasVideo: false}: 7.7,
-		{Resolution: "1080p", HasVideo: true}:  4.7,
+			{Resolution: "1080p", HasVideo: false}: 7.7,
+			{Resolution: "1080p", HasVideo: true}:  4.7,
 
-		{Resolution: "4k", HasVideo: false}: 4.0,
-		{Resolution: "4k", HasVideo: true}:  2.4,
+			{Resolution: "4k", HasVideo: false}: 4.0,
+			{Resolution: "4k", HasVideo: true}:  2.4,
+		},
+		BasePrice: 2.4,
 	},
 	"dreamina-seedance-2-0-fast": {
-		{Resolution: "480p", HasVideo: false}: 5.6,
-		{Resolution: "480p", HasVideo: true}:  3.3,
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "480p", HasVideo: false}: 5.6,
+			{Resolution: "480p", HasVideo: true}:  3.3,
 
-		{Resolution: "720p", HasVideo: false}: 5.6,
-		{Resolution: "720p", HasVideo: true}:  3.3,
+			{Resolution: "720p", HasVideo: false}: 5.6,
+			{Resolution: "720p", HasVideo: true}:  3.3,
+		},
+		BasePrice: 3.3,
 	},
 	"doubao-seedance-1-5-pro": {
-		{HasAudio: false}: 8,
-		{HasAudio: true}:  16,
+		Prices: map[videoPriceKey]float64{
+			{HasAudio: false}: 8,
+			{HasAudio: true}:  16,
+		},
+		BasePrice: 8,
 	},
 	"doubao-seedance-1-0-pro-fast": {
-		{HasAudio: false}: 4.2,
-		{HasAudio: true}:  4.2,
+		Prices: map[videoPriceKey]float64{
+			{HasAudio: false}: 4.2,
+			{HasAudio: true}:  4.2,
+		},
+		BasePrice: 4.2,
 	},
 	"doubao-seedance-1-0-pro": {
-		{HasAudio: false}: 15,
-		{HasAudio: true}:  15,
+		Prices: map[videoPriceKey]float64{
+			{HasAudio: false}: 15,
+			{HasAudio: true}:  15,
+		},
+		BasePrice: 15,
 	},
 }
 
 func GetVideoInputRatio(model string, metadata map[string]interface{}) (float64, bool) {
 	hasVideo, hasAudio, resolution := hasInfo(metadata)
-	prices, ok := videoPriceTable[model]
+	cfg, ok := videoPriceTable[model]
 	if !ok {
 		return 0, false
 	}
 	// 模型实际价格
-	key := videoPriceKey{
+	price, ok := cfg.Prices[videoPriceKey{
 		Resolution: resolution,
 		HasVideo:   hasVideo,
 		HasAudio:   hasAudio,
-	}
-	price, ok := prices[key]
+	}]
 	if !ok {
 		return 0, false
 	}
-	// 基准价格
-	if key.Resolution != "" {
-		key.HasVideo = true
-		key.HasAudio = false
-	} else {
-		key.HasAudio = false
-	}
-	basePrice, ok := prices[key]
-	if !ok || basePrice == 0 {
-		return 0, false
-	}
-	return price / basePrice, true
+	return price / cfg.BasePrice, true
 }
 
 func hasInfo(metadata map[string]interface{}) (hasVideo, hasAudio bool, resolution string) {
