@@ -613,3 +613,13 @@ func handleConfigUpdate(key, value string) bool {
 
 	return true // 已处理
 }
+
+// InitOption 处理默认页面内容
+func InitOption(home, user, privacy, about []byte) {
+	_ = UpdateOptionsBulk(map[string]string{
+		"legal.privacy_policy": string(privacy),
+		"legal.user_agreement": string(user),
+		"HomePageContent":      string(home),
+		"About":                string(about),
+	})
+}
