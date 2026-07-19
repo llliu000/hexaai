@@ -44,6 +44,33 @@ var videoPriceTable = map[string]map[videoPriceKey]float64{
 		{Resolution: "720p", HasVideo: false}: 37,
 		{Resolution: "720p", HasVideo: true}:  22,
 	},
+	"dreamina-seedance-2-0-mini": {
+		{Resolution: "480p", HasVideo: false}: 3.5,
+		{Resolution: "480p", HasVideo: true}:  2.1,
+
+		{Resolution: "720p", HasVideo: false}: 3.5,
+		{Resolution: "720p", HasVideo: true}:  2.1,
+	},
+	"dreamina-seedance-2-0": {
+		{Resolution: "480p", HasVideo: false}: 7.0,
+		{Resolution: "480p", HasVideo: true}:  4.3,
+
+		{Resolution: "720p", HasVideo: false}: 7.0,
+		{Resolution: "720p", HasVideo: true}:  4.3,
+
+		{Resolution: "1080p", HasVideo: false}: 7.7,
+		{Resolution: "1080p", HasVideo: true}:  4.7,
+
+		{Resolution: "4k", HasVideo: false}: 4.0,
+		{Resolution: "4k", HasVideo: true}:  2.4,
+	},
+	"dreamina-seedance-2-0-fast": {
+		{Resolution: "480p", HasVideo: false}: 5.6,
+		{Resolution: "480p", HasVideo: true}:  3.3,
+
+		{Resolution: "720p", HasVideo: false}: 5.6,
+		{Resolution: "720p", HasVideo: true}:  3.3,
+	},
 	"doubao-seedance-1-5-pro": {
 		{HasAudio: false}: 8,
 		{HasAudio: true}:  16,
