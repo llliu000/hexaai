@@ -52,6 +52,18 @@ var classicBuildFS embed.FS
 //go:embed web/classic/dist/index.html
 var classicIndexPage []byte
 
+//go:embed web/option/home.html
+var homepage []byte
+
+//go:embed web/option/user.html
+var user []byte
+
+//go:embed web/option/privacy.html
+var privacy []byte
+
+//go:embed web/option/about.html
+var about []byte
+
 func main() {
 	startTime := time.Now()
 
@@ -331,6 +343,7 @@ func InitResources() error {
 	// Initialize options, should after model.InitDB()
 	model.InitOptionMap()
 	model.InitUserDiscount()
+	model.InitOption(homepage, user, privacy, about)
 
 	// 清理旧的磁盘缓存文件
 	common.CleanupOldCacheFiles()

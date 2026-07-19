@@ -1,0 +1,1290 @@
+<style>
+  .ai-home {
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+    color: #0f1728;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 42%, #f4f7fb 100%);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .ai-home * {
+    box-sizing: border-box;
+  }
+  .ai-home-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.36;
+    background-image:
+            linear-gradient(rgba(15, 23, 40, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(15, 23, 40, 0.04) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 86%);
+  }
+  .ai-home-shell {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    margin: 0;
+    padding: 0 0 88px;
+  }
+  .ai-hero {
+    position: relative;
+    width: 100%;
+    min-height: 780px;
+    padding: 88px 56px 120px;
+    overflow: hidden;
+    background:
+            radial-gradient(circle at 16% 18%, rgba(148, 187, 255, 0.22), transparent 28%),
+            radial-gradient(circle at 84% 20%, rgba(140, 214, 211, 0.18), transparent 26%),
+            linear-gradient(135deg, rgba(239, 246, 255, 0.94), rgba(255, 255, 255, 0.92) 48%, rgba(240, 253, 250, 0.78));
+  }
+  .ai-hero-copy {
+    position: relative;
+    z-index: 3;
+    max-width: 980px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .ai-status,
+  .ai-eyebrow,
+  .ai-kicker {
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(116, 133, 168, 0.16);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 14px 28px rgba(18, 32, 61, 0.06);
+  }
+  .ai-status {
+    display: flex;
+    width: fit-content;
+    max-width: min(100%, 520px);
+    margin: 0 auto;
+    padding: 10px 16px;
+    color: #166534;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .ai-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.12);
+  }
+  .ai-eyebrow {
+    display: flex;
+    width: fit-content;
+    max-width: min(100%, 520px);
+    margin: 38px auto 0;
+    padding: 9px 14px;
+    color: #5a6680;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .ai-kicker {
+    display: inline-flex;
+    padding: 9px 14px;
+    color: #5a6680;
+    font-size: 13px;
+  }
+  .ai-title {
+    margin: 22px auto 20px;
+    max-width: 980px;
+    font-size: 78px;
+    line-height: 1.04;
+    letter-spacing: 0;
+    font-weight: 850;
+  }
+  .ai-subtitle {
+    max-width: 780px;
+    margin: 0 auto;
+    color: #5f6b82;
+    font-size: 18px;
+    line-height: 1.9;
+  }
+  .ai-actions {
+    margin-top: 34px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .ai-btn {
+    min-height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(20, 31, 53, 0.1);
+    background: rgba(255, 255, 255, 0.82);
+    color: #0f1728;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: 0 18px 34px rgba(18, 32, 61, 0.08);
+  }
+  .ai-btn-primary {
+    background: #101828;
+    color: #fff;
+    box-shadow: 0 24px 44px rgba(14, 24, 44, 0.18);
+  }
+  .ai-btn small {
+    margin-left: 6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: inherit;
+    font-size: 12px;
+  }
+  .ai-trust {
+    position: relative;
+    z-index: 3;
+    margin: 38px auto 0;
+    width: 100%;
+    max-width: 1120px;
+    text-align: center;
+  }
+  .ai-trust p {
+    margin: 0 0 12px;
+    color: #6b7690;
+    font-size: 14px;
+  }
+  .ai-marquee,
+  .ai-provider-lane {
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+  .ai-marquee-track,
+  .ai-provider-track {
+    display: flex;
+    width: max-content;
+    gap: 12px;
+    animation: ai-marquee 30s linear infinite;
+  }
+  .ai-provider-lane:nth-child(2) .ai-provider-track {
+    animation-name: ai-marquee-reverse;
+    animation-duration: 34s;
+  }
+  .ai-chip {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.84);
+    border: 1px solid rgba(116, 133, 168, 0.16);
+    box-shadow: 0 14px 24px rgba(18, 32, 61, 0.06);
+    color: #64748b;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+  .ai-chip b {
+    color: #0f1728;
+  }
+  .ai-chip i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4d6fd8;
+  }
+  .ai-terminal-wrap {
+    position: relative;
+    z-index: 3;
+    width: min(100%, 680px);
+    margin: 38px auto 0;
+  }
+  .ai-terminal {
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid rgba(116, 133, 168, 0.16);
+    background: rgba(10, 18, 31, 0.94);
+    color: #dbeafe;
+    box-shadow: 0 34px 70px rgba(18, 32, 61, 0.2);
+  }
+  .ai-terminal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    font-size: 13px;
+  }
+  .ai-dots {
+    display: flex;
+    gap: 7px;
+  }
+  .ai-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .ai-dots span:nth-child(1) { background: #fb7185; }
+  .ai-dots span:nth-child(2) { background: #facc15; }
+  .ai-dots span:nth-child(3) { background: #34d399; }
+  .ai-ping {
+    color: #86efac;
+    font-size: 12px;
+  }
+  .ai-terminal pre {
+    margin: 0;
+    padding: 22px;
+    overflow-x: auto;
+    font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .ai-code-key { color: #93c5fd; }
+  .ai-code-str { color: #a7f3d0; }
+  .ai-code-note { color: #94a3b8; }
+  .ai-floating {
+    position: absolute;
+    z-index: 2;
+    left: var(--card-left);
+    top: var(--card-top);
+    width: 260px;
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 15px 17px;
+    border-radius: 24px;
+    border: 1px solid rgba(116, 133, 168, 0.18);
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow:
+            0 26px 52px rgba(18, 32, 61, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transform: translate(-50%, -50%) rotate(var(--card-rotate)) scale(var(--card-scale, 1));
+    animation: ai-card-float var(--float-dur, 7s) ease-in-out infinite alternate;
+    animation-delay: var(--card-delay, 0s);
+    overflow: hidden;
+  }
+  .ai-floating::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.62), transparent 52%);
+    pointer-events: none;
+  }
+  .ai-floating-mark {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(116, 133, 168, 0.18);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 10px 20px rgba(18, 32, 61, 0.08);
+    color: #111827;
+    font-size: 15px;
+    font-weight: 850;
+  }
+  .ai-floating-copy {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+  }
+  .ai-floating-copy strong {
+    display: block;
+    color: #0f1728;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ai-floating-copy span {
+    display: block;
+    color: #637088;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ai-floating-note {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    max-width: 76px;
+    color: #637088;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 1.2;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ai-floating--rose .ai-floating-mark { background: linear-gradient(135deg, #fff1f2, #ffffff); color: #be123c; }
+  .ai-floating--teal .ai-floating-mark { background: linear-gradient(135deg, #ecfeff, #ffffff); color: #0f766e; }
+  .ai-floating--amber .ai-floating-mark { background: linear-gradient(135deg, #fff7ed, #ffffff); color: #b45309; }
+  .ai-floating--sky .ai-floating-mark { background: linear-gradient(135deg, #eff6ff, #ffffff); color: #2563eb; }
+  .ai-floating--mint .ai-floating-mark { background: linear-gradient(135deg, #ecfdf5, #ffffff); color: #047857; }
+  .ai-floating--slate .ai-floating-mark { background: linear-gradient(135deg, #f1f5f9, #ffffff); color: #334155; }
+  .f1 { --card-left: 10%; --card-top: 18%; --card-rotate: -11deg; --card-scale: 1.04; --float-dur: 8.5s; --card-delay: 0.05s; }
+  .f2 { --card-left: 88%; --card-top: 20%; --card-rotate: 12deg; --card-scale: 1.03; --float-dur: 7.5s; --card-delay: 0.14s; }
+  .f3 { --card-left: 8%; --card-top: 46%; --card-rotate: -18deg; --card-scale: 0.96; --float-dur: 6.2s; --card-delay: 0.28s; }
+  .f4 { --card-left: 91%; --card-top: 49%; --card-rotate: -8deg; --card-scale: 0.98; --float-dur: 6.8s; --card-delay: 0.4s; }
+  .f5 { --card-left: 12%; --card-top: 80%; --card-rotate: -13deg; --card-scale: 1.01; --float-dur: 7s; --card-delay: 0.22s; }
+  .f6 { --card-left: 84%; --card-top: 83%; --card-rotate: 15deg; --card-scale: 0.98; --float-dur: 8.2s; --card-delay: 0.5s; }
+  .ai-wave {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    z-index: 1;
+    height: 170px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0), #fff 72%);
+  }
+  .ai-section {
+    width: 100%;
+    padding: 96px 48px 0;
+  }
+  .ai-section-copy {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto 28px;
+    text-align: center;
+  }
+  .ai-section-copy .ai-kicker {
+    margin-top: 0;
+  }
+  .ai-section-copy h2 {
+    margin: 18px 0 14px;
+    font-size: 42px;
+    line-height: 1.18;
+    letter-spacing: 0;
+  }
+  .ai-section-copy p {
+    margin: 0 auto;
+    max-width: 780px;
+    color: #5f6b82;
+    font-size: 17px;
+    line-height: 1.85;
+  }
+  .ai-grid-3 {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .ai-card {
+    min-width: 0;
+    padding: 28px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(116, 133, 168, 0.14);
+    box-shadow: 0 24px 54px rgba(18, 32, 61, 0.08);
+  }
+  .ai-card h3 {
+    margin: 12px 0 10px;
+    font-size: 22px;
+    line-height: 1.35;
+    letter-spacing: 0;
+  }
+  .ai-card p {
+    margin: 0;
+    color: #5f6b82;
+    line-height: 1.75;
+  }
+  .ai-label {
+    display: inline-flex;
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: rgba(15, 23, 40, 0.045);
+    border: 1px solid rgba(116, 133, 168, 0.14);
+    color: #4c5c76;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .ai-metrics {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    margin-top: 44px;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 1fr;
+    gap: 16px;
+  }
+  .ai-metric-card {
+    min-height: 210px;
+    padding: 24px;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(116, 133, 168, 0.16);
+    box-shadow: 0 22px 50px rgba(18, 32, 61, 0.08);
+  }
+  .ai-metric-card:first-child {
+    grid-row: span 2;
+    background:
+            radial-gradient(circle at top right, rgba(96, 165, 250, 0.22), transparent 38%),
+            linear-gradient(180deg, rgba(255,255,255,0.94), rgba(239,246,255,0.88));
+  }
+  .ai-metric-card strong {
+    display: block;
+    margin: 12px 0 10px;
+    font-size: 28px;
+    line-height: 1.18;
+  }
+  .ai-metric-card p {
+    margin: 0;
+    color: #5f6b82;
+    line-height: 1.72;
+  }
+  .ai-seedance {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    gap: 22px;
+    align-items: stretch;
+    padding: 28px;
+    border-radius: 30px;
+    background:
+            linear-gradient(135deg, rgba(255, 241, 242, 0.88), rgba(255, 255, 255, 0.9) 52%, rgba(239, 246, 255, 0.88));
+    border: 1px solid rgba(116, 133, 168, 0.14);
+    box-shadow: 0 30px 80px rgba(18, 32, 61, 0.1);
+  }
+  .ai-video-mock {
+    min-height: 420px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    background:
+            radial-gradient(circle at 24% 20%, rgba(56, 189, 248, 0.38), transparent 30%),
+            radial-gradient(circle at 76% 70%, rgba(34, 197, 94, 0.26), transparent 32%),
+            linear-gradient(135deg, #111827 0%, #1e293b 52%, #0f766e 100%);
+  }
+  .ai-video-mock::before {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .ai-video-scene {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #ffffff;
+    text-align: center;
+    padding: 28px;
+  }
+  .ai-video-scene strong {
+    display: block;
+    font-size: 40px;
+    margin-bottom: 8px;
+  }
+  .ai-play {
+    width: 78px;
+    height: 78px;
+    margin: 18px auto 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 2px solid rgba(255,255,255,0.78);
+    background: rgba(255,255,255,0.1);
+  }
+  .ai-play::before {
+    content: "";
+    margin-left: 5px;
+    border-top: 13px solid transparent;
+    border-bottom: 13px solid transparent;
+    border-left: 20px solid #fff;
+  }
+  .ai-video-prompt {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.72);
+    color: #dbeafe;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .ai-specs {
+    display: grid;
+    gap: 14px;
+    align-content: start;
+  }
+  .ai-specs h2 {
+    margin: 16px 0 10px;
+    font-size: 40px;
+    line-height: 1.18;
+  }
+  .ai-specs p {
+    margin: 0;
+    color: #5f6b82;
+    line-height: 1.8;
+  }
+  .ai-spec {
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.84);
+    border: 1px solid rgba(116, 133, 168, 0.14);
+  }
+  .ai-spec strong {
+    display: block;
+    margin-bottom: 8px;
+  }
+  .ai-spec span {
+    color: #5f6b82;
+  }
+  .ai-bench-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .ai-bench-card {
+    grid-column: span 6;
+    min-height: 340px;
+    padding: 22px;
+    border-radius: 26px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245,248,255,0.82));
+    border: 1px solid rgba(116, 133, 168, 0.14);
+    box-shadow: 0 24px 60px rgba(18, 32, 61, 0.08);
+  }
+  .ai-bench-card:first-child {
+    grid-column: span 12;
+  }
+  .ai-bench-media {
+    margin-top: 18px;
+    min-height: 220px;
+    border-radius: 20px;
+    padding: 18px;
+    background:
+            radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 36%),
+            linear-gradient(180deg, #f8fafc, #eef5ff);
+    border: 1px solid rgba(116, 133, 168, 0.12);
+    display: grid;
+    align-items: end;
+    gap: 12px;
+  }
+  .ai-bench-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 52px;
+    gap: 12px;
+    align-items: center;
+    font-size: 13px;
+    color: #334155;
+    font-weight: 700;
+  }
+  .ai-bench-track {
+    height: 12px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #dbeafe;
+  }
+  .ai-bench-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #38bdf8, #2563eb);
+  }
+  .ai-stat {
+    margin-top: 18px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .ai-stat strong {
+    font-size: 46px;
+    line-height: 1;
+    color: #1d4ed8;
+  }
+  .ai-callout {
+    margin-top: 16px;
+    display: inline-flex;
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: #eff4ff;
+    border: 1px solid rgba(116, 133, 168, 0.16);
+    color: #24334d;
+    font-size: 13px;
+  }
+  .ai-panel {
+    width: 100%;
+    padding: 30px;
+    border-radius: 32px;
+    background:
+            radial-gradient(circle at top left, rgba(125, 211, 252, 0.18), transparent 34%),
+            radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.12), transparent 28%),
+            linear-gradient(180deg, rgba(255,255,255,0.96), rgba(247,250,255,0.92));
+    box-shadow: 0 30px 70px rgba(15, 23, 42, 0.08);
+  }
+  .ai-route-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.74);
+    border: 1px solid rgba(116, 133, 168, 0.12);
+    margin-bottom: 18px;
+  }
+  .ai-route-copy {
+    max-width: 360px;
+  }
+  .ai-route-copy strong {
+    display: block;
+    margin: 8px 0 4px;
+    font-size: 20px;
+  }
+  .ai-route-copy p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.6;
+  }
+  .ai-route {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .ai-route span {
+    padding: 9px 12px;
+    border-radius: 999px;
+    background: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .ai-matrix {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .ai-matrix-card {
+    min-width: 0;
+    position: relative;
+    overflow: hidden;
+    padding: 28px;
+    border-radius: 28px;
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+  }
+  .ai-primary-card {
+    grid-column: span 7;
+    grid-row: span 2;
+    min-height: 430px;
+    background:
+            radial-gradient(circle at top right, rgba(96, 165, 250, 0.32), transparent 40%),
+            linear-gradient(180deg, rgba(235,245,255,0.98), rgba(224,240,255,0.92));
+  }
+  .ai-context-card {
+    grid-column: span 5;
+    background:
+            radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 40%),
+            linear-gradient(180deg, rgba(248,246,255,0.96), rgba(238,240,255,0.92));
+  }
+  .ai-reason-card {
+    grid-column: span 5;
+    background:
+            radial-gradient(circle at top right, rgba(14, 165, 233, 0.18), transparent 38%),
+            linear-gradient(180deg, rgba(245,252,255,0.96), rgba(238,248,250,0.94));
+  }
+  .ai-flag-card {
+    grid-column: 1 / -1;
+    background:
+            radial-gradient(circle at top right, rgba(251, 191, 36, 0.22), transparent 36%),
+            linear-gradient(135deg, rgba(255, 251, 235, 0.98), rgba(254, 243, 199, 0.94) 54%, rgba(255, 251, 235, 1));
+  }
+  .ai-progress {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .ai-progress-row {
+    display: grid;
+    gap: 7px;
+  }
+  .ai-progress-row div {
+    display: flex;
+    justify-content: space-between;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .ai-progress-row i {
+    display: block;
+    height: 9px;
+    border-radius: 999px;
+    background: #dbeafe;
+    overflow: hidden;
+  }
+  .ai-progress-row i span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #38bdf8, #2563eb);
+  }
+  .ai-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+  }
+  .ai-tags span {
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(15, 23, 40, 0.05);
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .ai-accent-card {
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 22px;
+    background: rgba(255, 241, 242, 0.9);
+    border: 1px solid rgba(244, 63, 94, 0.12);
+  }
+  .ai-provider-wall {
+    display: grid;
+    gap: 18px;
+    margin-top: 36px;
+  }
+  .ai-provider-pill {
+    flex: 0 0 300px;
+    min-height: 118px;
+    padding: 20px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,250,252,0.9));
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.05);
+  }
+  .ai-provider-pill b {
+    display: block;
+    font-size: 16px;
+  }
+  .ai-provider-pill em,
+  .ai-provider-pill span {
+    color: #6b7690;
+    font-size: 13px;
+    font-style: normal;
+  }
+  .ai-final {
+    width: calc(100% - 96px);
+    margin: 96px auto 0;
+    padding: 38px;
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    background: #101828;
+    color: #fff;
+    box-shadow: 0 34px 80px rgba(15, 23, 42, 0.22);
+  }
+  .ai-final h2 {
+    margin: 0 0 10px;
+    font-size: 36px;
+    letter-spacing: 0;
+  }
+  .ai-final p {
+    margin: 0;
+    color: #cbd5e1;
+    line-height: 1.7;
+  }
+  .ai-final .ai-btn {
+    background: #fff;
+    color: #101828;
+    box-shadow: none;
+    flex: none;
+  }
+  @keyframes ai-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes ai-marquee-reverse {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
+  }
+  @keyframes ai-card-float {
+    from { margin-top: 0; }
+    to { margin-top: -18px; }
+  }
+  @media (max-width: 1180px) {
+    .ai-floating {
+      width: 220px;
+      opacity: 0.72;
+    }
+    .ai-floating-note {
+      display: none;
+    }
+    .ai-metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .ai-metric-card:first-child {
+      grid-row: auto;
+    }
+  }
+  @media (max-width: 1024px) {
+    .ai-floating {
+      display: none;
+    }
+  }
+  @media (max-width: 900px) {
+    .ai-hero {
+      min-height: auto;
+      padding: 62px 18px 84px;
+    }
+    .ai-title {
+      font-size: 52px;
+    }
+    .ai-subtitle {
+      font-size: 17px;
+    }
+    .ai-grid-3,
+    .ai-seedance,
+    .ai-metrics {
+      grid-template-columns: 1fr;
+    }
+    .ai-bench-card,
+    .ai-bench-card:first-child {
+      grid-column: span 12;
+    }
+    .ai-route-bar {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+    .ai-route {
+      justify-content: flex-start;
+    }
+    .ai-primary-card,
+    .ai-context-card,
+    .ai-reason-card,
+    .ai-flag-card {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+    .ai-final {
+      width: calc(100% - 36px);
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+  @media (max-width: 640px) {
+    .ai-hero {
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+    .ai-title {
+      font-size: 38px;
+    }
+    .ai-subtitle {
+      font-size: 16px;
+    }
+    .ai-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .ai-btn {
+      width: 100%;
+      padding-left: 16px;
+      padding-right: 16px;
+      text-align: center;
+    }
+    .ai-btn small {
+      display: none;
+    }
+    .ai-section {
+      padding: 64px 16px 0;
+    }
+    .ai-section-copy h2 {
+      font-size: 30px;
+    }
+    .ai-card,
+    .ai-seedance,
+    .ai-panel {
+      border-radius: 20px;
+      padding: 20px;
+    }
+    .ai-video-mock {
+      min-height: 300px;
+    }
+    .ai-video-scene strong {
+      font-size: 28px;
+    }
+    .ai-video-prompt {
+      font-size: 12px;
+    }
+    .ai-bench-row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .ai-provider-pill {
+      flex-basis: 250px;
+    }
+    .ai-final {
+      width: calc(100% - 28px);
+      border-radius: 22px;
+      padding: 24px;
+    }
+    .ai-final h2 {
+      font-size: 28px;
+    }
+    .ai-status,
+    .ai-eyebrow {
+      max-width: 100%;
+      white-space: normal;
+      justify-content: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ai-marquee-track,
+    .ai-provider-track,
+    .ai-floating {
+      animation: none;
+    }
+  }
+</style>
+<div class="ai-home">
+  <div class="ai-home-bg"></div>
+  <div class="ai-home-shell">
+    <main>
+      <section class="ai-hero">
+        <div class="ai-hero-copy">
+          <div class="ai-status"><span class="ai-status-dot"></span>API 路由状态：全线健康 (99.99% 正常运行)</div>
+          <div class="ai-eyebrow">陆极云AI · 企业级 AI 路由网关</div>
+          <h1 class="ai-title">一个接口，无缝调度全球顶尖 AI 模型</h1>
+          <p class="ai-subtitle">
+            告别繁琐的密钥管理与多平台对接。通过统一 OpenAI 兼容入口，接入 DeepSeek、Qwen、Kimi、Claude、OpenAI、Seedance 等模型能力。
+          </p>
+          <div class="ai-actions">
+            <a class="ai-btn ai-btn-primary" href="/register">免费获取 API Key <small>注册即送体验额度</small></a>
+            <a class="ai-btn" href="#api-entry">查看接入示例</a>
+          </div>
+        </div>
+        <div class="ai-trust">
+          <p>全面覆盖全球领先的 AI 模型生态</p>
+          <div class="ai-marquee">
+            <div class="ai-marquee-track">
+              <span class="ai-chip"><i></i><b>DeepSeek R1</b> 深度推理</span>
+              <span class="ai-chip"><i></i><b>Seedance 2.0</b> 视频生成</span>
+              <span class="ai-chip"><i></i><b>Qwen-Max</b> 极致性价比</span>
+              <span class="ai-chip"><i></i><b>GPT-4o</b> 前沿旗舰</span>
+              <span class="ai-chip"><i></i><b>Kimi K2</b> 超长上下文</span>
+              <span class="ai-chip"><i></i><b>Claude 3.5</b> 复杂逻辑</span>
+              <span class="ai-chip"><i></i><b>Llama 3</b> 开源生态</span>
+              <span class="ai-chip"><i></i><b>DeepSeek R1</b> 深度推理</span>
+              <span class="ai-chip"><i></i><b>Seedance 2.0</b> 视频生成</span>
+              <span class="ai-chip"><i></i><b>Qwen-Max</b> 极致性价比</span>
+              <span class="ai-chip"><i></i><b>GPT-4o</b> 前沿旗舰</span>
+              <span class="ai-chip"><i></i><b>Kimi K2</b> 超长上下文</span>
+              <span class="ai-chip"><i></i><b>Claude 3.5</b> 复杂逻辑</span>
+              <span class="ai-chip"><i></i><b>Llama 3</b> 开源生态</span>
+            </div>
+          </div>
+        </div>
+        <div id="api-entry" class="ai-terminal-wrap">
+          <div class="ai-terminal">
+            <div class="ai-terminal-head">
+              <div class="ai-dots"><span></span><span></span><span></span></div>
+              <span>integration.py</span>
+              <span class="ai-ping">12ms</span>
+            </div>
+            <pre><code><span class="ai-code-key">import</span> openai
+client = openai.Client(
+  base_url=<span class="ai-code-str">"https://你的域名/v1"</span>, <span class="ai-code-note"># 只需替换这一行</span>
+  api_key=<span class="ai-code-str">"YOUR_API_KEY"</span>
+)
+<span class="ai-code-note"># active route: /v1/chat/completions</span></code></pre>
+          </div>
+        </div>
+        <div class="ai-floating ai-floating--rose f1">
+          <span class="ai-floating-mark">S</span>
+          <span class="ai-floating-copy"><strong>Seedance 2.0</strong><span>ByteDance / Video</span></span>
+          <em class="ai-floating-note">Cinematic</em>
+        </div>
+        <div class="ai-floating ai-floating--teal f2">
+          <span class="ai-floating-mark">G</span>
+          <span class="ai-floating-copy"><strong>GPT-5.4</strong><span>OpenAI / Frontier</span></span>
+          <em class="ai-floating-note">Global</em>
+        </div>
+        <div class="ai-floating ai-floating--amber f3">
+          <span class="ai-floating-mark">K</span>
+          <span class="ai-floating-copy"><strong>Kimi K2</strong><span>Moonshot / Long context</span></span>
+          <em class="ai-floating-note">Long</em>
+        </div>
+        <div class="ai-floating ai-floating--sky f4">
+          <span class="ai-floating-mark">Q</span>
+          <span class="ai-floating-copy"><strong>Qwen Max</strong><span>Alibaba / Multilingual</span></span>
+          <em class="ai-floating-note">Open</em>
+        </div>
+        <div class="ai-floating ai-floating--mint f5">
+          <span class="ai-floating-mark">D</span>
+          <span class="ai-floating-copy"><strong>DeepSeek R1</strong><span>DeepSeek / Reasoning</span></span>
+          <em class="ai-floating-note">Reason</em>
+        </div>
+        <div class="ai-floating ai-floating--slate f6">
+          <span class="ai-floating-mark">C</span>
+          <span class="ai-floating-copy"><strong>Claude 3.5</strong><span>Anthropic / General</span></span>
+          <em class="ai-floating-note">General</em>
+        </div>
+        <div class="ai-wave"></div>
+      </section>
+      <section class="ai-section">
+        <div class="ai-metrics">
+          <article class="ai-metric-card">
+            <span class="ai-label">极简接入</span>
+            <strong>无缝迁移，零重构成本</strong>
+            <p>完全兼容 OpenAI SDK 格式。只需修改 Base URL 和 API Key，现有业务代码、LangChain 或 Dify 即可快速接入。</p>
+          </article>
+          <article class="ai-metric-card">
+            <span class="ai-label">统一管理</span>
+            <strong>一个后台，接住所有主流模型</strong>
+            <p>把常用模型、渠道、额度和用量统一收进同一套控制台。</p>
+          </article>
+          <article class="ai-metric-card">
+            <span class="ai-label">灵活接入</span>
+            <strong>多渠道接入，扩展更从容</strong>
+            <p>支持不同厂商和渠道，按业务需要配置模型映射与调用入口。</p>
+          </article>
+          <article class="ai-metric-card">
+            <span class="ai-label">多模态融合</span>
+            <strong>文本、图像与视频一站式管理</strong>
+            <p>Seedance 2.0 等视频生成能力也能放进统一接口与计费体系。</p>
+          </article>
+          <article class="ai-metric-card">
+            <span class="ai-label">极速迭代</span>
+            <strong>永远保持在前沿第一线</strong>
+            <p>新模型发布后快速接入，通过控制台灰度放量，让产品能力持续更新。</p>
+          </article>
+        </div>
+      </section>
+      <section class="ai-section">
+        <div class="ai-seedance">
+          <div class="ai-video-mock">
+            <div class="ai-video-scene">
+              <span>
+                <strong>Seedance 2.0</strong>
+                文本生成视频 · 创意素材 · 多模态能力
+                <span class="ai-play"></span>
+              </span>
+            </div>
+            <div class="ai-video-prompt">
+              Prompt: cinematic tracking shot, glowing VR goggles, galaxy transition, voxel world, epic lighting, 8k...
+            </div>
+          </div>
+          <div class="ai-specs">
+            <div>
+              <span class="ai-label">全网稀缺算力</span>
+              <h2>首发接入 Seedance 2.0 视频生成引擎</h2>
+              <p>不仅是文本大模型，也把视频生成、图像生成和多模态能力放进同一套 API 接入面，免排队调用，按量计费。</p>
+            </div>
+            <div class="ai-spec"><strong>免排队调用</strong><span>企业级并发通道，快速生成视频内容。</span></div>
+            <div class="ai-spec"><strong>统一 OpenAI 格式</strong><span>接入体验保持一致，减少额外学习成本。</span></div>
+            <div class="ai-spec"><strong>统一计费管理</strong><span>文本、图像、视频用量都能在同一后台查看。</span></div>
+          </div>
+        </div>
+      </section>
+      <section class="ai-section">
+        <div class="ai-section-copy">
+          <span class="ai-kicker">性能优先</span>
+          <h2>稳定与速度，是一切业务的前提。</h2>
+          <p>通过多模型、多渠道和路由策略，让请求在高峰期也保持更可控的延迟和成功率。</p>
+        </div>
+        <div class="ai-bench-grid">
+          <article class="ai-bench-card">
+            <span class="ai-label">前沿模型竞速</span>
+            <h3>GPT / Gemini / Claude</h3>
+            <p>大厂旗舰模型横向对比快照。</p>
+            <div class="ai-bench-media">
+              <div class="ai-bench-row"><span>GPT-5</span><i class="ai-bench-track"><span style="width:94%"></span></i><b>94</b></div>
+              <div class="ai-bench-row"><span>Claude Sonnet</span><i class="ai-bench-track"><span style="width:90%"></span></i><b>90</b></div>
+              <div class="ai-bench-row"><span>Gemini Pro</span><i class="ai-bench-track"><span style="width:88%"></span></i><b>88</b></div>
+              <div class="ai-bench-row"><span>Qwen Max</span><i class="ai-bench-track"><span style="width:84%"></span></i><b>84</b></div>
+            </div>
+          </article>
+          <article class="ai-bench-card">
+            <span class="ai-label">逻辑推理 benchmark</span>
+            <h3>DeepSeek R1 vs OpenAI o1</h3>
+            <p>复杂推理能力对比。</p>
+            <div class="ai-bench-media">
+              <div class="ai-bench-row"><span>DeepSeek R1</span><i class="ai-bench-track"><span style="width:91%"></span></i><b>91</b></div>
+              <div class="ai-bench-row"><span>OpenAI o1</span><i class="ai-bench-track"><span style="width:93%"></span></i><b>93</b></div>
+              <div class="ai-bench-row"><span>成本效率</span><i class="ai-bench-track"><span style="width:97%"></span></i><b>97</b></div>
+            </div>
+          </article>
+          <article class="ai-bench-card">
+            <span class="ai-label">超长上下文处理</span>
+            <h3>Kimi K2 benchmark</h3>
+            <p>长文档、知识库、会议记录与历史上下文场景。</p>
+            <div class="ai-bench-media">
+              <div class="ai-bench-row"><span>长文档理解</span><i class="ai-bench-track"><span style="width:92%"></span></i><b>92</b></div>
+              <div class="ai-bench-row"><span>信息抽取</span><i class="ai-bench-track"><span style="width:86%"></span></i><b>86</b></div>
+              <div class="ai-bench-row"><span>上下文保持</span><i class="ai-bench-track"><span style="width:89%"></span></i><b>89</b></div>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="ai-section">
+        <div class="ai-section-copy">
+          <span class="ai-kicker">成本控制</span>
+          <h2>性能接近时，成本差距会被放大。</h2>
+          <p>不必把所有请求都交给最贵的旗舰模型。为不同任务匹配合适算力，才能把利润率留在业务里。</p>
+        </div>
+        <div class="ai-grid-3">
+          <article class="ai-card">
+            <span class="ai-label">Qwen vs GPT</span>
+            <h3>高频文本任务的降本入口</h3>
+            <p>客服、摘要、翻译、信息提取等任务，优先走低成本文本池。</p>
+            <div class="ai-stat"><strong>22x</strong><span>更低输入成本</span></div>
+            <div class="ai-callout">适合高频日常流量</div>
+          </article>
+          <article class="ai-card">
+            <span class="ai-label">DeepSeek vs GPT</span>
+            <h3>复杂推理任务的性价比选择</h3>
+            <p>代码生成、数学推理、长文档规划等任务，可以按需切到推理模型。</p>
+            <div class="ai-stat"><strong>35x</strong><span>更低输出成本</span></div>
+            <div class="ai-callout">适合深度分析场景</div>
+          </article>
+          <article class="ai-card">
+            <span class="ai-label">多厂商组合</span>
+            <h3>前沿模型之间灵活比价</h3>
+            <p>在不同厂商之间灵活调度，让关键任务用旗舰，日常任务用高性价比模型。</p>
+            <div class="ai-stat"><strong>17x</strong><span>更低输入成本</span></div>
+            <div class="ai-callout">适合规模化业务</div>
+          </article>
+        </div>
+      </section>
+      <section class="ai-section">
+        <div class="ai-section-copy">
+          <span class="ai-kicker">模型矩阵</span>
+          <h2>顶级性能，也可以拥有极致性价比。</h2>
+          <p>将日常请求、长上下文、深度推理、多模态和旗舰兜底分层调度，用更清晰的架构控制成本和质量。</p>
+        </div>
+        <div class="ai-panel">
+          <div class="ai-route-bar">
+            <div class="ai-route-copy">
+              <span class="ai-label">推荐架构策略</span>
+              <strong>日常省钱，核心任务不妥协</strong>
+              <p>单一 API 密钥，搞定从日常问答到复杂推理的所有场景。</p>
+            </div>
+            <div class="ai-route">
+              <span>日常文本池</span>
+              <span>长上下文池</span>
+              <span>深度推理池</span>
+              <span>旗舰火力池</span>
+            </div>
+          </div>
+          <div class="ai-matrix">
+            <article class="ai-matrix-card ai-primary-card">
+              <span class="ai-label">日常文本池 · 默认大流量入口</span>
+              <h3>Qwen-Plus / Doubao</h3>
+              <p>翻译、摘要、简单问答、NPC 聊天等高频任务，默认承接大部分日常流量。</p>
+              <div class="ai-progress">
+                <div class="ai-progress-row"><div><span>客服问答</span><span>92%</span></div><i><span style="width:92%"></span></i></div>
+                <div class="ai-progress-row"><div><span>内容摘要</span><span>78%</span></div><i><span style="width:78%"></span></i></div>
+                <div class="ai-progress-row"><div><span>多语言翻译</span><span>68%</span></div><i><span style="width:68%"></span></i></div>
+              </div>
+              <div class="ai-accent-card">
+                <span class="ai-label">视听多模态</span>
+                <h3>Seedance 2.0</h3>
+                <p>视频广告、视觉素材、创意原型，作为现有 AI 产品的创意能力外挂。</p>
+                <div class="ai-tags"><span>视频广告</span><span>视觉素材</span><span>创意原型</span></div>
+              </div>
+            </article>
+            <article class="ai-matrix-card ai-context-card">
+              <span class="ai-label">长上下文池</span>
+              <h3>Kimi K2 / Claude Haiku</h3>
+              <p>财报研读、知识库问答、长会话记忆提取。</p>
+              <div class="ai-tags"><span>百万级上下文</span><span>长文档</span><span>知识库问答</span></div>
+            </article>
+            <article class="ai-matrix-card ai-reason-card">
+              <span class="ai-label">深度推理池</span>
+              <h3>DeepSeek R1 / o1-mini</h3>
+              <p>写代码、数学解题、复杂架构设计、多步 Agent 规划。</p>
+              <div class="ai-tags"><span>代码生成</span><span>数学推演</span><span>多步规划</span></div>
+            </article>
+            <article class="ai-matrix-card ai-flag-card">
+              <span class="ai-label">旗舰火力池 · 最终质量兜底</span>
+              <h3>GPT-5 / Claude Sonnet</h3>
+              <p>面对最高质量要求和关键交付时，调用顶配模型兜底。把最贵的算力只留给真正关键的少数请求。</p>
+              <div class="ai-tags"><span>关键决策</span><span>高风险回复</span><span>重要交付</span></div>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section class="ai-section">
+        <div class="ai-section-copy">
+          <span class="ai-kicker">生态覆盖</span>
+          <h2>你需要的模型，这里尽量都有。</h2>
+          <p>从闭源旗舰到开源新星，保留选择权，不被单一平台绑定。</p>
+        </div>
+        <div class="ai-provider-wall">
+          <div class="ai-provider-lane">
+            <div class="ai-provider-track">
+              <div class="ai-provider-pill"><b>Seedance 2.0</b><em>Video native</em><span>ByteDance / Video</span></div>
+              <div class="ai-provider-pill"><b>Doubao 1.5 Pro</b><em>Mass scale</em><span>ByteDance / General</span></div>
+              <div class="ai-provider-pill"><b>DeepSeek R1</b><em>Open reasoning</em><span>DeepSeek / Reasoning</span></div>
+              <div class="ai-provider-pill"><b>Qwen3</b><em>Think / no-think</em><span>Alibaba / Hybrid</span></div>
+              <div class="ai-provider-pill"><b>Kimi K2 Think</b><em>Long context</em><span>Moonshot / Agentic</span></div>
+              <div class="ai-provider-pill"><b>GLM-5</b><em>MCP ready</em><span>Zhipu / Agentic</span></div>
+              <div class="ai-provider-pill"><b>Seedance 2.0</b><em>Video native</em><span>ByteDance / Video</span></div>
+              <div class="ai-provider-pill"><b>Doubao 1.5 Pro</b><em>Mass scale</em><span>ByteDance / General</span></div>
+              <div class="ai-provider-pill"><b>DeepSeek R1</b><em>Open reasoning</em><span>DeepSeek / Reasoning</span></div>
+              <div class="ai-provider-pill"><b>Qwen3</b><em>Think / no-think</em><span>Alibaba / Hybrid</span></div>
+              <div class="ai-provider-pill"><b>Kimi K2 Think</b><em>Long context</em><span>Moonshot / Agentic</span></div>
+              <div class="ai-provider-pill"><b>GLM-5</b><em>MCP ready</em><span>Zhipu / Agentic</span></div>
+            </div>
+          </div>
+          <div class="ai-provider-lane">
+            <div class="ai-provider-track">
+              <div class="ai-provider-pill"><b>Hunyuan Turbo S</b><em>Fast route</em><span>Tencent / Speed</span></div>
+              <div class="ai-provider-pill"><b>Hunyuan Vision</b><em>Vision CoT</em><span>Tencent / Vision</span></div>
+              <div class="ai-provider-pill"><b>ERNIE 4.5</b><em>Knowledge native</em><span>Baidu / Multimodal</span></div>
+              <div class="ai-provider-pill"><b>MiniMax M2.1</b><em>Multilang coding</em><span>MiniMax / Coding</span></div>
+              <div class="ai-provider-pill"><b>Claude Sonnet</b><em>General purpose</em><span>Anthropic / General</span></div>
+              <div class="ai-provider-pill"><b>GPT-4o / GPT-5</b><em>Frontier anchor</em><span>OpenAI / Frontier</span></div>
+              <div class="ai-provider-pill"><b>Hunyuan Turbo S</b><em>Fast route</em><span>Tencent / Speed</span></div>
+              <div class="ai-provider-pill"><b>Hunyuan Vision</b><em>Vision CoT</em><span>Tencent / Vision</span></div>
+              <div class="ai-provider-pill"><b>ERNIE 4.5</b><em>Knowledge native</em><span>Baidu / Multimodal</span></div>
+              <div class="ai-provider-pill"><b>MiniMax M2.1</b><em>Multilang coding</em><span>MiniMax / Coding</span></div>
+              <div class="ai-provider-pill"><b>Claude Sonnet</b><em>General purpose</em><span>Anthropic / General</span></div>
+              <div class="ai-provider-pill"><b>GPT-4o / GPT-5</b><em>Frontier anchor</em><span>OpenAI / Frontier</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="ai-final">
+        <div>
+          <h2>用一个 API，接入你的全能 AI 能力层。</h2>
+          <p>几分钟完成集成，统一模型、路由、令牌、额度和用量管理。</p>
+        </div>
+        <a class="ai-btn" href="/register">免费获取 API Key</a>
+      </section>
+    </main>
+  </div>
+</div>
