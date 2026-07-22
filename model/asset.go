@@ -28,7 +28,7 @@ func (AssetGroup) TableName() string {
 type Asset struct {
 	Id          string          `json:"id" gorm:"type:varchar(191);uniqueIndex"` // 资源ID，如 Asset-2026**********-*****
 	UserId      int             `json:"user_id" gorm:"index"`
-	GroupId     string          `json:"group_id" gorm:"type:varchar(191);not null;index"`  // 分组ID
+	GroupId     string          `json:"group_id" gorm:"type:varchar(191);not null"`        // 分组ID
 	URL         string          `json:"url" gorm:"type:text;not null"`                     // 资源地址
 	Name        string          `json:"name" gorm:"type:varchar(191);not null;index"`      // 名称，上限为 64 个字符
 	AssetType   string          `json:"asset_type" gorm:"type:varchar(50);not null;index"` // 资源类型，如 Image、Video、Audio

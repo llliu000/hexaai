@@ -748,3 +748,103 @@ func DeleteOldLogBatch(ctx context.Context, targetTimestamp int64, limit int) (i
 	}
 	return result.RowsAffected, nil
 }
+
+// ExportLogsBatch queries logs in batches and calls fn for each batch.
+// channelMap is pre-loaded once and used to fill ChannelName.
+// Returns total exported count.
+func ExportLogsBatch(logType int, startTimestamp int64, endTimestamp int64, modelName string, username string, tokenName string, channel int, group string, requestId string, fn func(batch []*Log) error) (int, error) {
+	const (
+		ExportMaxRows   = 500000
+		exportBatchSize = 1000
+	)
+	// Build base query (reusable)
+	buildTx := func() *gorm.DB {
+		var tx *gorm.DB
+		if logType == LogTypeUnknown {
+			tx = LOG_DB
+		} else {
+			tx = LOG_DB.Where("logs.type = ?", logType)
+		}
+		if modelName != "" {
+			tx = tx.Where("logs.model_name like ?", modelName)
+		}
+		if username != "" {
+			tx = tx.Where("logs.username = ?", username)
+		}
+		if tokenName != "" {
+			tx = tx.Where("logs.token_name = ?", tokenName)
+		}
+		if requestId != "" {
+			tx = tx.Where("logs.request_id = ?", requestId)
+		}
+		if startTimestamp != 0 {
+			tx = tx.Where("logs.created_at >= ?", startTimestamp)
+		}
+		if endTimestamp != 0 {
+			tx = tx.Where("logs.created_at <= ?", endTimestamp)
+		}
+		if channel != 0 {
+			tx = tx.Where("logs.channel_id = ?", channel)
+		}
+		if group != "" {
+			tx = tx.Where("logs."+logGroupCol+" = ?", group)
+		}
+		return tx
+	}
+
+	// Pre-load channel map once
+	channelMap, _ := loadChannelNameMap()
+
+	total := 0
+	lastID := 0 // 0 means start from the newest (id desc, so first batch has no lower bound)
+
+	for total < ExportMaxRows {
+		remaining := ExportMaxRows - total
+		batchLimit := exportBatchSize
+		if remaining < batchLimit {
+			batchLimit = remaining
+		}
+		var batch []*Log
+		tx := buildTx().Order("logs.id desc").Limit(batchLimit)
+		if lastID > 0 {
+			tx = tx.Where("logs.id < ?", lastID)
+		}
+		if err := tx.Find(&batch).Error; err != nil {
+			return total, err
+		}
+		if len(batch) == 0 {
+			break
+		}
+		// Fill channel names from pre-loaded map
+		for i := range batch {
+			if name, ok := channelMap[batch[i].ChannelId]; ok {
+				batch[i].ChannelName = name
+			}
+		}
+		if err := fn(batch); err != nil {
+			return total, err
+		}
+		total += len(batch)
+		lastID = batch[len(batch)-1].Id
+		if len(batch) < batchLimit {
+			break // no more data
+		}
+	}
+	return total, nil
+}
+
+// loadChannelNameMap loads all channel id->name mappings.
+func loadChannelNameMap() (map[int]string, error) {
+	channelMap := make(map[int]string)
+	var channels []struct {
+		Id   int    `gorm:"column:id"`
+		Name string `gorm:"column:name"`
+	}
+	if err := DB.Table("channels").Select("id, name").Find(&channels).Error; err != nil {
+		return channelMap, err
+	}
+	for _, ch := range channels {
+		channelMap[ch.Id] = ch.Name
+	}
+	return channelMap, nil
+}
