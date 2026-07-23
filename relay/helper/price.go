@@ -65,6 +65,10 @@ func HandleGroupRatio(ctx *gin.Context, relayInfo *relaycommon.RelayInfo) types.
 		// normal group ratio
 		groupRatioInfo.GroupRatio = ratio_setting.GetGroupRatio(relayInfo.UsingGroup)
 	}
+	discount := ratio_setting.GetUserModelDiscount(relayInfo.UserId, relayInfo.OriginModelName)
+	if discount != 1 { // 如果配置了折扣强制分组倍率为1
+		groupRatioInfo.GroupRatio = 1
+	}
 
 	return groupRatioInfo
 }
