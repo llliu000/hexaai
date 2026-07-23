@@ -320,6 +320,10 @@ func RecalculateTaskQuotaByTokens(ctx context.Context, task *model.Task, totalTo
 	} else {
 		finalGroupRatio = groupRatio
 	}
+	discount := ratio_setting.GetUserModelDiscount(task.UserId, modelName)
+	if discount != 1 { // 如果配置了折扣强制分组倍率为1
+		finalGroupRatio = 1
+	}
 
 	// 计算 OtherRatios 乘积（视频折扣、时长等）
 	otherMultiplier := 1.0
