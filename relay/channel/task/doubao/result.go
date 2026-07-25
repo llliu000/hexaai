@@ -16,12 +16,14 @@ const (
 	ThirdAnyFast = "anyfast"
 	Official     = "volc"
 	ThirdKWJM    = "kwjm"
+	ThirdOne     = "one"
 )
 
 var submitResultMapping = map[string]func(responseBody []byte) (string, *dto.TaskError){
 	ThirdKWJM:    officialSubmit,
 	Official:     officialSubmit,
 	ThirdAnyFast: newApiSubmit,
+	ThirdOne:     oneSubmit,
 }
 
 func officialSubmit(responseBody []byte) (string, *dto.TaskError) {
@@ -53,10 +55,24 @@ func newApiSubmit(responseBody []byte) (string, *dto.TaskError) {
 	return "", taskErr
 }
 
+func oneSubmit(responseBody []byte) (string, *dto.TaskError) {
+	var dResp oneResponse
+	if err := common.Unmarshal(responseBody, &dResp); err != nil {
+		taskErr := service.TaskErrorWrapper(errors.Wrapf(err, "body: %s", responseBody), "unmarshal_response_body_failed", http.StatusInternalServerError)
+		return "", taskErr
+	}
+	if dResp.Task.Id == "" {
+		taskErr := service.TaskErrorWrapper(fmt.Errorf("task_id is empty"), "invalid_response", http.StatusInternalServerError)
+		return "", taskErr
+	}
+	return dResp.Task.Id, nil
+}
+
 var fetchResultMapping = map[string]func(responseBody []byte) (*relaycommon.TaskInfo, error){
 	Official:     officialFetch,
 	ThirdAnyFast: newApiFetch,
 	ThirdKWJM:    officialFetch,
+	ThirdOne:     oneFetch,
 }
 
 // seedance-1.x获取任务详情响应结果处理
@@ -82,6 +98,41 @@ func newApiFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 		return nil, err
 	}
 	return taskInfo(resTask)
+}
+
+func oneFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
+	var sor oneResponse
+	if err := common.Unmarshal(responseBody, &sor); err != nil {
+		return nil, errors.Wrap(err, "unmarshal task result failed")
+	}
+	if sor.Task.Error != nil {
+		sor.Task.Status = "failed"
+	}
+
+	taskResult := relaycommon.TaskInfo{Code: 0}
+	switch sor.Task.Status {
+	case "processing":
+		taskResult.Status = model.TaskStatusInProgress
+		taskResult.Progress = "50%"
+	case "completed":
+		taskResult.Status = model.TaskStatusSuccess
+		taskResult.Progress = "100%"
+		if len(sor.Task.Outputs) > 0 {
+			taskResult.Url = sor.Task.Outputs[0]
+		}
+		// 解析 usage 信息用于按倍率计费
+		taskResult.CompletionTokens = sor.Task.Usage.CompletionTokens
+		taskResult.TotalTokens = sor.Task.Usage.TotalTokens
+	case "failed":
+		taskResult.Status = model.TaskStatusFailure
+		taskResult.Progress = "100%"
+		taskResult.Reason = "task failed"
+	default:
+		// Unknown status, treat as processing
+		taskResult.Status = model.TaskStatusInProgress
+		taskResult.Progress = "30%"
+	}
+	return &taskResult, nil
 }
 
 func taskInfo(resTask responseTask) (*relaycommon.TaskInfo, error) {

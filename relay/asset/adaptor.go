@@ -6,6 +6,7 @@ import (
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/relay/asset/anyfast"
 	"github.com/QuantumNous/new-api/relay/asset/kw"
+	"github.com/QuantumNous/new-api/relay/asset/one"
 	"github.com/QuantumNous/new-api/relay/asset/volc"
 )
 
@@ -37,6 +38,8 @@ func GetAdaptor(ch *model.Channel) Adaptor {
 		a = &kw.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
 	case "anyfast":
 		a = &anyfast.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
+	case "one":
+		a = &one.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
 	case "volc":
 		a = &volc.Adaptor{}
 	}
