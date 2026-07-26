@@ -1,19 +1,22 @@
-package volc
+package realm_drama
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/dto"
-	"github.com/volcengine/volcengine-go-sdk/volcengine"
-	"github.com/volcengine/volcengine-go-sdk/volcengine/session"
-	"github.com/volcengine/volcengine-go-sdk/volcengine/universal"
 )
 
 type Adaptor struct {
-	BaseUrl     string `json:"base_url"`
-	AccessID    string `json:"access_id"`
-	SecretKey   string `json:"secret_key"`
+	ApiKey      string `json:"api_key"`
+	BaseURL     string `json:"base_url"`
 	ProjectName string `json:"project_name"`
-	Region      string `json:"region"`
 	Moderation  struct {
 		Strategy string `json:"strategy"`
 	} `json:"moderation"`
@@ -73,41 +76,38 @@ func (a *Adaptor) GetVisualValidateResult(req *dto.GetVisualValidateResultReques
 }
 
 func (a *Adaptor) doCall(action string, request, response any) error {
-	config := volcengine.NewConfig().WithAkSk(a.AccessID, a.SecretKey).
-		WithEndpoint(a.BaseUrl).WithRegion(a.Region)
-	sess, err := session.NewSession(config)
+	body, err := json.Marshal(request)
 	if err != nil {
 		return err
 	}
-	marshal, err := common.Marshal(request)
+	reader := bytes.NewReader(body)
+	baseUrl := fmt.Sprintf("%s/?Action=%s&Version=2024-01-01", a.BaseURL, action)
+	httpReq, err := http.NewRequest(http.MethodPost, baseUrl, reader)
 	if err != nil {
 		return err
 	}
-	params := map[string]any{}
-	if err = common.Unmarshal(marshal, &params); nil != err {
-		return err
-	}
-	resp, err := universal.New(sess).DoCall(
-		universal.RequestUniversal{
-			ServiceName: "ark",
-			Action:      action,
-			Version:     "2024-01-01",
-			HttpMethod:  universal.POST,
-			ContentType: universal.ApplicationJSON,
-		},
-		&params,
-	)
+	httpReq.Header.Set("Authorization", "Bearer "+a.ApiKey)
+	httpReq.Header.Set("Content-Type", "application/json")
+	httpReq.Header.Set("Accept", "application/json")
+
+	client := &http.Client{Timeout: 60 * time.Second}
+	resp, err := client.Do(httpReq)
 	if err != nil {
 		return err
 	}
-	result, ok := (*resp)["Result"]
-	if !ok {
+	defer resp.Body.Close()
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		return fmt.Errorf("one asset failed: status %d: %s", resp.StatusCode, strings.TrimSpace(string(respBody)))
+	}
+	if len(respBody) == 0 || response == nil {
 		return nil
 	}
-	respData, err := common.Marshal(result)
-	if err != nil {
-		return err
+	if err = common.Unmarshal(respBody, response); err != nil {
+		return fmt.Errorf("asset decode response failed: %w", err)
 	}
-	err = common.Unmarshal(respData, &response)
-	return err
+	return nil
 }

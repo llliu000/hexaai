@@ -6,7 +6,8 @@ import (
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/relay/asset/anyfast"
 	"github.com/QuantumNous/new-api/relay/asset/kw"
-	"github.com/QuantumNous/new-api/relay/asset/one"
+	"github.com/QuantumNous/new-api/relay/asset/realm_drama"
+	"github.com/QuantumNous/new-api/relay/asset/token_mart"
 	"github.com/QuantumNous/new-api/relay/asset/volc"
 )
 
@@ -21,6 +22,8 @@ type Adaptor interface {
 	CreateAssets(req *dto.CreateAssetRequest) (*dto.CreateAssetResponse, error)
 	GetAsset(req *dto.GetAssetRequest) (*dto.GetAssetResponse, error)
 	ListAssets(req *dto.ListAssetsRequest) (*dto.ListAssetsResponse, error)
+	CreateVisualValidateSession(req *dto.CreateVisualValidateSessionRequest) (*dto.CreateVisualValidateSessionResponse, error)
+	GetVisualValidateResult(req *dto.GetVisualValidateResultRequest) (*dto.GetVisualValidateResultResponse, error)
 	ReviewSkip() bool
 }
 
@@ -38,8 +41,10 @@ func GetAdaptor(ch *model.Channel) Adaptor {
 		a = &kw.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
 	case "anyfast":
 		a = &anyfast.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
-	case "one":
-		a = &one.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
+	case "token_mart":
+		a = &token_mart.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
+	case "realm_drama":
+		a = &realm_drama.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
 	case "volc":
 		a = &volc.Adaptor{}
 	}

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
@@ -16,7 +15,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var assetSyncWorkers = 64
+var assetSyncWorkers = 12
 var assetSyncQueue = make(chan *assetSyncTask, 1024)
 var assetStatusSyncQueue = make(chan int, 1024)
 var assetChannelSyncQueue = make(chan int, 20)
@@ -45,14 +44,14 @@ func init() {
 			}
 		}
 	}()
-	go func() {
-		for chId := range assetChannelSyncQueue {
-			log.Printf("新增channel后开始同步豆包视频资源:channel_id=%d\n", chId)
-			if err := syncChannelAsset(chId); err != nil {
-				common.SysError(fmt.Sprintf("asset sync failed, ac_id=%d: %s", chId, err.Error()))
-			}
-		}
-	}()
+	//go func() {
+	//	for chId := range assetChannelSyncQueue {
+	//		log.Printf("新增channel后开始同步豆包视频资源:channel_id=%d\n", chId)
+	//		if err := syncChannelAsset(chId); err != nil {
+	//			common.SysError(fmt.Sprintf("asset sync failed, ac_id=%d: %s", chId, err.Error()))
+	//		}
+	//	}
+	//}()
 }
 
 func enqueueAssetSync(assetId string, update bool) {
@@ -77,21 +76,13 @@ func syncAssetToUpstreams(task *assetSyncTask) error {
 		}
 	}
 
-	// 查询所有可用豆包视频渠道
-	chs, err := model.ListChannelsByOpenAIOrganization()
-	if err != nil {
+	// 查询用户可用豆包视频渠道
+	channel, err := getUserSeedanceChannel(localAsset.UserId)
+	if nil != err {
 		return err
 	}
-	var errs []string
-	for i := range chs {
-		if err = createAssetOnChannel(&localAsset, &chs[i]); err != nil {
-			errs = append(errs, err.Error())
-		}
-	}
-	if len(errs) > 0 {
-		return errors.New(strings.Join(errs, "; "))
-	}
-	return nil
+	err = createAssetOnChannel(&localAsset, channel)
+	return err
 }
 
 func syncAssetStatusToLocal(acId int) error {

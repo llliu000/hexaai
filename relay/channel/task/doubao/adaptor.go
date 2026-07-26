@@ -56,7 +56,7 @@ func (a *TaskAdaptor) BuildRequestURL(_ *relaycommon.RelayInfo) (string, error) 
 		return fmt.Sprintf("%s/v1/video/generations", a.baseURL), nil
 	case ThirdKWJM:
 		return fmt.Sprintf("%s/v3/contents/generations/tasks", a.baseURL), nil
-	case ThirdOne:
+	case ThirdTokenMart:
 		return fmt.Sprintf("%s/v1/video/generate", a.baseURL), nil
 	default:
 		return fmt.Sprintf("%s/api/v3/contents/generations/tasks", a.baseURL), nil
@@ -155,7 +155,7 @@ func (a *TaskAdaptor) FetchTask(baseUrl, key string, body map[string]any, proxy 
 		api = fmt.Sprintf("%s/v1/video/generations/%s", baseUrl, taskID)
 	case ThirdKWJM:
 		api = fmt.Sprintf("%s/v3/contents/generations/tasks/%s", baseUrl, taskID)
-	case ThirdOne:
+	case ThirdTokenMart:
 		api = fmt.Sprintf("%s/v1/video/tasks/%s", baseUrl, taskID)
 	default:
 		api = fmt.Sprintf("%s/api/v3/contents/generations/tasks/%s", baseUrl, taskID)
@@ -261,7 +261,7 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	if responseItems.Code != "" {
 		data = responseItems.Data.Data
 	}
-	var sbm oneResponse
+	var sbm tokenMartResponse
 	_ = common.Unmarshal(data, &sbm)
 	if sbm.Task.Id != "" {
 		var response = responseTask{

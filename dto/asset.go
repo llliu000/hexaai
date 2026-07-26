@@ -90,6 +90,16 @@ type DeleteAssetGroupRequest struct {
 	Id string `json:"Id" binding:"required"`
 }
 
+type CreateVisualValidateSessionRequest struct {
+	BaseAssetRequest
+	CallbackURL string `json:"CallbackUrl" binding:"required"`
+}
+
+type GetVisualValidateResultRequest struct {
+	BaseAssetRequest
+	BytedToken string `json:"BytedToken" binding:"required"`
+}
+
 type AssetBaseResult struct {
 	ResponseMetadata struct {
 		RequestId string `json:"RequestId"`
@@ -157,3 +167,13 @@ type UpdateAssetResponse struct {
 type DeleteAssetResponse struct{}
 
 type DeleteAssetGroupResponse struct{}
+
+type CreateVisualValidateSessionResponse struct {
+	BytedToken  string `json:"BytedToken"`
+	H5Link      string `json:"H5Link"`
+	CallbackURL string `json:"CallbackURL"`
+}
+
+type GetVisualValidateResultResponse struct {
+	GroupId string `json:"GroupId"`
+}

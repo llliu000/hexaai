@@ -1,7 +1,6 @@
-package one
+package realm_drama
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -11,20 +10,46 @@ import (
 	"github.com/QuantumNous/new-api/dto"
 )
 
-func TestKwAssetFullFlow(t *testing.T) {
+func TestVolcAssetFullFlow(t *testing.T) {
+
+	projectName := os.Getenv("VOLC_TEST_PROJECT_NAME")
+	if projectName == "" {
+		projectName = "default"
+	}
+
 	apiKey := "sk-inf-v1-10bfb7d7d1837f35fb83f6f32feadf0043f47e0f091993d638c0e7d0b2e7f285"
 	baseURL := "https://model.service-inference.ai"
 
 	adaptor := Adaptor{ApiKey: apiKey, BaseURL: baseURL}
 	suffix := time.Now().Format("20060102150405")
 
-	assetName := fmt.Sprintf("new-api-test-asset-%s", suffix)
-	assetURL := os.Getenv("KW_TEST_ASSET_URL")
-	if assetURL == "" {
-		assetURL = "https://b0.bdstatic.com/ugc/img/2024-12-28/16a7486e93dc56ef5aba9e0aa6144e01.png"
+	groupName := fmt.Sprintf("new-api-test-group-%s", "suffix")
+	groupDescription := "new-api volc asset integration test"
+	groupType := "AIGC"
+
+	createGroupResp, err := adaptor.CreateAssetGroup(&dto.CreateAssetGroupRequest{
+		BaseAssetRequest: dto.BaseAssetRequest{
+			ProjectName: optionalPtr(projectName),
+		},
+		Description: ptr(groupDescription),
+		Name:        groupName,
+		GroupType:   groupType,
+	})
+	if err != nil {
+		t.Fatalf("CreateAssetGroup failed: %v", err)
 	}
+	if createGroupResp == nil || createGroupResp.Id == "" {
+		t.Fatalf("CreateAssetGroup returned empty response: %#v", createGroupResp)
+	}
+
+	assetName := fmt.Sprintf("new-api-test-asset-%s", suffix)
+	assetURL := "https://b0.bdstatic.com/ugc/img/2024-12-28/16a7486e93dc56ef5aba9e0aa6144e01.png"
 	assetType := "Image"
 	createAssetResp, err := adaptor.CreateAssets(&dto.CreateAssetRequest{
+		BaseAssetRequest: dto.BaseAssetRequest{
+			ProjectName: optionalPtr(projectName),
+		},
+		GroupId:   createGroupResp.Id,
 		URL:       assetURL,
 		Name:      assetName,
 		AssetType: assetType,
@@ -36,15 +61,36 @@ func TestKwAssetFullFlow(t *testing.T) {
 		t.Fatalf("CreateAssets returned empty response: %#v", createAssetResp)
 	}
 
-	getAssetResp, err := adaptor.GetAsset(&dto.GetAssetRequest{Id: createAssetResp.Id})
+	getAssetResp, err := adaptor.GetAsset(&dto.GetAssetRequest{
+		BaseAssetRequest: dto.BaseAssetRequest{
+			ProjectName: optionalPtr(projectName),
+		},
+		Id: createAssetResp.Id,
+	})
 	if err != nil {
 		t.Fatalf("GetAsset failed: %v", err)
 	}
-	marshal, _ := json.Marshal(getAssetResp)
-	t.Logf("GetAsset: %v", string(marshal))
+	assertAsset(t, getAssetResp, createAssetResp.Id, createGroupResp.Id, assetName, assetType)
+
+	listAssetsResp, err := adaptor.ListAssets(&dto.ListAssetsRequest{
+		BaseAssetRequest: dto.BaseAssetRequest{
+			ProjectName: optionalPtr(projectName),
+		},
+		Filter: &dto.ListAssetsFilter{
+			GroupIds:  []string{createGroupResp.Id},
+			GroupType: ptr(groupType),
+			Name:      ptr(assetName),
+		},
+		PageNumber: 1,
+		PageSize:   10,
+	})
+	if err != nil {
+		t.Fatalf("ListAssets failed: %v", err)
+	}
+	assertAssetListed(t, listAssetsResp, createAssetResp.Id, createGroupResp.Id, assetName, assetType)
 }
 
-func assertAssetGroupListed(t *testing.T, resp *dto.ListAssetGroupsResponse, groupID string, groupName string, groupType string) {
+func assertAssetGroupListed(t *testing.T, resp *dto.ListAssetGroupsResponse, groupID string, groupName string) {
 	t.Helper()
 	if resp == nil {
 		t.Fatal("ListAssetGroups returned nil response")
@@ -53,9 +99,6 @@ func assertAssetGroupListed(t *testing.T, resp *dto.ListAssetGroupsResponse, gro
 		if item.Id == groupID {
 			if item.Name != "" && item.Name != groupName {
 				t.Fatalf("listed asset group name mismatch: got %q, want %q", item.Name, groupName)
-			}
-			if item.GroupType != "" && !strings.EqualFold(item.GroupType, groupType) {
-				t.Fatalf("listed asset group type mismatch: got %q, want %q", item.GroupType, groupType)
 			}
 			return
 		}
@@ -97,5 +140,12 @@ func assertAsset(t *testing.T, resp *dto.GetAssetResponse, assetID string, group
 }
 
 func ptr(value string) *string {
+	return &value
+}
+
+func optionalPtr(value string) *string {
+	if value == "" {
+		return nil
+	}
 	return &value
 }

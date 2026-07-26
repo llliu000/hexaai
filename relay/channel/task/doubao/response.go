@@ -35,7 +35,7 @@ type responseTask struct {
 	UpdatedAt int64 `json:"updated_at,omitempty"`
 }
 
-type oneResponse struct {
+type tokenMartResponse struct {
 	Task struct {
 		Id              string   `json:"id"`
 		Status          string   `json:"status"`

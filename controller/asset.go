@@ -52,6 +52,9 @@ func (a *AssetController) Action(c *gin.Context) {
 		result.Result, err = a.DeleteAsset(c)
 	case "DeleteAssetGroup":
 		result.Result, err = a.DeleteAssetGroup(c)
+	case "CreateVisualValidateSession":
+		result.Result, err = a.CreateVisualValidateSession(c)
+	case "GetVisualValidateResult":
 	default:
 		c.String(http.StatusNotFound, "Not Found")
 		return
@@ -153,6 +156,24 @@ func (a *AssetController) DeleteAssetGroup(c *gin.Context) (*dto.DeleteAssetGrou
 	}
 	userId := c.GetInt("id")
 	return service.DeleteAssetGroup(userId, &req)
+}
+
+func (a *AssetController) CreateVisualValidateSession(c *gin.Context) (*dto.CreateVisualValidateSessionResponse, error) {
+	var req dto.CreateVisualValidateSessionRequest
+	if err := c.BindJSON(&req); nil != err {
+		return nil, err
+	}
+	userId := c.GetInt("id")
+	return service.CreateVisualValidateSession(userId, &req)
+}
+
+func (a *AssetController) GetVisualValidateResult(c *gin.Context) (*dto.GetVisualValidateResultResponse, error) {
+	var req dto.GetVisualValidateResultRequest
+	if err := c.BindJSON(&req); nil != err {
+		return nil, err
+	}
+	userId := c.GetInt("id")
+	return service.GetVisualValidateResult(userId, &req)
 }
 
 func (a *AssetController) ManualAsset(c *gin.Context) {

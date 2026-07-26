@@ -1,4 +1,4 @@
-package one
+package token_mart
 
 type createAssetRequest struct {
 	URL       string `json:"URL"`

@@ -1,8 +1,9 @@
-package one
+package token_mart
 
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -82,6 +83,14 @@ func (a *Adaptor) GetAsset(req *dto.GetAssetRequest) (*dto.GetAssetResponse, err
 
 func (a *Adaptor) ListAssets(req *dto.ListAssetsRequest) (*dto.ListAssetsResponse, error) {
 	return &dto.ListAssetsResponse{}, nil
+}
+
+func (a *Adaptor) CreateVisualValidateSession(req *dto.CreateVisualValidateSessionRequest) (*dto.CreateVisualValidateSessionResponse, error) {
+	return nil, errors.New("account not support CreateVisualValidateSession")
+}
+
+func (a *Adaptor) GetVisualValidateResult(req *dto.GetVisualValidateResultRequest) (*dto.GetVisualValidateResultResponse, error) {
+	return nil, errors.New("account not support GetVisualValidateResult")
 }
 
 func (a *Adaptor) doRequest(method, url string, body io.Reader, out any) error {

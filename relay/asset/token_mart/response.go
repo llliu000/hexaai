@@ -1,4 +1,4 @@
-package one
+package token_mart
 
 type Response[T any] struct {
 	Success bool `json:"success"`

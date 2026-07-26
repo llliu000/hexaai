@@ -13,17 +13,17 @@ import (
 )
 
 const (
-	ThirdAnyFast = "anyfast"
-	Official     = "volc"
-	ThirdKWJM    = "kwjm"
-	ThirdOne     = "one"
+	ThirdAnyFast   = "anyfast"
+	Official       = "volc"
+	ThirdKWJM      = "kwjm"
+	ThirdTokenMart = "token_mart"
 )
 
 var submitResultMapping = map[string]func(responseBody []byte) (string, *dto.TaskError){
-	ThirdKWJM:    officialSubmit,
-	Official:     officialSubmit,
-	ThirdAnyFast: newApiSubmit,
-	ThirdOne:     oneSubmit,
+	ThirdKWJM:      officialSubmit,
+	Official:       officialSubmit,
+	ThirdAnyFast:   newApiSubmit,
+	ThirdTokenMart: tokenMartSubmit,
 }
 
 func officialSubmit(responseBody []byte) (string, *dto.TaskError) {
@@ -55,8 +55,8 @@ func newApiSubmit(responseBody []byte) (string, *dto.TaskError) {
 	return "", taskErr
 }
 
-func oneSubmit(responseBody []byte) (string, *dto.TaskError) {
-	var dResp oneResponse
+func tokenMartSubmit(responseBody []byte) (string, *dto.TaskError) {
+	var dResp tokenMartResponse
 	if err := common.Unmarshal(responseBody, &dResp); err != nil {
 		taskErr := service.TaskErrorWrapper(errors.Wrapf(err, "body: %s", responseBody), "unmarshal_response_body_failed", http.StatusInternalServerError)
 		return "", taskErr
@@ -69,10 +69,10 @@ func oneSubmit(responseBody []byte) (string, *dto.TaskError) {
 }
 
 var fetchResultMapping = map[string]func(responseBody []byte) (*relaycommon.TaskInfo, error){
-	Official:     officialFetch,
-	ThirdAnyFast: newApiFetch,
-	ThirdKWJM:    officialFetch,
-	ThirdOne:     oneFetch,
+	Official:       officialFetch,
+	ThirdAnyFast:   newApiFetch,
+	ThirdKWJM:      officialFetch,
+	ThirdTokenMart: tokenMartFetch,
 }
 
 // seedance-1.x获取任务详情响应结果处理
@@ -100,8 +100,8 @@ func newApiFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 	return taskInfo(resTask)
 }
 
-func oneFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
-	var sor oneResponse
+func tokenMartFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
+	var sor tokenMartResponse
 	if err := common.Unmarshal(responseBody, &sor); err != nil {
 		return nil, errors.Wrap(err, "unmarshal task result failed")
 	}

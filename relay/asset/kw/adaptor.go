@@ -3,6 +3,7 @@ package kw
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -167,6 +168,14 @@ func (a *Adaptor) ListAssets(req *dto.ListAssetsRequest) (*dto.ListAssetsRespons
 		PageNumber: response.PageNumber,
 		PageSize:   response.PageSize,
 	}, nil
+}
+
+func (a *Adaptor) CreateVisualValidateSession(req *dto.CreateVisualValidateSessionRequest) (*dto.CreateVisualValidateSessionResponse, error) {
+	return nil, errors.New("account not support CreateVisualValidateSession")
+}
+
+func (a *Adaptor) GetVisualValidateResult(req *dto.GetVisualValidateResultRequest) (*dto.GetVisualValidateResultResponse, error) {
+	return nil, errors.New("account not support GetVisualValidateResult")
 }
 
 func (a *Adaptor) post(action string, payload any, out any) error {

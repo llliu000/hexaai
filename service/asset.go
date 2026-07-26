@@ -11,6 +11,7 @@ import (
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/model"
+	assetrelay "github.com/QuantumNous/new-api/relay/asset"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -314,7 +315,7 @@ func UpdateAsset(userId int, req *dto.UpdateAssetRequest) (*dto.UpdateAssetRespo
 	if req.ProjectName != nil {
 		updates["project_name"] = normalizeAssetProjectName(*req.ProjectName)
 	}
-	if err := model.DB.Model(asset).Updates(updates).Error; err != nil {
+	if err = model.DB.Model(asset).Updates(updates).Error; err != nil {
 		return nil, err
 	}
 	return &dto.UpdateAssetResponse{Id: asset.Id}, nil
@@ -323,6 +324,24 @@ func UpdateAsset(userId int, req *dto.UpdateAssetRequest) (*dto.UpdateAssetRespo
 func DeleteAsset(userId int, req *dto.DeleteAssetRequest) (*dto.DeleteAssetResponse, error) {
 	err := model.DB.Where("user_id = ? AND id = ?", userId, req.Id).Delete(&model.Asset{}).Error
 	return &dto.DeleteAssetResponse{}, err
+}
+
+func CreateVisualValidateSession(userId int, req *dto.CreateVisualValidateSessionRequest) (*dto.CreateVisualValidateSessionResponse, error) {
+	channel, err := getUserSeedanceChannel(userId)
+	if err != nil {
+		return nil, err
+	}
+	adaptor := assetrelay.GetAdaptor(channel)
+	return adaptor.CreateVisualValidateSession(req)
+}
+
+func GetVisualValidateResult(userId int, req *dto.GetVisualValidateResultRequest) (*dto.GetVisualValidateResultResponse, error) {
+	channel, err := getUserSeedanceChannel(userId)
+	if err != nil {
+		return nil, err
+	}
+	adaptor := assetrelay.GetAdaptor(channel)
+	return adaptor.GetVisualValidateResult(req)
 }
 
 func ManualAsset(ctx *gin.Context) {
@@ -356,6 +375,22 @@ func ManualAsset(ctx *gin.Context) {
 			time.Sleep(time.Second * 3)
 		}
 	}()
+}
+
+func getUserSeedanceChannel(userId int) (*model.Channel, error) {
+	// 直接调用火山
+	var user model.User
+	if err := model.DB.Where("id = ?", userId).
+		Find(&user).Error; err != nil {
+		return nil, err
+	}
+	var channel model.Channel
+	if err := model.DB.Where("id = ?",
+		user.GetSetting().SeedanceChannelId).
+		Find(&channel).Error; err != nil {
+		return nil, err
+	}
+	return &channel, nil
 }
 
 func validateAssetGroupFields(name string, description string, groupType string) error {
