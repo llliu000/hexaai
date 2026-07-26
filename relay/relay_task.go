@@ -149,7 +149,7 @@ func ResolveSpecChannel(c *gin.Context, info *relaycommon.RelayInfo) *dto.TaskEr
 	if !ok {
 		return nil
 	}
-	ch, err := model.GetChannelById(channelId, false)
+	ch, err := model.GetChannelById(channelId, true)
 	if err != nil {
 		return service.TaskErrorWrapperLocal(err, "channel_not_found", http.StatusBadRequest)
 	}
