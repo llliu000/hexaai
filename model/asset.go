@@ -16,6 +16,7 @@ type AssetGroup struct {
 	Description string    `json:"description" gorm:"type:varchar(500)"`              // 描述，上限为 300 字符
 	GroupType   string    `json:"group_type" gorm:"type:varchar(50);not null;index"` // 分组类型，如 AIGC、LivenessFace
 	ProjectName string    `json:"project_name" gorm:"type:varchar(191);index"`       // 项目名称，如 default
+	RealHuman   bool      `json:"real_human" gorm:"type:bool"`                       // 是否真人认证分组
 	CreateTime  time.Time `json:"create_time" gorm:"bigint"`
 	UpdateTime  time.Time `json:"update_time" gorm:"bigint"`
 }

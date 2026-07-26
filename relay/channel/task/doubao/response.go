@@ -8,7 +8,7 @@ type responseTask struct {
 	ID      string `json:"id,omitempty"`
 	Model   string `json:"model,omitempty"`
 	Status  string `json:"status,omitempty"`
-	Content *struct {
+	Content struct {
 		VideoURL string `json:"video_url,omitempty"`
 	} `json:"content,omitempty"`
 	Seed            int    `json:"seed,omitempty"`
@@ -20,7 +20,7 @@ type responseTask struct {
 	Tools           []struct {
 		Type string `json:"type,omitempty"`
 	} `json:"tools,omitempty"`
-	Usage *struct {
+	Usage struct {
 		CompletionTokens int `json:"completion_tokens,omitempty"`
 		TotalTokens      int `json:"total_tokens,omitempty"`
 		ToolUsage        struct {
@@ -33,4 +33,21 @@ type responseTask struct {
 	} `json:"error,omitempty"`
 	CreatedAt int64 `json:"created_at,omitempty"`
 	UpdatedAt int64 `json:"updated_at,omitempty"`
+}
+
+type tokenMartResponse struct {
+	Task struct {
+		Id              string   `json:"id"`
+		Status          string   `json:"status"`
+		Model           string   `json:"model"`
+		DurationSeconds int      `json:"duration_seconds"`
+		Outputs         []string `json:"outputs"`
+		Error           *string  `json:"error"`
+		CreatedAt       any      `json:"created_at"`
+		CompletedAt     any      `json:"completed_at"`
+		Usage           struct {
+			CompletionTokens int `json:"completion_tokens"`
+			TotalTokens      int `json:"total_tokens"`
+		} `json:"usage"`
+	} `json:"task"`
 }

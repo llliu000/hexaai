@@ -58,6 +58,20 @@ func (a *Adaptor) ListAssets(req *dto.ListAssetsRequest) (*dto.ListAssetsRespons
 	return &result, err
 }
 
+func (a *Adaptor) CreateVisualValidateSession(req *dto.CreateVisualValidateSessionRequest) (*dto.CreateVisualValidateSessionResponse, error) {
+	var result dto.CreateVisualValidateSessionResponse
+	req.ProjectName = &a.ProjectName
+	err := a.doCall("CreateVisualValidateSession", req, &result)
+	return &result, err
+}
+
+func (a *Adaptor) GetVisualValidateResult(req *dto.GetVisualValidateResultRequest) (*dto.GetVisualValidateResultResponse, error) {
+	var result dto.GetVisualValidateResultResponse
+	req.ProjectName = &a.ProjectName
+	err := a.doCall("GetVisualValidateResult", req, &result)
+	return &result, err
+}
+
 func (a *Adaptor) doCall(action string, request, response any) error {
 	config := volcengine.NewConfig().WithAkSk(a.AccessID, a.SecretKey).
 		WithEndpoint(a.BaseUrl).WithRegion(a.Region)

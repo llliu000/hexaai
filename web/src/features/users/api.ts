@@ -16,6 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import type { Channel } from '@/features/channels/types'
 import type { PermissionCatalog } from '@/lib/admin-permissions'
 import { api } from '@/lib/api'
 
@@ -163,6 +164,39 @@ export async function updateUserModelDiscounts(
   modelDiscounts: UserModelDiscounts
 ): Promise<ApiResponse> {
   const res = await api.put(`/api/user/${id}/model_discounts`, modelDiscounts)
+  return res.data
+}
+
+/**
+ * Get enabled Doubao video channels for Seedance binding.
+ */
+export async function getSeedanceChannels(): Promise<ApiResponse<Channel[]>> {
+  const res = await api.get('/api/channel', {
+    params: {
+      type: 54,
+      tag_mode: false,
+      id_sort: false,
+      status: 1,
+      p: 1,
+      page_size: 20,
+    },
+  })
+  return {
+    ...res.data,
+    data: res.data?.data?.items ?? [],
+  }
+}
+
+/**
+ * Update a user's Seedance channel binding.
+ */
+export async function updateUserSeedanceChannel(
+  id: number,
+  seedanceChannelId: number
+): Promise<ApiResponse> {
+  const res = await api.put(`/api/user/${id}/seedance_channel`, {
+    seedance_channel_id: seedanceChannelId,
+  })
   return res.data
 }
 

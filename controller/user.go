@@ -787,6 +787,62 @@ func UpdateUserModelDiscounts(c *gin.Context) {
 	common.ApiSuccessI18n(c, i18n.MsgUpdateSuccess, nil)
 }
 
+type UpdateUserSeedanceChannelRequest struct {
+	SeedanceChannelId int `json:"seedance_channel_id"`
+}
+
+func UpdateUserSeedanceChannel(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || id == 0 {
+		common.ApiErrorI18n(c, i18n.MsgInvalidParams)
+		return
+	}
+
+	var req UpdateUserSeedanceChannelRequest
+	if err = c.ShouldBindJSON(&req); err != nil || req.SeedanceChannelId < 0 {
+		common.ApiErrorI18n(c, i18n.MsgInvalidParams)
+		return
+	}
+
+	user, err := model.GetUserById(id, false)
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+
+	myRole := c.GetInt("role")
+	if !canManageTargetRole(myRole, user.Role) {
+		common.ApiErrorI18n(c, i18n.MsgUserNoPermissionHigherLevel)
+		return
+	}
+
+	if req.SeedanceChannelId > 0 {
+		channel, err := model.GetChannelById(req.SeedanceChannelId, false)
+		if err != nil {
+			common.ApiError(c, err)
+			return
+		}
+		if channel.Type != constant.ChannelTypeDoubaoVideo || channel.Status != common.ChannelStatusEnabled {
+			common.ApiErrorI18n(c, i18n.MsgInvalidParams)
+			return
+		}
+	}
+
+	userSetting := user.GetSetting()
+	userSetting.SeedanceChannelId = req.SeedanceChannelId
+	if err = model.UpdateUserSetting(user.Id, userSetting); err != nil {
+		common.ApiErrorI18n(c, i18n.MsgUpdateFailed)
+		return
+	}
+
+	recordManageAuditFor(c, user.Id, "user.seedance_channel_update", map[string]interface{}{
+		"username":  user.Username,
+		"id":        user.Id,
+		"channelId": req.SeedanceChannelId,
+	})
+	common.ApiSuccessI18n(c, i18n.MsgUpdateSuccess, nil)
+}
+
 func AdminClearUserBinding(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -1552,6 +1608,7 @@ func UpdateUserSetting(c *gin.Context) {
 		BillingPreference:                existingSettings.BillingPreference,
 		Language:                         existingSettings.Language,
 		ModelDiscounts:                   existingSettings.ModelDiscounts,
+		SeedanceChannelId:                existingSettings.SeedanceChannelId,
 	}
 
 	// 如果是webhook类型,添加webhook相关设置
