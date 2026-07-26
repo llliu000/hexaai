@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"io"
 
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/constant"
+	"github.com/QuantumNous/new-api/model"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,5 +39,22 @@ func DoubaoRequestConvert() func(c *gin.Context) {
 		// Rewrite request body and path
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(jsonData))
 		c.Next()
+	}
+}
+
+func DoubaoChannelSelect() func(c *gin.Context) {
+	return func(c *gin.Context) {
+		userid := c.GetInt("id")
+		user, err := model.GetUserById(userid, false)
+		if err != nil {
+			c.Next()
+			return
+		}
+		channelId := user.GetSetting().SeedanceChannelId
+		if channelId == 0 {
+			c.Next()
+			return
+		}
+		common.SetContextKey(c, constant.ContextKeyTokenSpecificChannelId, channelId)
 	}
 }
