@@ -366,6 +366,25 @@ func GetVisualValidateResult(userId int, req *dto.GetVisualValidateResultRequest
 	return result, nil
 }
 
+func UserAssetBindChannel(userid int) error {
+	user, err := model.GetUserById(userid, false)
+	if err != nil {
+		return err
+	}
+	channelId := user.GetSetting().SeedanceChannelId
+	if channelId == 0 {
+		return errors.New("no channel set")
+	}
+	channel, err := model.GetChannelById(channelId, false)
+	if err != nil {
+		return err
+	}
+	if channel.Id == 0 {
+		return errors.New("no channel set")
+	}
+	return nil
+}
+
 func ManualAsset(ctx *gin.Context) {
 	go func() {
 		for page := 1; ; page++ {

@@ -3,15 +3,30 @@ package realm_drama
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/dto"
 )
+
+type AssetBaseResult[T any] struct {
+	ResponseMetadata struct {
+		RequestId string `json:"RequestId"`
+		Action    string `json:"Action"`
+		Version   string `json:"Version"`
+		Service   string `json:"Service"`
+		Region    string `json:"Region"`
+		Error     struct {
+			Code    string `json:"Code"`
+			Message string `json:"Message"`
+		} `json:"Error"`
+	} `json:"ResponseMetadata"`
+	Result T `json:"Result"`
+}
 
 type Adaptor struct {
 	ApiKey      string `json:"api_key"`
@@ -27,52 +42,58 @@ func (a *Adaptor) ReviewSkip() bool {
 }
 
 func (a *Adaptor) CreateAssetGroup(req *dto.CreateAssetGroupRequest) (*dto.CreateAssetGroupResponse, error) {
-	var result dto.CreateAssetGroupResponse
 	req.ProjectName = &a.ProjectName
+	var result AssetBaseResult[dto.CreateAssetGroupResponse]
 	err := a.doCall("CreateAssetGroup", req, &result)
-	return &result, err
+	return &result.Result, err
 }
 
 func (a *Adaptor) ListAssetGroups(req *dto.ListAssetGroupsRequest) (*dto.ListAssetGroupsResponse, error) {
-	var result dto.ListAssetGroupsResponse
 	req.ProjectName = &a.ProjectName
+	var result AssetBaseResult[dto.ListAssetGroupsResponse]
 	err := a.doCall("ListAssetGroups", req, &result)
-	return &result, err
+	return &result.Result, err
 }
 
 func (a *Adaptor) CreateAssets(req *dto.CreateAssetRequest) (*dto.CreateAssetResponse, error) {
-	var result dto.CreateAssetResponse
 	req.ProjectName = &a.ProjectName
+	var result AssetBaseResult[dto.CreateAssetResponse]
 	err := a.doCall("CreateAsset", req, &result)
-	return &result, err
+	return &result.Result, err
 }
 
 func (a *Adaptor) GetAsset(req *dto.GetAssetRequest) (*dto.GetAssetResponse, error) {
-	var result dto.GetAssetResponse
 	req.ProjectName = &a.ProjectName
+	var result AssetBaseResult[dto.GetAssetResponse]
 	err := a.doCall("GetAsset", req, &result)
-	return &result, err
+	return &result.Result, err
 }
 
 func (a *Adaptor) ListAssets(req *dto.ListAssetsRequest) (*dto.ListAssetsResponse, error) {
-	var result dto.ListAssetsResponse
 	req.ProjectName = &a.ProjectName
+	var result AssetBaseResult[dto.ListAssetsResponse]
 	err := a.doCall("ListAssets", req, &result)
-	return &result, err
+	return &result.Result, err
 }
 
 func (a *Adaptor) CreateVisualValidateSession(req *dto.CreateVisualValidateSessionRequest) (*dto.CreateVisualValidateSessionResponse, error) {
-	var result dto.CreateVisualValidateSessionResponse
 	req.ProjectName = &a.ProjectName
+	var result AssetBaseResult[dto.CreateVisualValidateSessionResponse]
 	err := a.doCall("CreateVisualValidateSession", req, &result)
-	return &result, err
+	return &result.Result, err
 }
 
 func (a *Adaptor) GetVisualValidateResult(req *dto.GetVisualValidateResultRequest) (*dto.GetVisualValidateResultResponse, error) {
-	var result dto.GetVisualValidateResultResponse
 	req.ProjectName = &a.ProjectName
+	var result AssetBaseResult[dto.GetVisualValidateResultResponse]
 	err := a.doCall("GetVisualValidateResult", req, &result)
-	return &result, err
+	if err != nil {
+		return nil, err
+	}
+	if message := result.ResponseMetadata.Error.Message; message != "" {
+		return nil, errors.New(message)
+	}
+	return &result.Result, nil
 }
 
 func (a *Adaptor) doCall(action string, request, response any) error {
@@ -99,9 +120,6 @@ func (a *Adaptor) doCall(action string, request, response any) error {
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
-	}
-	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
-		return fmt.Errorf("one asset failed: status %d: %s", resp.StatusCode, strings.TrimSpace(string(respBody)))
 	}
 	if len(respBody) == 0 || response == nil {
 		return nil

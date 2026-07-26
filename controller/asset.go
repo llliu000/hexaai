@@ -16,13 +16,18 @@ const assetAPIVersion = "2024-01-01"
 type AssetController struct{}
 
 func (a *AssetController) Action(c *gin.Context) {
+	userId := c.GetInt("id")
 	action := c.Query("Action")
 	version := c.Query("Version")
 	if action == "" || version != assetAPIVersion {
 		c.String(http.StatusNotFound, "Not Found")
 		return
 	}
-
+	// 判断是否绑定渠道
+	if err := service.UserAssetBindChannel(userId); err != nil {
+		common.ApiError(c, err)
+		return
+	}
 	var err error
 	var result dto.AssetBaseResult
 	result.ResponseMetadata.RequestId = c.GetString(common.RequestIdKey)
@@ -55,6 +60,7 @@ func (a *AssetController) Action(c *gin.Context) {
 	case "CreateVisualValidateSession":
 		result.Result, err = a.CreateVisualValidateSession(c)
 	case "GetVisualValidateResult":
+		result.Result, err = a.GetVisualValidateResult(c)
 	default:
 		c.String(http.StatusNotFound, "Not Found")
 		return

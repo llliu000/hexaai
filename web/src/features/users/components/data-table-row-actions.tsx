@@ -29,6 +29,7 @@ import {
   Link2,
   CreditCard,
   Percent,
+  Video,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -60,6 +61,7 @@ import { getUserActionMessage } from '../lib'
 import type { User, ManageUserAction } from '../types'
 import { UserBindingDialog } from './dialogs/user-binding-dialog'
 import { UserModelDiscountsDialog } from './dialogs/user-model-discounts-dialog'
+import { UserSeedanceChannelDialog } from './dialogs/user-seedance-channel-dialog'
 import { useUsers } from './users-provider'
 
 interface DataTableRowActionsProps {
@@ -74,6 +76,8 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const [resetTwoFAOpen, setResetTwoFAOpen] = useState(false)
   const [bindingDialogOpen, setBindingDialogOpen] = useState(false)
   const [modelDiscountsDialogOpen, setModelDiscountsDialogOpen] =
+    useState(false)
+  const [seedanceChannelDialogOpen, setSeedanceChannelDialogOpen] =
     useState(false)
   const [subscriptionsDialogOpen, setSubscriptionsDialogOpen] = useState(false)
 
@@ -238,6 +242,18 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </DropdownMenuShortcut>
         </DropdownMenuItem>
 
+        <DropdownMenuItem
+          onSelect={(event) => {
+            event.preventDefault()
+            setSeedanceChannelDialogOpen(true)
+          }}
+        >
+          {t('Seedance Channel')}
+          <DropdownMenuShortcut>
+            <Video size={16} />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
@@ -321,6 +337,13 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
       <UserModelDiscountsDialog
         open={modelDiscountsDialogOpen}
         onOpenChange={setModelDiscountsDialogOpen}
+        user={user}
+        onSuccess={triggerRefresh}
+      />
+
+      <UserSeedanceChannelDialog
+        open={seedanceChannelDialogOpen}
+        onOpenChange={setSeedanceChannelDialogOpen}
         user={user}
         onSuccess={triggerRefresh}
       />
