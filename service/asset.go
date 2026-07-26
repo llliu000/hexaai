@@ -341,7 +341,29 @@ func GetVisualValidateResult(userId int, req *dto.GetVisualValidateResultRequest
 		return nil, err
 	}
 	adaptor := assetrelay.GetAdaptor(channel)
-	return adaptor.GetVisualValidateResult(req)
+	result, err := adaptor.GetVisualValidateResult(req)
+	if err != nil {
+		return nil, err
+	}
+	if result.GroupId == "" {
+		return result, nil
+	}
+	// 创建本地资源并返回
+	group := &model.AssetGroup{
+		Id:          result.GroupId,
+		Name:        "real-human",
+		Description: "real-human",
+		CreateTime:  time.Now(),
+		UpdateTime:  time.Now(),
+		ProjectName: "default",
+		GroupType:   "AIGC",
+		RealHuman:   true,
+		UserId:      userId,
+	}
+	if err = model.DB.Create(group).Error; err != nil {
+		return nil, err
+	}
+	return result, nil
 }
 
 func ManualAsset(ctx *gin.Context) {

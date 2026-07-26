@@ -164,10 +164,17 @@ func createAssetOnChannel(localAsset *model.Asset, channel *model.Channel) error
 	if adaptor == nil {
 		return nil
 	}
-	// 上游资源分组ID处理
-	upstreamGroupId, err := getUpstreamAssetGroupId(adaptor, channel.Id)
-	if err != nil {
+	var group model.AssetGroup
+	err := model.DB.Where("id = ?", localAsset.GroupId).First(&group).Error
+	if nil != err {
 		return err
+	}
+	upstreamGroupId := group.Id
+	if !group.RealHuman {
+		// 上游资源分组ID处理
+		if upstreamGroupId, err = getUpstreamAssetGroupId(adaptor, channel.Id); err != nil {
+			return err
+		}
 	}
 	err = createUpstreamAsset(adaptor, localAsset, upstreamGroupId, channel.Id)
 	return err
