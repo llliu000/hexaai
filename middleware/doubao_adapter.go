@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 
 	"github.com/QuantumNous/new-api/common"
@@ -55,6 +56,6 @@ func DoubaoChannelSelect() func(c *gin.Context) {
 			c.Next()
 			return
 		}
-		common.SetContextKey(c, constant.ContextKeyTokenSpecificChannelId, channelId)
+		common.SetContextKey(c, constant.ContextKeyTokenSpecificChannelId, fmt.Sprintf("%d", channelId))
 	}
 }

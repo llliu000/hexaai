@@ -498,10 +498,6 @@ func RelayTask(c *gin.Context) {
 		respondTaskError(c, taskErr)
 		return
 	}
-	if taskErr := relay.ResolveSpecChannel(c, relayInfo); taskErr != nil {
-		respondTaskError(c, taskErr)
-		return
-	}
 
 	var result *relay.TaskSubmitResult
 	var taskErr *dto.TaskError

@@ -139,24 +139,6 @@ func ResolveOriginTask(c *gin.Context, info *relaycommon.RelayInfo) *dto.TaskErr
 	return nil
 }
 
-// ResolveSpecChannel 解析指定的渠道
-func ResolveSpecChannel(c *gin.Context, info *relaycommon.RelayInfo) *dto.TaskError {
-	value, ok := common.GetContextKey(c, constant.ContextKeyTokenSpecificChannelId)
-	if !ok {
-		return nil
-	}
-	channelId, ok := value.(int)
-	if !ok {
-		return nil
-	}
-	ch, err := model.GetChannelById(channelId, true)
-	if err != nil {
-		return service.TaskErrorWrapperLocal(err, "channel_not_found", http.StatusBadRequest)
-	}
-	info.LockedChannel = ch
-	return nil
-}
-
 // RelayTaskSubmit 完成 task 提交的全部流程（每次尝试调用一次）：
 // 刷新渠道元数据 → 确定 platform/adaptor → 验证请求 →
 // 估算计费(EstimateBilling) → 计算价格 → 预扣费（仅首次）→
