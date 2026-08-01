@@ -5,9 +5,10 @@ import (
 	"net/http"
 
 	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/dto"
+	taskdto "github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/model"
 	relaycommon "github.com/QuantumNous/new-api/relay/common"
+	"github.com/QuantumNous/new-api/relaykit/dto"
 	"github.com/QuantumNous/new-api/service"
 	"github.com/pkg/errors"
 )
@@ -19,14 +20,14 @@ const (
 	ThirdTokenMart = "token_mart"
 )
 
-var submitResultMapping = map[string]func(responseBody []byte) (string, *dto.TaskError){
+var submitResultMapping = map[string]func(responseBody []byte) (string, *taskdto.TaskError){
 	ThirdKWJM:      officialSubmit,
 	Official:       officialSubmit,
 	ThirdAnyFast:   newApiSubmit,
 	ThirdTokenMart: tokenMartSubmit,
 }
 
-func officialSubmit(responseBody []byte) (string, *dto.TaskError) {
+func officialSubmit(responseBody []byte) (string, *taskdto.TaskError) {
 	var dResp responsePayload
 	if err := common.Unmarshal(responseBody, &dResp); err != nil {
 		taskErr := service.TaskErrorWrapper(errors.Wrapf(err, "body: %s", responseBody), "unmarshal_response_body_failed", http.StatusInternalServerError)
@@ -39,7 +40,7 @@ func officialSubmit(responseBody []byte) (string, *dto.TaskError) {
 	return dResp.ID, nil
 }
 
-func newApiSubmit(responseBody []byte) (string, *dto.TaskError) {
+func newApiSubmit(responseBody []byte) (string, *taskdto.TaskError) {
 	var nr dto.OpenAIVideo
 	if err := common.Unmarshal(responseBody, &nr); nil != err {
 		taskErr := service.TaskErrorWrapper(err, "unmarshal_response_failed", http.StatusInternalServerError)
@@ -48,14 +49,14 @@ func newApiSubmit(responseBody []byte) (string, *dto.TaskError) {
 	if nr.TaskID != "" {
 		return nr.TaskID, nil
 	}
-	taskErr := &dto.TaskError{}
+	taskErr := &taskdto.TaskError{}
 	if err := common.Unmarshal(responseBody, &taskErr); nil != err {
 		taskErr = service.TaskErrorWrapper(err, "unmarshal_response_failed", http.StatusInternalServerError)
 	}
 	return "", taskErr
 }
 
-func tokenMartSubmit(responseBody []byte) (string, *dto.TaskError) {
+func tokenMartSubmit(responseBody []byte) (string, *taskdto.TaskError) {
 	var dResp tokenMartResponse
 	if err := common.Unmarshal(responseBody, &dResp); err != nil {
 		taskErr := service.TaskErrorWrapper(errors.Wrapf(err, "body: %s", responseBody), "unmarshal_response_body_failed", http.StatusInternalServerError)
@@ -86,7 +87,7 @@ func officialFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 
 // anyfast seedance-2.x获取任务详情响应结果处理
 func newApiFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
-	var responseItems dto.TaskResponse[model.Task]
+	var responseItems taskdto.TaskResponse[model.Task]
 	if err := common.Unmarshal(responseBody, &responseItems); err != nil {
 		return nil, errors.Wrap(err, "unmarshal task result failed")
 	}

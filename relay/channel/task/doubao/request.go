@@ -1,6 +1,6 @@
 package doubao
 
-import "github.com/QuantumNous/new-api/dto"
+import "github.com/QuantumNous/new-api/relaykit/dto"
 
 type requestPayload struct {
 	Model                 string         `json:"model"`

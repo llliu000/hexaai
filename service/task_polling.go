@@ -484,7 +484,7 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 	// 优先尝试官方平台解析相应
 	if taskResult, err = adaptor.ParseTaskResult(responseBody); err != nil {
 		// try parse as New API response format
-		var responseItems dto.TaskResponse[model.Task]
+		var responseItems taskdto.TaskResponse[model.Task]
 		err = common.Unmarshal(responseBody, &responseItems)
 		if nil != err || !responseItems.IsSuccess() {
 			return fmt.Errorf("parseTaskResult failed for task %s: %w", taskId, err)

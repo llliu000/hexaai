@@ -256,7 +256,7 @@ func (a *TaskAdaptor) ConvertToOpenAIVideo(originTask *model.Task) ([]byte, erro
 }
 
 func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, error) {
-	var responseItems dto.TaskResponse[model.Task]
+	var responseItems taskdto.TaskResponse[model.Task]
 	_ = common.Unmarshal(originTask.Data, &responseItems)
 	var data = originTask.Data
 	if responseItems.Code != "" {
