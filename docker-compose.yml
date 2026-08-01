@@ -1,9 +1,6 @@
 services:
   hexaai:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: hexaai:latest
+    image: hexaai:1.0.0
     container_name: hexaai
     restart: always
     command: --log-dir /app/logs
