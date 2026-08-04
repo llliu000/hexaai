@@ -121,22 +121,28 @@ func SizeToVeoAspectRatio(size string) string {
 	return "16:9"
 }
 
-// VeoResolutionRatio returns the pricing multiplier for the given resolution.
-// Standard resolutions (720p, 1080p) return 1.0.
-// 4K returns a model-specific multiplier based on Google's official pricing.
+// VeoResolutionRatio returns the resolution pricing multiplier relative to
+// each model's 720p price. Unsupported or unknown combinations return 1.0.
 func VeoResolutionRatio(modelName, resolution string) float64 {
-	if resolution != "4k" {
-		return 1.0
+	modelName = strings.ToLower(strings.TrimSpace(modelName))
+	resolution = strings.ToLower(strings.TrimSpace(resolution))
+
+	switch resolution {
+	case "1080p":
+		if strings.Contains(modelName, "3.1-fast-generate") {
+			return 1.2 // $0.12 / $0.10
+		}
+		if strings.Contains(modelName, "3.1-lite-generate") {
+			return 1.6 // $0.08 / $0.05
+		}
+	case "4k":
+		if strings.Contains(modelName, "3.1-fast-generate") {
+			return 3.0 // $0.30 / $0.10
+		}
+		if strings.Contains(modelName, "3.1-generate") {
+			return 1.5 // $0.60 / $0.40
+		}
 	}
-	// 4K multipliers derived from Vertex AI official pricing (video+audio base):
-	//   veo-3.1-generate:      $0.60 / $0.40 = 1.5
-	//   veo-3.1-fast-generate: $0.35 / $0.15 ≈ 2.333
-	// Veo 3.0 models do not support 4K; return 1.0 as fallback.
-	if strings.Contains(modelName, "3.1-fast-generate") {
-		return 2.333333
-	}
-	if strings.Contains(modelName, "3.1-generate") || strings.Contains(modelName, "3.1") {
-		return 1.5
-	}
+
 	return 1.0
 }
