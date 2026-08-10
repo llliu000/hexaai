@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/QuantumNous/new-api/model"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
 )
 
 var ModelList = []string{}
@@ -168,4 +169,16 @@ func resolveAssetURL(channelId int, raw string) string {
 		return raw
 	}
 	return AssetPrefix + ac.UpstreamAssertId
+}
+
+func enhanceVideo(info *relaycommon.RelayInfo, req *requestPayload) {
+	if !info.EnhanceVideo {
+		return
+	}
+	if strings.EqualFold(req.Resolution, "1080p") {
+		// 先生成 720p，再由画质增强服务超分至 1080p。
+		info.EnhanceResolution = "1080p"
+		req.Resolution = "720p"
+		return
+	}
 }

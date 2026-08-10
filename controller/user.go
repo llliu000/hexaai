@@ -1609,6 +1609,7 @@ func UpdateUserSetting(c *gin.Context) {
 		Language:                         existingSettings.Language,
 		ModelDiscounts:                   existingSettings.ModelDiscounts,
 		SeedanceChannelId:                existingSettings.SeedanceChannelId,
+		EnhanceVideo:                     existingSettings.EnhanceVideo,
 	}
 
 	// 如果是webhook类型,添加webhook相关设置

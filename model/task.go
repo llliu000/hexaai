@@ -105,11 +105,14 @@ type TaskPrivateData struct {
 	UpstreamTaskID string `json:"upstream_task_id,omitempty"` // 上游真实 task ID
 	ResultURL      string `json:"result_url,omitempty"`       // 任务成功后的结果 URL（视频地址等）
 	// 计费上下文：用于异步退款/差额结算（轮询阶段读取）
-	BillingSource  string              `json:"billing_source,omitempty"`  // "wallet" 或 "subscription"
-	SubscriptionId int                 `json:"subscription_id,omitempty"` // 订阅 ID，用于订阅退款
-	TokenId        int                 `json:"token_id,omitempty"`        // 令牌 ID，用于令牌额度退款
-	NodeName       string              `json:"node_name,omitempty"`       // 发起任务的节点名，轮询结算阶段据此归属日志而非最后查询节点
-	BillingContext *TaskBillingContext `json:"billing_context,omitempty"` // 计费参数快照（用于轮询阶段重新计算）
+	BillingSource     string              `json:"billing_source,omitempty"`     // "wallet" 或 "subscription"
+	SubscriptionId    int                 `json:"subscription_id,omitempty"`    // 订阅 ID，用于订阅退款
+	TokenId           int                 `json:"token_id,omitempty"`           // 令牌 ID，用于令牌额度退款
+	NodeName          string              `json:"node_name,omitempty"`          // 发起任务的节点名，轮询结算阶段据此归属日志而非最后查询节点
+	BillingContext    *TaskBillingContext `json:"billing_context,omitempty"`    // 计费参数快照（用于轮询阶段重新计算）
+	EnhanceVideo      bool                `json:"enhance_video,omitempty"`      // 是否启用超分
+	EnhanceResolution string              `json:"enhance_resolution,omitempty"` // 目标分辨率
+	EnhanceTaskID     string              `json:"enhance_task_id,omitempty"`    // 超分任务ID
 }
 
 // TaskBillingContext 记录任务提交时的计费参数，以便轮询阶段可以重新计算额度。
@@ -370,13 +373,14 @@ func (Task *Task) Insert() error {
 }
 
 type taskSnapshot struct {
-	Status     TaskStatus
-	Progress   string
-	StartTime  int64
-	FinishTime int64
-	FailReason string
-	ResultURL  string
-	Data       json.RawMessage
+	Status        TaskStatus
+	Progress      string
+	StartTime     int64
+	FinishTime    int64
+	FailReason    string
+	ResultURL     string
+	EnhanceTaskID string
+	Data          json.RawMessage
 }
 
 func (s taskSnapshot) Equal(other taskSnapshot) bool {
@@ -386,18 +390,20 @@ func (s taskSnapshot) Equal(other taskSnapshot) bool {
 		s.FinishTime == other.FinishTime &&
 		s.FailReason == other.FailReason &&
 		s.ResultURL == other.ResultURL &&
+		s.EnhanceTaskID == other.EnhanceTaskID &&
 		bytes.Equal(s.Data, other.Data)
 }
 
 func (t *Task) Snapshot() taskSnapshot {
 	return taskSnapshot{
-		Status:     t.Status,
-		Progress:   t.Progress,
-		StartTime:  t.StartTime,
-		FinishTime: t.FinishTime,
-		FailReason: t.FailReason,
-		ResultURL:  t.PrivateData.ResultURL,
-		Data:       t.Data,
+		Status:        t.Status,
+		Progress:      t.Progress,
+		StartTime:     t.StartTime,
+		FinishTime:    t.FinishTime,
+		FailReason:    t.FailReason,
+		ResultURL:     t.PrivateData.ResultURL,
+		EnhanceTaskID: t.PrivateData.EnhanceTaskID,
+		Data:          t.Data,
 	}
 }
 

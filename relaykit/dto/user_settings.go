@@ -18,6 +18,7 @@ type UserSetting struct {
 	Language                         string         `json:"language,omitempty"`                             // Language 用户语言偏好 (zh, en)
 	ModelDiscounts                   map[string]int `json:"model_discounts,omitempty"`                      // ModelDiscounts 用户模型折扣，10000 = 1.0
 	SeedanceChannelId                int            `json:"seedance_channel_id,omitempty"`                  // 豆包seedance绑定的渠道ID
+	EnhanceVideo                     bool           `json:"enhance_video,omitempty"`                        // 是否启用视频生成超分
 }
 
 var (

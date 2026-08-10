@@ -521,6 +521,11 @@ func RelayTask(c *gin.Context) {
 		Retry:       common.GetPointer(0),
 	}
 
+	// 超分
+	if user, err := model.GetUserById(relayInfo.UserId, false); err == nil {
+		relayInfo.EnhanceVideo = user.GetSetting().EnhanceVideo
+	}
+
 	for ; retryParam.GetRetry() <= common.RetryTimes; retryParam.IncreaseRetry() {
 		var channel *model.Channel
 
@@ -588,6 +593,8 @@ func RelayTask(c *gin.Context) {
 		task.PrivateData.UpstreamTaskID = result.UpstreamTaskID
 		task.PrivateData.BillingSource = relayInfo.BillingSource
 		task.PrivateData.SubscriptionId = relayInfo.SubscriptionId
+		task.PrivateData.EnhanceResolution = relayInfo.EnhanceResolution
+		task.PrivateData.EnhanceVideo = relayInfo.EnhanceVideo
 		task.PrivateData.TokenId = relayInfo.TokenId
 		task.PrivateData.NodeName = common.NodeName
 		task.PrivateData.BillingContext = &model.TaskBillingContext{

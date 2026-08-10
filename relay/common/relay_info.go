@@ -828,6 +828,9 @@ type TaskRelayInfo struct {
 	PublicTaskID string
 
 	ConsumeQuota bool
+	// 是否启用超分，启用了超分视频生成后还需要处理超分
+	EnhanceVideo      bool
+	EnhanceResolution string
 
 	// LockedChannel holds the full channel object when the request is bound to
 	// a specific channel (e.g., remix on origin task's channel). Stored as any
