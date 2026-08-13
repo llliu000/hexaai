@@ -561,6 +561,7 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 		if !task.PrivateData.EnhanceVideo {
 			break
 		}
+		orgUrl := task.GetResultURL()
 		status := enhanceVideo(ctx, task)
 		switch status {
 		case -1: // 跳过返回原有地址
@@ -574,7 +575,7 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 		case 1: // 任务处理中
 			return nil
 		case 2: // 超分成功
-
+			task.PrivateData.EnhanceOrgUrl = orgUrl
 		}
 	case model.TaskStatusFailure:
 		logger.LogJson(ctx, fmt.Sprintf("Task %s failed", taskId), task)
@@ -698,7 +699,7 @@ func enhanceVideo(ctx context.Context, task *model.Task) int {
 		return -1
 	}
 	if task.PrivateData.EnhanceTaskID == "" {
-		result, err := adapter.Submit(ctx, enhance.SubmitRequest{
+		result, err := adapter.Submit(ctx, taskdto.SubmitRequest{
 			TargetResolution: task.PrivateData.EnhanceResolution,
 			VideoURL:         task.GetResultURL(),
 		})
@@ -714,12 +715,12 @@ func enhanceVideo(ctx context.Context, task *model.Task) int {
 		return -1
 	}
 	switch enhanceTaskResult.Status {
-	case enhance.TaskStatusProcessing:
+	case taskdto.TaskStatusProcessing:
 		return 1
-	case enhance.TaskStatusCompleted:
+	case taskdto.TaskStatusCompleted:
 		task.PrivateData.ResultURL = enhanceTaskResult.VideoURL
 		return 2
-	case enhance.TaskStatusFailed:
+	case taskdto.TaskStatusFailed:
 		return -1
 	}
 	return 1

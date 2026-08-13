@@ -113,6 +113,7 @@ type TaskPrivateData struct {
 	EnhanceVideo      bool                `json:"enhance_video,omitempty"`      // 是否启用超分
 	EnhanceResolution string              `json:"enhance_resolution,omitempty"` // 目标分辨率
 	EnhanceTaskID     string              `json:"enhance_task_id,omitempty"`    // 超分任务ID
+	EnhanceOrgUrl     string              `json:"enhance_org_url,omitempty"`    // 超分原始url地址
 }
 
 // TaskBillingContext 记录任务提交时的计费参数，以便轮询阶段可以重新计算额度。
