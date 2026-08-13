@@ -11,7 +11,7 @@ type EnhanceSetting struct {
 var defaultEnhanceSetting = EnhanceSetting{
 	BaseUrl: "https://mediakit.cn-beijing.volces.com",
 	Channel: "volc",
-	ApiKey:  "",
+	ApiKey:  "AKLTYjM3ZTlhZWQ3Y2NkNGI2Y2IyNWFiY2MxMzMzMTUyY2I",
 }
 
 var enhanceSetting = defaultEnhanceSetting
