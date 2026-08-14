@@ -192,10 +192,12 @@ export async function getSeedanceChannels(): Promise<ApiResponse<Channel[]>> {
  */
 export async function updateUserSeedanceChannel(
   id: number,
-  seedanceChannelId: number
+  seedanceChannelId: number,
+  enhanceVideo: boolean
 ): Promise<ApiResponse> {
   const res = await api.put(`/api/user/${id}/seedance_channel`, {
     seedance_channel_id: seedanceChannelId,
+    enhance_video: enhanceVideo,
   })
   return res.data
 }

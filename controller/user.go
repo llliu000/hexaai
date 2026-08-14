@@ -781,7 +781,8 @@ func UpdateUserModelDiscounts(c *gin.Context) {
 }
 
 type UpdateUserSeedanceChannelRequest struct {
-	SeedanceChannelId int `json:"seedance_channel_id"`
+	SeedanceChannelId int  `json:"seedance_channel_id"`
+	EnhanceVideo      bool `json:"enhance_video"`
 }
 
 func UpdateUserSeedanceChannel(c *gin.Context) {
@@ -823,15 +824,17 @@ func UpdateUserSeedanceChannel(c *gin.Context) {
 
 	userSetting := user.GetSetting()
 	userSetting.SeedanceChannelId = req.SeedanceChannelId
+	userSetting.EnhanceVideo = req.EnhanceVideo
 	if err = model.UpdateUserSetting(user.Id, userSetting); err != nil {
 		common.ApiErrorI18n(c, i18n.MsgUpdateFailed)
 		return
 	}
 
 	recordManageAuditFor(c, user.Id, "user.seedance_channel_update", map[string]interface{}{
-		"username":  user.Username,
-		"id":        user.Id,
-		"channelId": req.SeedanceChannelId,
+		"username":     user.Username,
+		"id":           user.Id,
+		"channelId":    req.SeedanceChannelId,
+		"enhanceVideo": userSetting.EnhanceVideo,
 	})
 	common.ApiSuccessI18n(c, i18n.MsgUpdateSuccess, nil)
 }

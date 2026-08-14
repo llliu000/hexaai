@@ -25,7 +25,7 @@ var auditContentTemplates = map[string]string{
 	"user.quota_override":          "Overrode user quota from ${from} to ${to}",
 	"user.binding_clear":           "Cleared ${bindingType} binding for user ${username}",
 	"user.model_discounts_update":  "Updated model discounts for user ${username} (ID: ${id}, models: ${models})",
-	"user.seedance_channel_update": "Updated Seedance channel for user ${username} (ID: ${id}, channel ID: ${channelId})",
+	"user.seedance_channel_update": "Updated Seedance settings for user ${username} (ID: ${id}, channel ID: ${channelId}, video enhancement: ${enhanceVideo})",
 	"user.2fa_disable":             "Force-disabled two-factor authentication for the user",
 	"user.passkey_register":        "Registered a passkey",
 	"user.passkey_delete":          "Deleted a passkey",

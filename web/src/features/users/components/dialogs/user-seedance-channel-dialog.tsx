@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 import type { Channel } from '@/features/channels/types'
 
 import { getSeedanceChannels, updateUserSeedanceChannel } from '../../api'
@@ -44,16 +45,26 @@ interface Props {
   onSuccess?: () => void
 }
 
-function parseSeedanceChannelId(user: User | null): string {
-  if (!user?.setting) return ''
+interface SeedanceSettings {
+  channelId: string
+  enhanceVideo: boolean
+}
+
+function parseSeedanceSettings(user: User | null): SeedanceSettings {
+  if (!user?.setting) return { channelId: '', enhanceVideo: false }
   try {
     const setting = JSON.parse(user.setting) as {
       seedance_channel_id?: unknown
+      enhance_video?: unknown
     }
     const channelId = Number(setting.seedance_channel_id)
-    return Number.isInteger(channelId) && channelId > 0 ? String(channelId) : ''
+    return {
+      channelId:
+        Number.isInteger(channelId) && channelId > 0 ? String(channelId) : '',
+      enhanceVideo: setting.enhance_video === true,
+    }
   } catch {
-    return ''
+    return { channelId: '', enhanceVideo: false }
   }
 }
 
@@ -66,12 +77,15 @@ export function UserSeedanceChannelDialog({
   const { t } = useTranslation()
   const [channels, setChannels] = useState<Channel[]>([])
   const [selectedChannelId, setSelectedChannelId] = useState('')
+  const [enhanceVideo, setEnhanceVideo] = useState(false)
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (!open) return
-    setSelectedChannelId(parseSeedanceChannelId(user))
+    const settings = parseSeedanceSettings(user)
+    setSelectedChannelId(settings.channelId)
+    setEnhanceVideo(settings.enhanceVideo)
     setLoading(true)
     getSeedanceChannels()
       .then((result) => {
@@ -101,7 +115,11 @@ export function UserSeedanceChannelDialog({
 
     setSaving(true)
     try {
-      const result = await updateUserSeedanceChannel(user.id, channelId)
+      const result = await updateUserSeedanceChannel(
+        user.id,
+        channelId,
+        enhanceVideo
+      )
       if (result.success) {
         toast.success(t('Seedance channel updated'))
         onOpenChange(false)
@@ -192,6 +210,23 @@ export function UserSeedanceChannelDialog({
             ? t('No enabled Doubao video channels available')
             : t('Select an enabled Doubao video channel for Seedance assets.')}
         </p>
+      </div>
+
+      <div className='flex items-center justify-between gap-4'>
+        <div className='space-y-1'>
+          <Label htmlFor='seedance-enhance-video'>
+            {t('Enable video enhancement')}
+          </Label>
+          <p className='text-muted-foreground text-sm'>
+            {t('Upscale Seedance videos after generation.')}
+          </p>
+        </div>
+        <Switch
+          id='seedance-enhance-video'
+          checked={enhanceVideo}
+          onCheckedChange={setEnhanceVideo}
+          disabled={saving}
+        />
       </div>
     </Dialog>
   )

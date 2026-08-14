@@ -135,6 +135,8 @@ export const STATIC_I18N_KEYS = [
   'Please select a Seedance channel',
   'Seedance channel updated',
   'Select Seedance channel',
+  'Enable video enhancement',
+  'Upscale Seedance videos after generation.',
   'No enabled Doubao video channels available',
   'Select an enabled Doubao video channel for Seedance assets.',
   'Unnamed',
@@ -536,6 +538,14 @@ export const STATIC_I18N_KEYS = [
   'Official documentation',
   'Violation deduction amount',
   'Base amount. Actual deduction = base amount × system group rate.',
+
+  // Video enhancement settings
+  'Video Enhancement',
+  'Video Enhancement Settings',
+  'Volcengine',
+  'Currently only Volcengine is supported.',
+  'Video enhancement service endpoint.',
+  'Leave blank to keep the current API key.',
 
   // Chat2Link
   'No available Web chat links',

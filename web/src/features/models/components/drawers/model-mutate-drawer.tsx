@@ -325,6 +325,8 @@ export function ModelMutateDrawer({
       'group_ratio_setting.group_special_usable_group': '{}',
       'grok.violation_deduction_enabled': false,
       'grok.violation_deduction_amount': 0,
+      'enhance.channel': 'volc',
+      'enhance.base_url': 'https://mediakit.cn-beijing.volces.com',
       RetryTimes: 0,
       ChannelDisableThreshold: '',
       AutomaticDisableChannelEnabled: false,
