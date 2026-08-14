@@ -141,6 +141,7 @@ export function EnhanceSettingsCard(props: EnhanceSettingsCardProps) {
         <SettingsForm
           onSubmit={form.handleSubmit(onSubmit)}
           autoComplete='off'
+          className='w-full max-w-2xl lg:grid-cols-1'
         >
           <SettingsPageFormActions
             onSave={form.handleSubmit(onSubmit)}
