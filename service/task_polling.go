@@ -561,6 +561,7 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 		if !task.PrivateData.EnhanceVideo {
 			break
 		}
+		logger.LogJson(ctx, "任务快照结果:", snap)
 		orgUrl := task.GetResultURL()
 		status := enhanceVideo(ctx, task)
 		switch status {
