@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/QuantumNous/new-api/dto"
+	"github.com/QuantumNous/new-api/logger"
 	"github.com/google/uuid"
 )
 
@@ -215,6 +216,7 @@ func (a *Adapter) do(req *http.Request, target any) error {
 	if err != nil {
 		return fmt.Errorf("read volc video enhancement response: %w", err)
 	}
+	logger.LogInfo(context.Background(), fmt.Sprintf("视频增强响应结果:%s", string(body)))
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		var errorResponse struct {
 			RequestID string    `json:"request_id"`
