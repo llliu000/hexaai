@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -562,8 +561,6 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 		if !task.PrivateData.EnhanceVideo {
 			break
 		}
-		marshal, _ := json.Marshal(snap)
-		logger.LogInfo(ctx, fmt.Sprintf("任务快照结果:%s", string(marshal)))
 		orgUrl := task.GetResultURL()
 		status := enhanceVideo(ctx, task)
 		switch status {
