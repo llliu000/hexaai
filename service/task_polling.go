@@ -572,6 +572,7 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 			task.PrivateData.ResultURL = snap.ResultURL
 			task.Progress = snap.Progress
 			task.Status = snap.Status
+			taskResult.Progress = ""
 			task.Data = snap.Data
 			shouldSettle = false
 			task.FinishTime = 0
