@@ -112,7 +112,24 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 	} else {
 		info.UpstreamModelName = body.Model
 	}
-	data, err := common.Marshal(body)
+
+	var data []byte
+	if a.organization == ThirdAnyFast { // 转换为openai协议
+		params := map[string]any{
+			"model":    info.UpstreamModelName,
+			"metadata": body,
+			"asset":    true,
+		}
+		for i := range body.Content {
+			if body.Content[i].Type == "text" {
+				params["prompt"] = body.Content[i].Text
+				break
+			}
+		}
+		data, err = common.Marshal(params)
+	} else {
+		data, err = common.Marshal(body)
+	}
 	if err != nil {
 		return nil, err
 	}
