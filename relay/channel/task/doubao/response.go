@@ -49,5 +49,6 @@ type tokenMartResponse struct {
 			CompletionTokens int `json:"completion_tokens"`
 			TotalTokens      int `json:"total_tokens"`
 		} `json:"usage"`
+		Metadata responseTask `json:"metadata"`
 	} `json:"task"`
 }
