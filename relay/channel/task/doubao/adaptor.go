@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/samber/lo"
@@ -273,31 +274,20 @@ func (a *TaskAdaptor) ConvertToOpenAIVideo(originTask *model.Task) ([]byte, erro
 }
 
 func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, error) {
+	// 处理token market
+	var sbm tokenMartResponse
+	_ = common.Unmarshal(originTask.Data, &sbm)
+	if sbm.Task.Id != "" {
+		sbm.Task.Metadata.Model = originTask.Properties.OriginModelName
+		return common.Marshal(sbm.Task.Metadata)
+	}
+
 	var responseItems taskdto.TaskResponse[model.Task]
 	_ = common.Unmarshal(originTask.Data, &responseItems)
 	var data = originTask.Data
 	if responseItems.Code != "" {
 		data = responseItems.Data.Data
 	}
-	var sbm tokenMartResponse
-	_ = common.Unmarshal(data, &sbm)
-	if sbm.Task.Id != "" {
-		var response = responseTask{
-			ID:        originTask.TaskID,
-			Status:    sbm.Task.Status,
-			Model:     originTask.Properties.OriginModelName,
-			Duration:  sbm.Task.DurationSeconds,
-			CreatedAt: originTask.CreatedAt,
-			UpdatedAt: originTask.UpdatedAt,
-		}
-		response.Usage.TotalTokens = sbm.Task.Usage.TotalTokens
-		response.Usage.CompletionTokens = sbm.Task.Usage.CompletionTokens
-		if len(sbm.Task.Outputs) > 0 {
-			response.Content.VideoURL = sbm.Task.Outputs[0]
-		}
-		return common.Marshal(response)
-	}
-
 	var rt responseTask
 	if err := json.Unmarshal(data, &rt); nil != err {
 		return data.MarshalJSON()
@@ -306,7 +296,7 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	rt.CreatedAt = originTask.CreatedAt
 	rt.UpdatedAt = originTask.UpdatedAt
 	rt.Model = originTask.Properties.OriginModelName
-	if rt.Status == "" {
+	if rt.Status == "" || strings.ToLower(rt.Status) == "unknown" {
 		rt.Status = "queued"
 	}
 	return json.Marshal(rt)
