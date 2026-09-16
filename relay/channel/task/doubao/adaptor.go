@@ -59,7 +59,7 @@ func (a *TaskAdaptor) BuildRequestURL(_ *relaycommon.RelayInfo) (string, error) 
 	case ThirdKWJM:
 		return fmt.Sprintf("%s/v3/contents/generations/tasks", a.baseURL), nil
 	case ThirdTokenMart:
-		return fmt.Sprintf("%s/v1/video/generate", a.baseURL), nil
+		return fmt.Sprintf("%s/v2/video/generate", a.baseURL), nil
 	default:
 		return fmt.Sprintf("%s/api/v3/contents/generations/tasks", a.baseURL), nil
 	}
@@ -175,7 +175,7 @@ func (a *TaskAdaptor) FetchTask(baseUrl, key string, body map[string]any, proxy 
 	case ThirdKWJM:
 		api = fmt.Sprintf("%s/v3/contents/generations/tasks/%s", baseUrl, taskID)
 	case ThirdTokenMart:
-		api = fmt.Sprintf("%s/v1/video/tasks/%s", baseUrl, taskID)
+		api = fmt.Sprintf("%s/v2/video/tasks/%s", baseUrl, taskID)
 	default:
 		api = fmt.Sprintf("%s/api/v3/contents/generations/tasks/%s", baseUrl, taskID)
 	}
