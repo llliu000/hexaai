@@ -44,7 +44,7 @@ func (a *Adaptor) CreateAssets(req *dto.CreateAssetRequest) (*dto.CreateAssetRes
 	if err != nil {
 		return nil, err
 	}
-	reqUrl := fmt.Sprintf("%s/v1/sd/assets", a.BaseURL)
+	reqUrl := fmt.Sprintf("%s/v2/sd-max/assets", a.BaseURL)
 	var response Response[createResponse]
 	reader := bytes.NewReader(marshal)
 	if err = a.doRequest(http.MethodPost, reqUrl, reader, &response); err != nil {
@@ -54,7 +54,7 @@ func (a *Adaptor) CreateAssets(req *dto.CreateAssetRequest) (*dto.CreateAssetRes
 }
 
 func (a *Adaptor) GetAsset(req *dto.GetAssetRequest) (*dto.GetAssetResponse, error) {
-	reqUrl := fmt.Sprintf("%s/v1/sd/assets/%s", a.BaseURL, req.Id)
+	reqUrl := fmt.Sprintf("%s/v2/sd-max/assets/%s", a.BaseURL, req.Id)
 	var resp Response[assetResponse]
 	if err := a.doRequest(http.MethodGet, reqUrl, nil, &resp); err != nil {
 		return nil, err
