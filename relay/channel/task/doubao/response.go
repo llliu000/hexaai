@@ -52,3 +52,12 @@ type tokenMartResponse struct {
 		Metadata responseTask `json:"metadata"`
 	} `json:"task"`
 }
+
+type vipCodeResponse struct {
+	Error    string `json:"error"`
+	Format   string `json:"format"`
+	Metadata any    `json:"metadata"`
+	Status   string `json:"status"`
+	TaskId   string `json:"task_id"`
+	Url      string `json:"url"`
+}

@@ -60,6 +60,8 @@ func (a *TaskAdaptor) BuildRequestURL(_ *relaycommon.RelayInfo) (string, error) 
 		return fmt.Sprintf("%s/v3/contents/generations/tasks", a.baseURL), nil
 	case ThirdTokenMart:
 		return fmt.Sprintf("%s/v2/video/generate", a.baseURL), nil
+	case ThirdVipCode:
+		return fmt.Sprintf("%s/v1/video/generations", a.baseURL), nil
 	default:
 		return fmt.Sprintf("%s/api/v3/contents/generations/tasks", a.baseURL), nil
 	}
@@ -115,6 +117,44 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 	}
 
 	var data []byte
+	switch a.organization {
+	case ThirdAnyFast:
+		params := map[string]any{
+			"model":    info.UpstreamModelName,
+			"metadata": body,
+			"asset":    true,
+		}
+		for i := range body.Content {
+			if body.Content[i].Type == "text" {
+				params["prompt"] = body.Content[i].Text
+				break
+			}
+		}
+		data, err = common.Marshal(params)
+	case ThirdVipCode:
+		params := map[string]any{
+			"model":        info.UpstreamModelName,
+			"resolution":   body.Resolution,
+			"duration":     body.Duration,
+			"aspect_ratio": body.Ratio,
+			"metadata": map[string]any{
+				"referenceType": "asset",
+			},
+		}
+		var images []string
+		for i := range body.Content {
+			if imageURL := body.Content[i].ImageURL; imageURL != nil && imageURL.URL != "" {
+				images = append(images, imageURL.URL)
+			}
+			if body.Content[i].Type == "text" {
+				params["prompt"] = body.Content[i].Text
+			}
+		}
+		params["images"] = images
+		data, err = common.Marshal(params)
+	default:
+		data, err = common.Marshal(body)
+	}
 	if a.organization == ThirdAnyFast { // 转换为openai协议
 		params := map[string]any{
 			"model":    info.UpstreamModelName,
@@ -176,6 +216,8 @@ func (a *TaskAdaptor) FetchTask(baseUrl, key string, body map[string]any, proxy 
 		api = fmt.Sprintf("%s/v3/contents/generations/tasks/%s", baseUrl, taskID)
 	case ThirdTokenMart:
 		api = fmt.Sprintf("%s/v2/video/tasks/%s", baseUrl, taskID)
+	case ThirdVipCode:
+		api = fmt.Sprintf("%s/v1/video/generations/%s", baseUrl, taskID)
 	default:
 		api = fmt.Sprintf("%s/api/v3/contents/generations/tasks/%s", baseUrl, taskID)
 	}
