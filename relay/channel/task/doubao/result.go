@@ -18,6 +18,7 @@ const (
 	Official       = "volc"
 	ThirdKWJM      = "kwjm"
 	ThirdTokenMart = "token_mart"
+	ThirdVipCode   = "vip_code"
 )
 
 var submitResultMapping = map[string]func(responseBody []byte) (string, *taskdto.TaskError){
@@ -25,6 +26,7 @@ var submitResultMapping = map[string]func(responseBody []byte) (string, *taskdto
 	Official:       officialSubmit,
 	ThirdAnyFast:   newApiSubmit,
 	ThirdTokenMart: tokenMartSubmit,
+	ThirdVipCode:   newApiSubmit,
 }
 
 func officialSubmit(responseBody []byte) (string, *taskdto.TaskError) {
@@ -74,6 +76,7 @@ var fetchResultMapping = map[string]func(responseBody []byte) (*relaycommon.Task
 	ThirdAnyFast:   newApiFetch,
 	ThirdKWJM:      officialFetch,
 	ThirdTokenMart: tokenMartFetch,
+	ThirdVipCode:   vipCodeFetch,
 }
 
 // seedance-1.x获取任务详情响应结果处理
@@ -134,6 +137,25 @@ func tokenMartFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 		taskResult.Progress = "30%"
 	}
 	return &taskResult, nil
+}
+
+func vipCodeFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
+	var resp taskdto.TaskResponse[vipCodeResponse]
+	if err := common.Unmarshal(responseBody, &resp); err != nil {
+		return nil, errors.Wrap(err, "unmarshal task result failed")
+	}
+	if !resp.IsSuccess() {
+		return nil, fmt.Errorf("task fetch failed:%s", resp.Message)
+	}
+	if resp.Data.Error != "" {
+		return nil, fmt.Errorf("task fetch failed:%s", resp.Data.Error)
+	}
+	var t responseTask
+	t.Content.VideoURL = resp.Data.Url
+	t.Usage.CompletionTokens = 0
+	t.Status = resp.Data.Status
+	t.Usage.TotalTokens = 0
+	return taskInfo(t)
 }
 
 func taskInfo(resTask responseTask) (*relaycommon.TaskInfo, error) {

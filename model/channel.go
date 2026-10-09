@@ -1142,7 +1142,7 @@ func CountChannelsGroupByType() (map[int64]int64, error) {
 }
 
 func ListChannelsByOpenAIOrganization() (chs []Channel, err error) {
-	err = DB.Where("open_ai_organization in ?", []string{"kwjm", "anyfast", "volc", "token_mart"}).
+	err = DB.Where("open_ai_organization in ?", []string{"kwjm", "anyfast", "volc", "token_mart", "vip_code"}).
 		Where("type=?", constant.ChannelTypeDoubaoVideo).Find(&chs).Error
 	return
 }
