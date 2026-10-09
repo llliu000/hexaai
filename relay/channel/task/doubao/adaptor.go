@@ -81,6 +81,12 @@ func (a *TaskAdaptor) EstimateBilling(c *gin.Context, info *relaycommon.RelayInf
 	if err != nil {
 		return nil
 	}
+	if a.organization == ThirdVipCode {
+		if req.Duration == 0 {
+			req.Duration = 8
+		}
+		return map[string]float64{"seconds": float64(req.Duration)}
+	}
 	ratio, ok := GetVideoInputRatio(info.OriginModelName, req.Metadata)
 	if !ok || ratio == 1.0 {
 		return nil
