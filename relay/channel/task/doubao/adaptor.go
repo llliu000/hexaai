@@ -97,6 +97,7 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 	if err != nil {
 		return nil, errors.Wrap(err, "convert request payload failed")
 	}
+	enhanceVideo(info, body) // 超分处理
 	for i := range body.Content {
 		if image := body.Content[i].ImageURL; image != nil {
 			body.Content[i].ImageURL.URL = resolveAssetURL(info.ChannelId, image.URL)
@@ -259,7 +260,7 @@ func (a *TaskAdaptor) ConvertToOpenAIVideo(originTask *model.Task) ([]byte, erro
 	openAIVideo.TaskID = originTask.TaskID
 	openAIVideo.Status = originTask.Status.ToVideoStatus()
 	openAIVideo.SetProgressStr(originTask.Progress)
-	openAIVideo.SetMetadata("url", dResp.Content.VideoURL)
+	openAIVideo.SetMetadata("url", originTask.GetResultURL())
 	openAIVideo.CreatedAt = originTask.CreatedAt
 	openAIVideo.CompletedAt = originTask.UpdatedAt
 	openAIVideo.Model = originTask.Properties.OriginModelName
@@ -280,6 +281,7 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	_ = common.Unmarshal(originTask.Data, &sbm)
 	if sbm.Task.Id != "" {
 		sbm.Task.Metadata.Model = originTask.Properties.OriginModelName
+		sbm.Task.Metadata.Content.VideoURL = originTask.GetResultURL()
 		return common.Marshal(sbm.Task.Metadata)
 	}
 
@@ -297,6 +299,7 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	rt.CreatedAt = originTask.CreatedAt
 	rt.UpdatedAt = originTask.UpdatedAt
 	rt.Model = originTask.Properties.OriginModelName
+	rt.Content.VideoURL = originTask.GetResultURL()
 	if rt.Status == "" || strings.ToLower(rt.Status) == "unknown" {
 		rt.Status = "queued"
 	}

@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/QuantumNous/new-api/model"
+	relaycommon "github.com/QuantumNous/new-api/relay/common"
 )
 
 var ModelList = []string{}
@@ -19,6 +20,11 @@ type videoPriceKey struct {
 	Resolution string // 480p、720p、1080p、4k
 	HasVideo   bool   // 输入是否包含视频
 	HasAudio   bool   // 输出是否有声音
+}
+
+var enhanceTable = []string{
+	"doubao-seedance-2-0-e",
+	"doubao-seedance-2-0-p",
 }
 
 var videoPriceTable = map[string]*videoPriceConfig{
@@ -188,4 +194,28 @@ func resolveAssetURL(channelId int, raw string) string {
 		return raw
 	}
 	return AssetPrefix + ac.UpstreamAssertId
+}
+
+func enhanceVideo(info *relaycommon.RelayInfo, req *requestPayload) {
+	info.EnhanceVideo = containsEnhanceModel(info.OriginModelName)
+	if !info.EnhanceVideo {
+		return
+	}
+	info.EnhanceResolution = req.Resolution
+	req.Resolution = "480p"
+	switch {
+	case strings.Contains(info.OriginModelName, "-e"):
+		info.EnhanceResolution = "720p"
+	case strings.Contains(info.OriginModelName, "-p"):
+		info.EnhanceResolution = "1080p"
+	}
+}
+
+func containsEnhanceModel(modelName string) bool {
+	for _, enhanceModel := range enhanceTable {
+		if enhanceModel == modelName {
+			return true
+		}
+	}
+	return false
 }
