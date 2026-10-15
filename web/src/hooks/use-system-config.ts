@@ -20,6 +20,7 @@ import { useEffect, useCallback } from 'react'
 
 import { DEFAULT_SYSTEM_NAME, DEFAULT_LOGO } from '@/lib/constants'
 import { applyFaviconToDom } from '@/lib/dom-utils'
+import { resolveSystemLogo } from '@/lib/system-logo'
 import {
   useSystemConfigStore,
   type CurrencyConfig,
@@ -94,7 +95,7 @@ export function mapStatusDataToConfig(
 
   return {
     systemName: data.system_name || DEFAULT_SYSTEM_NAME,
-    logo: data.logo || DEFAULT_LOGO,
+    logo: resolveSystemLogo(data.logo),
     footerHtml: data.footer_html,
     demoSiteEnabled: data.demo_site_enabled,
     displayTokenStatEnabled: data.display_token_stat_enabled,
@@ -151,6 +152,7 @@ export function useSystemConfig(options: UseSystemConfigOptions = {}) {
     setLoadedLogoUrl,
     setLoading,
   } = useSystemConfigStore()
+  const logo = resolveSystemLogo(config.logo)
 
   // Load config from backend
   const loadConfig = useCallback(async () => {
@@ -170,9 +172,13 @@ export function useSystemConfig(options: UseSystemConfigOptions = {}) {
     if (autoLoad) loadConfig()
   }, [autoLoad, loadConfig])
 
-  // Preload logo image when URL changes
+  // The bundled mark is inline SVG; only custom logos need image preloading.
   useEffect(() => {
-    const { logo } = config
+    if (logo === DEFAULT_LOGO) {
+      applyFaviconToDom(logo)
+      if (loadedLogoUrl !== logo) setLoadedLogoUrl(logo)
+      return
+    }
 
     // Skip if logo is already loaded
     if (!logo || logo === loadedLogoUrl) return
@@ -185,6 +191,7 @@ export function useSystemConfig(options: UseSystemConfigOptions = {}) {
         applyFaviconToDom(logo)
       },
       () => {
+        applyFaviconToDom(DEFAULT_LOGO)
         if (logo !== DEFAULT_LOGO) {
           // eslint-disable-next-line no-console
           console.error('Failed to load logo:', logo)
@@ -194,11 +201,12 @@ export function useSystemConfig(options: UseSystemConfigOptions = {}) {
       }
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.logo, loadedLogoUrl, setLoadedLogoUrl])
+  }, [logo, loadedLogoUrl, setLoadedLogoUrl])
 
   return {
     ...config,
+    logo,
     loading,
-    logoLoaded: config.logo === loadedLogoUrl && !!loadedLogoUrl,
+    logoLoaded: logo === DEFAULT_LOGO || logo === loadedLogoUrl,
   }
 }

@@ -66,7 +66,7 @@ function ToolSurchargeMarker() {
               aria-hidden='true'
             />
             <span
-              className='text-[9px] leading-none font-bold'
+              className='text-[12px] leading-none font-bold'
               aria-hidden='true'
             >
               +

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 /*
 Copyright (C) 2023-2026 QuantumNous
 
@@ -17,25 +19,22 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { Main } from '@/components/layout'
-import {
-  CardStaggerContainer,
-  CardStaggerItem,
-} from '@/components/page-transition'
 import { useStatus } from '@/hooks/use-status'
 import { useAuthStore } from '@/stores/auth-store'
 
 import { CheckinCalendarCard } from './components/checkin-calendar-card'
 import { LanguagePreferencesCard } from './components/language-preferences-card'
 import { LoginSessionsCard } from './components/login-sessions-card'
-import { PasskeyCard } from './components/passkey-card'
 import { ProfileHeader } from './components/profile-header'
 import { ProfileSecurityCard } from './components/profile-security-card'
 import { ProfileSettingsCard } from './components/profile-settings-card'
 import { SidebarModulesCard } from './components/sidebar-modules-card'
-import { TwoFACard } from './components/two-fa-card'
 import { useProfile } from './hooks'
 
+import './profile-design.css'
+
 export function Profile() {
+  const { t } = useTranslation()
   const { profile, loading, refreshProfile } = useProfile()
   const { status } = useStatus()
   const permissions = useAuthStore((s) => s.auth.user?.permissions)
@@ -46,32 +45,46 @@ export function Profile() {
   )
   const turnstileSiteKey = status?.turnstile_site_key || ''
   const canConfigureSidebar = permissions?.sidebar_settings !== false
+  const hasSideContent = checkinEnabled || canConfigureSidebar
 
   return (
     <Main>
-      <div className='min-h-0 flex-1 overflow-auto px-3 py-3 sm:px-4 sm:py-6'>
-        <CardStaggerContainer className='mx-auto flex w-full max-w-7xl flex-col gap-4 sm:gap-6'>
-          <CardStaggerItem>
-            <ProfileHeader profile={profile} loading={loading} />
-          </CardStaggerItem>
-
-          <CardStaggerItem>
-            <div className='grid gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.46fr)] xl:items-start'>
-              <div className='space-y-4 sm:space-y-6'>
-                <ProfileSettingsCard
-                  profile={profile}
-                  loading={loading}
-                  onProfileUpdate={refreshProfile}
-                />
-                <LanguagePreferencesCard
-                  profile={profile}
-                  onProfileUpdate={refreshProfile}
-                />
-                <ProfileSecurityCard profile={profile} loading={loading} />
-                <LoginSessionsCard />
-              </div>
-
-              <div className='space-y-4 sm:space-y-6 xl:sticky xl:top-6'>
+      <div className='profile-design'>
+        <div className='profile-layout-header'>
+          <div className='profile-page-title'>
+            <h1>{t('Profile')}</h1>
+            <p>
+              {t(
+                'Manage your account information, security settings and personal preferences',
+                { defaultValue: '管理您的账户信息、安全设置与个人偏好' }
+              )}
+            </p>
+          </div>
+        </div>
+        <div className='profile-content-scroll'>
+          <div
+            className={`profile-columns${hasSideContent ? '' : ' profile-columns-full'}`}
+          >
+            <div className='profile-left'>
+              <div className='profile-summary'>
+              <ProfileHeader profile={profile} loading={loading} />
+            </div>
+            <div className='profile-main'>
+              <ProfileSettingsCard
+                profile={profile}
+                loading={loading}
+                onProfileUpdate={refreshProfile}
+              />
+              <LanguagePreferencesCard
+                profile={profile}
+                onProfileUpdate={refreshProfile}
+              />
+              <ProfileSecurityCard profile={profile} loading={loading} />
+              <LoginSessionsCard />
+            </div>
+          </div>
+            {hasSideContent && (
+              <div className='profile-side'>
                 {checkinEnabled && (
                   <CheckinCalendarCard
                     checkinEnabled={checkinEnabled}
@@ -80,12 +93,12 @@ export function Profile() {
                   />
                 )}
                 {canConfigureSidebar && <SidebarModulesCard />}
-                <PasskeyCard loading={loading} />
-                <TwoFACard loading={loading} />
+                {/* <PasskeyCard loading={loading} /> */}
+                {/* <TwoFACard loading={loading} /> */}
               </div>
-            </div>
-          </CardStaggerItem>
-        </CardStaggerContainer>
+            )}
+          </div>
+        </div>
       </div>
     </Main>
   )

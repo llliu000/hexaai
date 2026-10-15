@@ -91,7 +91,7 @@ export function ModelsSection(props: ModelsSectionProps) {
         {
           orient: 'bottom',
           label: {
-            style: { fill: chartTextColor, fontSize: 10 },
+            style: { fill: chartTextColor, fontSize: 11 },
             autoHide: true,
             autoLimit: true,
           },
@@ -101,7 +101,7 @@ export function ModelsSection(props: ModelsSectionProps) {
           orient: 'left',
           label: {
             formatMethod: (val: number | string) => formatTokens(Number(val)),
-            style: { fill: chartTextColor, fontSize: 10 },
+            style: { fill: chartTextColor, fontSize: 11 },
           },
           grid: {
             visible: true,
@@ -180,7 +180,7 @@ export function ModelsSection(props: ModelsSectionProps) {
           <div className='text-foreground font-mono text-2xl font-semibold tabular-nums'>
             {formatTokens(totalTokens)}
           </div>
-          <div className='text-muted-foreground/80 text-[10px] font-medium tracking-widest uppercase'>
+          <div className='text-muted-foreground/80 text-[11px] font-medium tracking-widest uppercase'>
             {t('tokens')}
           </div>
         </div>

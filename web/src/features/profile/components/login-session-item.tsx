@@ -16,8 +16,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { LaptopIcon } from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
 import { useTranslation } from 'react-i18next'
 
 import { Badge } from '@/components/ui/badge'
@@ -25,6 +23,7 @@ import { Button } from '@/components/ui/button'
 import dayjs from '@/lib/dayjs'
 import type { LoginSession } from '@/stores/auth-store'
 
+import { DesignIcon } from './design-icon'
 import { loginMethodLabel, sessionDevice } from './login-session-utils'
 
 interface LoginSessionItemProps {
@@ -40,13 +39,13 @@ export function LoginSessionItem({ session, onRevoke }: LoginSessionItemProps) {
       : 0
 
   return (
-    <div className='flex flex-col gap-3 py-4 sm:flex-row sm:items-center'>
-      <div className='bg-muted flex size-10 shrink-0 items-center justify-center rounded-lg'>
-        <HugeiconsIcon icon={LaptopIcon} className='size-5' strokeWidth={2} />
+    <div className='profile-session-row'>
+      <div className='profile-session-device' aria-hidden='true'>
+        <DesignIcon name='laptop' />
       </div>
-      <div className='min-w-0 flex-1'>
-        <div className='flex flex-wrap items-center gap-2'>
-          <p className='font-medium'>
+      <div className='profile-session-details'>
+        <div className='profile-session-identity'>
+          <p className='profile-session-name'>
             {sessionDevice(
               session.user_agent,
               t('Unknown device'),
@@ -56,13 +55,13 @@ export function LoginSessionItem({ session, onRevoke }: LoginSessionItemProps) {
           </p>
           {session.current && <Badge variant='secondary'>{t('Current')}</Badge>}
         </div>
-        <p className='text-muted-foreground mt-1 text-xs'>
+        <p className='profile-session-meta'>
           {t('IP: {{ip}} · Method: {{method}}', {
             ip: session.ip || t('Unknown'),
             method: loginMethodLabel(session.login_method, t),
           })}
         </p>
-        <p className='text-muted-foreground mt-1 text-xs'>
+        <p className='profile-session-time'>
           {t('Last active {{time}} · Expires {{expires}}', {
             time: dayjs.unix(session.last_active_at).fromNow(),
             expires: dayjs.unix(session.expires_at).format('YYYY-MM-DD HH:mm'),
@@ -73,8 +72,10 @@ export function LoginSessionItem({ session, onRevoke }: LoginSessionItemProps) {
         type='button'
         variant={session.current ? 'outline' : 'ghost'}
         size='sm'
+        className='profile-session-action'
         onClick={() => onRevoke(session)}
       >
+        <DesignIcon name='logout' />
         {session.current ? t('Sign out') : t('Revoke')}
       </Button>
     </div>

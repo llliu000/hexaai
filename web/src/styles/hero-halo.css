@@ -1,0 +1,58 @@
+.wm-hero:has(.wm-hero-halo) {
+  isolation: isolate;
+}
+.wm-hero-halo {
+  --wm-slide-accent: #7650d8;
+  --wm-halo-background-accent: var(--wm-slide-accent);
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wm-halo-background-accent) 12%, var(--wm-surface))
+      0%,
+    color-mix(in srgb, var(--wm-halo-background-accent) 7%, var(--wm-surface))
+      38%,
+    color-mix(in srgb, var(--wm-halo-background-accent) 2%, var(--wm-surface))
+      72%,
+    var(--wm-surface) 96%,
+    var(--wm-surface) 100%
+  );
+}
+.wm-hero-halo-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+}
+.wm-hero-halo-canvas[data-renderer='fallback'] {
+  display: none;
+}
+.wm-hero-halo-fallback {
+  position: absolute;
+  inset: 0;
+  background: inherit;
+}
+.wm-hero-halo:has([data-renderer='webgl']) .wm-hero-halo-fallback {
+  display: none;
+}
+.wm-hero-halo + .wm-hero-viewport {
+  position: relative;
+  z-index: 1;
+}
+.wm-hero-halo + .wm-hero-viewport .wm-hero-slide {
+  background: transparent;
+}
+.wm-hero-halo + .wm-hero-viewport .wm-hero-default-art,
+.wm-hero-halo + .wm-hero-viewport .wm-hero-decoration,
+.wm-hero-halo + .wm-hero-viewport .wm-hero-slide:has(picture)::after {
+  display: none;
+}
+.wm-hero-halo + .wm-hero-viewport picture.wm-hero-art {
+  opacity: 0.14;
+}

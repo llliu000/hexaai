@@ -16,8 +16,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { LayoutDashboard } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { Ellipsis } from 'lucide-react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
@@ -29,10 +29,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { IconBadge } from '@/components/ui/icon-badge'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Switch } from '@/components/ui/switch'
 import { api } from '@/lib/api'
 import { useAuthStore } from '@/stores/auth-store'
+
+import { DesignIcon } from './design-icon'
 
 type SidebarModuleConfig = {
   enabled: boolean
@@ -51,7 +58,10 @@ type SectionDef = {
 export function SidebarModulesCard() {
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
+  const [dirty, setDirty] = useState(false)
+  const [advanced, setAdvanced] = useState(false)
   const [config, setConfig] = useState<SidebarModulesConfig>({})
+  const savedConfig = useRef<SidebarModulesConfig>({})
   const currentUser = useAuthStore((s) => s.auth.user)
   const setUser = useAuthStore((s) => s.auth.setUser)
 
@@ -59,7 +69,9 @@ export function SidebarModulesCard() {
     {
       key: 'chat',
       title: t('Chat Area'),
-      description: t('Playground and chat functions'),
+      description: t('profile.design.chatDescription', {
+        defaultValue: '操控按钮和聊天功能',
+      }),
       modules: [
         {
           key: 'playground',
@@ -112,7 +124,7 @@ export function SidebarModulesCard() {
       modules: [
         {
           key: 'topup',
-          title: t('Wallet Management'),
+          title: t('Billing Center'),
           description: t('Balance and top-up management'),
         },
         {
@@ -130,6 +142,7 @@ export function SidebarModulesCard() {
       if (res.data.success && res.data.data?.sidebar_modules) {
         const raw = res.data.data.sidebar_modules
         const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw
+        savedConfig.current = parsed
         setConfig(parsed)
       } else {
         const defaults: SidebarModulesConfig = {}
@@ -137,6 +150,7 @@ export function SidebarModulesCard() {
           defaults[sec.key] = { enabled: true }
           for (const mod of sec.modules) defaults[sec.key][mod.key] = true
         }
+        savedConfig.current = defaults
         setConfig(defaults)
       }
     } catch {
@@ -150,6 +164,7 @@ export function SidebarModulesCard() {
   }, [loadConfig])
 
   const toggleSection = (sectionKey: string, val: boolean) => {
+    setDirty(true)
     setConfig((prev) => ({
       ...prev,
       [sectionKey]: { ...prev[sectionKey], enabled: val },
@@ -161,6 +176,7 @@ export function SidebarModulesCard() {
     moduleKey: string,
     val: boolean
   ) => {
+    setDirty(true)
     setConfig((prev) => ({
       ...prev,
       [sectionKey]: { ...prev[sectionKey], [moduleKey]: val },
@@ -181,6 +197,8 @@ export function SidebarModulesCard() {
           setUser({ ...currentUser, sidebar_modules: serialized })
         }
         toast.success(t('Saved successfully'))
+        savedConfig.current = config
+        setDirty(false)
       } else {
         toast.error(res.data.message || t('Save failed'))
       }
@@ -198,85 +216,111 @@ export function SidebarModulesCard() {
       for (const mod of sec.modules) defaults[sec.key][mod.key] = true
     }
     setConfig(defaults)
+    setDirty(true)
     toast.success(t('Reset to default configuration'))
   }
 
+  const renderSection = (section: SectionDef) => (
+    <section
+      className={`profile-module-group group-${section.key}`}
+      key={section.key}
+    >
+      <h3>{section.title}</h3>
+      <p>{section.description}</p>
+      {section.modules.map((mod) => (
+        <div className='profile-module-row' key={mod.key}>
+          <div>
+            <strong>{mod.title}</strong>
+            <small>{mod.description}</small>
+          </div>
+          <Switch
+            aria-label={mod.title}
+            checked={config[section.key]?.[mod.key] !== false}
+            disabled={loading || config[section.key]?.enabled === false}
+            onCheckedChange={(value) =>
+              toggleModule(section.key, mod.key, value)
+            }
+          />
+        </div>
+      ))}
+    </section>
+  )
+
   return (
-    <Card data-card-hover='false' className='gap-0 overflow-hidden py-0'>
-      <CardHeader className='border-b p-3 !pb-3 sm:p-5 sm:!pb-5'>
-        <div className='flex items-center gap-3'>
-          <IconBadge tone='info' size='title'>
-            <LayoutDashboard />
-          </IconBadge>
-          <div className='min-w-0'>
-            <CardTitle className='text-lg tracking-tight sm:text-xl'>
-              {t('Sidebar Personal Settings')}
-            </CardTitle>
-            <CardDescription className='text-xs sm:text-sm'>
+    <>
+      <Card data-card-hover='false' className='profile-modules-main'>
+        <CardHeader>
+          <DesignIcon name='modules' />
+          <div>
+            <CardTitle>{t('Sidebar Personal Settings')}</CardTitle>
+            <CardDescription>
               {t('Customize sidebar display content')}
             </CardDescription>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className='space-y-4 p-3 sm:space-y-5 sm:p-5'>
-        {sectionDefs.map((section) => {
-          const sectionEnabled = config[section.key]?.enabled !== false
-          return (
-            <div
-              key={section.key}
-              className='bg-background/60 rounded-xl border p-3'
-            >
-              <div className='flex items-start justify-between gap-3'>
-                <div className='min-w-0'>
-                  <p className='text-sm font-medium'>{section.title}</p>
-                  <p className='text-muted-foreground text-xs'>
-                    {section.description}
-                  </p>
-                </div>
-                <Switch
-                  checked={sectionEnabled}
-                  onCheckedChange={(v) => toggleSection(section.key, v)}
-                />
-              </div>
-              <div className='mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-1'>
-                {section.modules.map((mod) => (
-                  <div
-                    key={mod.key}
-                    className={`flex min-h-16 items-center justify-between rounded-lg border p-3 ${
-                      sectionEnabled ? '' : 'opacity-50'
-                    }`}
-                  >
-                    <div className='mr-2 min-w-0'>
-                      <p className='truncate text-sm font-medium'>
-                        {mod.title}
-                      </p>
-                      <p className='text-muted-foreground truncate text-xs'>
-                        {mod.description}
-                      </p>
-                    </div>
-                    <Switch
-                      checked={config[section.key]?.[mod.key] !== false}
-                      onCheckedChange={(v) =>
-                        toggleModule(section.key, mod.key, v)
-                      }
-                      disabled={!sectionEnabled}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )
-        })}
-
-        <div className='flex flex-col-reverse gap-2 border-t pt-4 sm:flex-row sm:justify-end'>
-          <Button variant='outline' onClick={handleReset}>
-            {t('Reset to Default')}
+          <button
+            className='profile-module-more'
+            type='button'
+            title={t('Settings')}
+            aria-label={t('Sidebar Settings')}
+            onClick={() => setAdvanced(true)}
+          >
+            <Ellipsis size={16} />
+          </button>
+        </CardHeader>
+        <CardContent>{sectionDefs.slice(0, 2).map(renderSection)}</CardContent>
+      </Card>
+      <Card data-card-hover='false' className='profile-modules-personal'>
+        <CardContent>{renderSection(sectionDefs[2])}</CardContent>
+      </Card>
+      {dirty && (
+        <div className='profile-module-save' role='status'>
+          <Button
+            variant='outline'
+            onClick={() => {
+              setConfig(savedConfig.current)
+              setDirty(false)
+            }}
+            disabled={loading}
+          >
+            {t('Cancel')}
           </Button>
           <Button onClick={handleSave} disabled={loading}>
             {loading ? t('Saving...') : t('Save Changes')}
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      )}
+      <Dialog open={advanced} onOpenChange={setAdvanced}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('Sidebar Personal Settings')}</DialogTitle>
+          </DialogHeader>
+          {sectionDefs.map((section) => (
+            <div
+              className='flex items-center justify-between gap-4'
+              key={section.key}
+            >
+              <span>{section.title}</span>
+              <Switch
+                aria-label={section.title}
+                checked={config[section.key]?.enabled !== false}
+                disabled={loading}
+                onCheckedChange={(value) => toggleSection(section.key, value)}
+              />
+            </div>
+          ))}
+          <Button variant='outline' onClick={handleReset}>
+            {t('Reset to Default')}
+          </Button>
+          <Button
+            onClick={async () => {
+              await handleSave()
+            }}
+            disabled={loading}
+          >
+            {loading ? t('Saving...') : t('Save Changes')}
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }

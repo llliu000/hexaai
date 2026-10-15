@@ -16,13 +16,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Activity, BarChart3, WalletCards } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { StatusBadge } from '@/components/status-badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
-import { IconBadge, type IconBadgeTone } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getUserAvatarFallback, getUserAvatarStyle } from '@/lib/avatar'
 import { formatCompactNumber, formatQuota } from '@/lib/format'
@@ -30,6 +28,7 @@ import { getRoleLabel } from '@/lib/roles'
 
 import { getDisplayName } from '../lib'
 import type { UserProfile } from '../types'
+import { DesignIcon, type DesignIconName } from './design-icon'
 
 // ============================================================================
 // Profile Header Component
@@ -88,29 +87,27 @@ export function ProfileHeader({ profile, loading }: ProfileHeaderProps) {
     label: string
     value: string
     description: string
-    icon: typeof WalletCards
-    tone: IconBadgeTone
+    icon: DesignIconName
   }[] = [
     {
       label: t('Current Balance'),
       value: formatQuota(profile.quota),
-      description: t('Remaining quota'),
-      icon: WalletCards,
-      tone: 'success',
+      description: t('profile.design.remainingQuota', {
+        defaultValue: '剩余额度',
+      }),
+      icon: 'balance',
     },
     {
       label: t('Total Usage'),
       value: formatQuota(profile.used_quota),
       description: t('Total consumed quota'),
-      icon: BarChart3,
-      tone: 'info',
+      icon: 'usage',
     },
     {
       label: t('API Requests'),
       value: formatCompactNumber(profile.request_count),
       description: t('Total requests made'),
-      icon: Activity,
-      tone: 'chart-4',
+      icon: 'requests',
     },
   ]
 
@@ -127,7 +124,7 @@ export function ProfileHeader({ profile, loading }: ProfileHeaderProps) {
             </AvatarFallback>
           </Avatar>
 
-          <div className='min-w-0 flex-1 space-y-1.5 sm:space-y-3'>
+          <div className='profile-identity min-w-0 flex-1'>
             <div className='flex min-w-0 items-center gap-2'>
               <h1 className='truncate text-xl font-semibold tracking-tight sm:text-2xl'>
                 {displayName}
@@ -148,13 +145,13 @@ export function ProfileHeader({ profile, loading }: ProfileHeaderProps) {
               <span className='truncate'>@{profile.username}</span>
               {profile.email && (
                 <>
-                  <span>•</span>
+                  <span>·</span>
                   <span className='truncate'>{profile.email}</span>
                 </>
               )}
               {profile.group && (
                 <>
-                  <span>•</span>
+                  <span>·</span>
                   <span className='truncate'>{profile.group}</span>
                 </>
               )}
@@ -167,9 +164,7 @@ export function ProfileHeader({ profile, loading }: ProfileHeaderProps) {
           {stats.map((item) => (
             <div key={item.label} className='min-w-0 px-3 py-3 sm:px-5 sm:py-4'>
               <div className='flex items-center gap-2'>
-                <IconBadge tone={item.tone} size='stat'>
-                  <item.icon />
-                </IconBadge>
+                <DesignIcon name={item.icon} />
                 <div className='text-muted-foreground truncate text-xs font-medium tracking-wider uppercase'>
                   {item.label}
                 </div>

@@ -36,7 +36,7 @@ export function CTA(props: CTAProps) {
   }
 
   return (
-    <section className='relative z-10 overflow-hidden px-6 py-24 md:py-32'>
+    <section className='lujiyun-home-cta relative z-10 overflow-hidden px-6 py-24 md:py-32'>
       {/* Gradient mesh background */}
       <div
         aria-hidden

@@ -111,13 +111,17 @@ export function PerformanceOverview() {
 
   return (
     <div className='overflow-hidden rounded-lg border'>
-      <div className='flex flex-wrap items-center gap-x-5 gap-y-2.5 px-4 py-2.5 sm:px-5 sm:py-3'>
+      <div className='flex flex-wrap items-center gap-x-5 gap-y-2.5 px-[15px] py-2.5 sm:py-3'>
         {/* Title */}
-        <div className='flex items-center gap-1.5'>
-          <IconBadge tone='success' size='xs'>
+        <div className='flex items-center gap-[11px]'>
+          <IconBadge
+            tone='success'
+            size='xs'
+            className='size-9 rounded-full [&>svg]:size-5'
+          >
             <HeartPulse />
           </IconBadge>
-          <span className='text-xs font-semibold whitespace-nowrap'>
+          <span className='text-[13px] font-semibold whitespace-nowrap'>
             {t('Performance health')}
           </span>
         </div>
@@ -189,7 +193,7 @@ function InlineMetric(props: {
       <IconBadge tone={props.tone} size='xs'>
         <Icon />
       </IconBadge>
-      <span className='text-muted-foreground text-[11px]'>{props.label}</span>
+      <span className='text-muted-foreground text-xs'>{props.label}</span>
       <span
         className={cn(
           'font-mono text-xs font-semibold tabular-nums',
@@ -207,7 +211,7 @@ function ModelBadge(props: { model: PerfModelSummary }) {
 
   return (
     <span className='bg-muted/50 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1'>
-      <span className='max-w-[10rem] truncate font-mono text-[11px]'>
+      <span className='max-w-[10rem] truncate font-mono text-[12px]'>
         {model.model_name}
       </span>
       <span
@@ -219,7 +223,7 @@ function ModelBadge(props: { model: PerfModelSummary }) {
       />
       <span
         className={cn(
-          'font-mono text-[11px] font-semibold tabular-nums',
+          'font-mono text-[12px] font-semibold tabular-nums',
           getSuccessRateTextClass(model.success_rate)
         )}
       >

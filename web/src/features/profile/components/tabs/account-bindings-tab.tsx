@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Mail, Shield, Send, Link2, Unlink } from 'lucide-react'
+import { Shield, Send, Link2, Unlink } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SiGithub, SiWechat, SiLinux } from 'react-icons/si'
@@ -54,6 +54,7 @@ import {
   type CustomOAuthBinding,
 } from '../../api'
 import type { UserProfile, BindingItem } from '../../types'
+import { ProfileMailIcon } from '../design-icon'
 import { EmailBindDialog } from '../dialogs/email-bind-dialog'
 import { TelegramBindDialog } from '../dialogs/telegram-bind-dialog'
 import { WeChatBindDialog } from '../dialogs/wechat-bind-dialog'
@@ -298,7 +299,7 @@ export function AccountBindingsTab({
       {
         id: 'email',
         label: t('Email'),
-        icon: Mail,
+        icon: ProfileMailIcon,
         value: profile.email,
         isBound: Boolean(profile.email),
         isEnabled: true,

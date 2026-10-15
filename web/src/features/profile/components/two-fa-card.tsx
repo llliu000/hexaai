@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Shield, AlertTriangle, RefreshCw } from 'lucide-react'
+import { AlertTriangle, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { StatusBadge } from '@/components/status-badge'
@@ -28,11 +28,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { IconBadge } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDialogs } from '@/hooks/use-dialog'
 
 import { useTwoFA } from '../hooks'
+import { DesignIcon } from './design-icon'
 import { TwoFABackupDialog } from './dialogs/two-fa-backup-dialog'
 import { TwoFADisableDialog } from './dialogs/two-fa-disable-dialog'
 import { TwoFASetupDialog } from './dialogs/two-fa-setup-dialog'
@@ -54,7 +54,10 @@ export function TwoFACard({ loading: pageLoading }: TwoFACardProps) {
 
   if (pageLoading || loading) {
     return (
-      <Card data-card-hover='false' className='gap-0 overflow-hidden py-0'>
+      <Card
+        data-card-hover='false'
+        className='profile-auth profile-two-factor gap-0 overflow-hidden py-0'
+      >
         <CardHeader className='p-3 sm:p-5'>
           <Skeleton className='h-6 w-48' />
           <Skeleton className='mt-2 h-4 w-64' />
@@ -68,7 +71,10 @@ export function TwoFACard({ loading: pageLoading }: TwoFACardProps) {
 
   return (
     <>
-      <Card data-card-hover='false' className='gap-0 overflow-hidden py-0'>
+      <Card
+        data-card-hover='false'
+        className='profile-auth profile-two-factor gap-0 overflow-hidden py-0'
+      >
         <CardHeader className='p-3 sm:p-5'>
           <CardTitle className='text-lg tracking-tight sm:text-xl'>
             {t('Two-Factor Authentication')}
@@ -83,9 +89,7 @@ export function TwoFACard({ loading: pageLoading }: TwoFACardProps) {
             {/* Status Section */}
             <div className='flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between xl:flex-col 2xl:flex-row'>
               <div className='flex items-start gap-4'>
-                <IconBadge tone='success' size='sm'>
-                  <Shield />
-                </IconBadge>
+                <DesignIcon name='two-factor' />
                 <div className='space-y-1'>
                   <div className='flex items-center gap-2'>
                     <p className='font-medium'>{t('Two-Step Verification')}</p>

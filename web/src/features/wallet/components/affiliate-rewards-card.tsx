@@ -16,14 +16,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Share2 } from 'lucide-react'
+import { CircleHelp, Clock3, Info, UsersRound, Wallet } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { CopyButton } from '@/components/copy-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { IconBadge } from '@/components/ui/icon-badge'
 import { Input } from '@/components/ui/input'
+import { PageIcon, type PageIconTone } from '@/components/ui/page-icon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatQuota } from '@/lib/format'
 
@@ -61,57 +61,101 @@ export function AffiliateRewardsCard({
   }
 
   const hasRewards = (user?.aff_quota ?? 0) > 0
+  const stats: {
+    label: string
+    value: string
+    icon: typeof Wallet
+    tone: PageIconTone
+  }[] = [
+    {
+      label: t('Pending'),
+      value: formatQuota(user?.aff_quota ?? 0),
+      icon: Clock3,
+      tone: 'green',
+    },
+    {
+      label: t('Total Earned'),
+      value: formatQuota(user?.aff_history_quota ?? 0),
+      icon: Wallet,
+      tone: 'blue',
+    },
+    {
+      label: t('Invites'),
+      value: String(user?.aff_count ?? 0),
+      icon: UsersRound,
+      tone: 'amber',
+    },
+  ]
 
   return (
-    <Card data-card-hover='false' className='bg-muted/20 py-0'>
-      <CardContent className='grid gap-3 p-3 sm:gap-4 sm:p-4 lg:grid-cols-[minmax(200px,1fr)_minmax(180px,0.65fr)_minmax(280px,1fr)] lg:items-center'>
-        <div className='flex min-w-0 items-center gap-2.5'>
-          <IconBadge tone='chart-3'>
-            <Share2 />
-          </IconBadge>
+    <Card data-card-hover='false' className='wallet-affiliate-card'>
+      <CardContent className='wallet-affiliate-content'>
+        <div className='wallet-affiliate-intro'>
+          <PageIcon icon={UsersRound} tone='purple' />
           <div className='min-w-0'>
             <h3 className='truncate text-sm font-semibold'>
               {t('Referral Program')}
             </h3>
-            <p className='text-muted-foreground line-clamp-1 text-xs'>
+            <p className='text-muted-foreground text-xs'>
               {t(
                 'Earn rewards when users join through your referral link. Transfer accumulated rewards to your balance anytime.'
               )}
             </p>
           </div>
+          {!complianceConfirmed && (
+            <p className='wallet-affiliate-notice'>
+              <Info size={17} />
+              {t(
+                'Referral reward transfer is disabled until the administrator confirms compliance terms.'
+              )}
+            </p>
+          )}
         </div>
 
-        <div className='grid grid-cols-3 gap-1.5 text-center'>
-          {[
-            [t('Pending'), formatQuota(user?.aff_quota ?? 0)],
-            [t('Total Earned'), formatQuota(user?.aff_history_quota ?? 0)],
-            [t('Invites'), String(user?.aff_count ?? 0)],
-          ].map(([label, value]) => (
-            <div key={label}>
-              <div className='text-muted-foreground truncate text-[10px] font-medium tracking-wider uppercase'>
-                {label}
+        <div className='wallet-affiliate-stats'>
+          {stats.map((item) => (
+            <div key={item.label}>
+              <PageIcon
+                icon={item.icon}
+                tone={item.tone}
+                className='wallet-referral-stat-icon'
+              />
+              <div className='text-muted-foreground truncate text-[12px] font-medium tracking-wider uppercase'>
+                {item.label}
+                <CircleHelp size={12} aria-hidden='true' />
               </div>
               <div className='mt-0.5 truncate text-sm font-semibold tabular-nums'>
-                {value}
+                {item.value}
               </div>
             </div>
           ))}
         </div>
 
-        <div className='flex items-center gap-2'>
-          <Input
-            value={affiliateLink}
-            readOnly
-            className='border-muted bg-background/70 h-9 min-w-0 flex-1 font-mono text-xs'
-          />
-          <CopyButton
-            value={affiliateLink}
-            variant='outline'
-            className='bg-background size-9 shrink-0'
-            iconClassName='size-4'
-            tooltip={t('Copy referral link')}
-            aria-label={t('Copy referral link')}
-          />
+        <div className='wallet-affiliate-link'>
+          <label htmlFor='wallet-referral-link'>
+            {t('Referral Link', { defaultValue: '推荐链接' })}
+          </label>
+          <div className='wallet-affiliate-link-control'>
+            <Input
+              id='wallet-referral-link'
+              value={affiliateLink}
+              readOnly
+              className='border-muted bg-background/70 h-9 min-w-0 flex-1 font-mono text-xs'
+            />
+            <CopyButton
+              value={affiliateLink}
+              variant='outline'
+              className='bg-background size-9 shrink-0'
+              iconClassName='size-4'
+              tooltip={t('Copy referral link')}
+              aria-label={t('Copy referral link')}
+            />
+          </div>
+          <p>
+            {t('Share your link to invite friends and earn more rewards.', {
+              defaultValue: '分享链接邀请好友，获得更多奖励',
+            })}
+          </p>
           {hasRewards && (
             <Button
               onClick={onTransfer}
@@ -123,13 +167,6 @@ export function AffiliateRewardsCard({
             </Button>
           )}
         </div>
-        {!complianceConfirmed ? (
-          <p className='text-muted-foreground text-xs lg:col-span-3'>
-            {t(
-              'Referral reward transfer is disabled until the administrator confirms compliance terms.'
-            )}
-          </p>
-        ) : null}
       </CardContent>
     </Card>
   )

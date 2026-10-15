@@ -511,6 +511,7 @@ export function CommonLogsFilterBar<TData>(
 
   return (
     <LogsFilterToolbar
+      className='usage-logs-filter-card'
       table={props.table}
       stats={statsBar}
       actionStart={

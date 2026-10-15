@@ -112,7 +112,7 @@ export function Features(_props: FeaturesProps) {
             (step, i) => (
               <div key={step} className='flex items-center gap-2'>
                 <div
-                  className={`flex size-6 items-center justify-center rounded-full text-[10px] font-bold ${
+                  className={`flex size-6 items-center justify-center rounded-full text-[12px] font-bold ${
                     i === 1
                       ? 'border border-blue-500/30 bg-blue-500/20 text-blue-500'
                       : 'border-border/40 bg-muted text-muted-foreground border'
@@ -141,7 +141,7 @@ export function Features(_props: FeaturesProps) {
             {['API', 'SDK', 'CLI', 'Docs'].map((n) => (
               <div
                 key={n}
-                className='border-background from-muted to-muted/60 text-muted-foreground flex size-8 items-center justify-center rounded-full border-2 bg-gradient-to-br text-[9px] font-bold'
+                className='border-background from-muted to-muted/60 text-muted-foreground flex size-8 items-center justify-center rounded-full border-2 bg-gradient-to-br text-[12px] font-bold'
               >
                 {n}
               </div>
@@ -180,7 +180,7 @@ export function Features(_props: FeaturesProps) {
   ]
 
   return (
-    <section className='relative z-10 px-6 py-24 md:py-32'>
+    <section className='lujiyun-home-features relative z-10 px-6 py-24 md:py-32'>
       <div className='mx-auto max-w-6xl'>
         <AnimateInView className='mb-16 max-w-lg'>
           <p className='text-muted-foreground mb-3 text-xs font-medium tracking-widest uppercase'>
@@ -203,7 +203,7 @@ export function Features(_props: FeaturesProps) {
               className={`bg-background group hover:bg-muted/20 p-7 transition-colors duration-300 md:p-8 ${f.span}`}
             >
               <div className='mb-3 flex items-center gap-3'>
-                <span className='border-border/40 bg-muted text-muted-foreground flex size-7 items-center justify-center rounded-md border text-[10px] font-semibold tabular-nums'>
+                <span className='border-border/40 bg-muted text-muted-foreground flex size-7 items-center justify-center rounded-md border text-[12px] font-semibold tabular-nums'>
                   {f.num}
                 </span>
                 <h3 className='text-sm font-semibold'>{f.title}</h3>

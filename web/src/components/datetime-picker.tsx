@@ -46,6 +46,7 @@ interface DateTimePickerProps {
   onChange?: (date: Date | undefined) => void
   placeholder?: string
   className?: string
+  compact?: boolean
 }
 
 export function DateTimePicker({
@@ -53,6 +54,7 @@ export function DateTimePicker({
   onChange,
   placeholder,
   className,
+  compact = false,
 }: DateTimePickerProps) {
   const { t, i18n } = useTranslation()
   const placeholderText = placeholder ?? t('Select date')
@@ -65,6 +67,7 @@ export function DateTimePicker({
   const [time, setTime] = React.useState<string>('00:00')
 
   React.useEffect(() => {
+    // eslint-disable-next-line react/set-state-in-effect -- External expiry presets must synchronize the calendar and time controls.
     setDate(value)
     setMonth(value)
     if (value) {
@@ -139,16 +142,39 @@ export function DateTimePicker({
             startMonth={new Date(currentYear - 100, 0)}
             endMonth={new Date(currentYear + 100, 11)}
           />
+          {compact && (
+            <div className='flex items-center gap-2 border-t p-3'>
+              <Input
+                type='time'
+                aria-label={t('Time')}
+                value={time}
+                onChange={handleTimeChange}
+                disabled={!date}
+              />
+              <Button
+                type='button'
+                variant='outline'
+                onClick={() => {
+                  handleClear()
+                  setOpen(false)
+                }}
+              >
+                {t('Never')}
+              </Button>
+            </div>
+          )}
         </PopoverContent>
       </Popover>
-      <Input
-        type='time'
-        value={time}
-        onChange={handleTimeChange}
-        className='w-32 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none'
-        disabled={!date}
-      />
-      {date && (
+      {!compact && (
+        <Input
+          type='time'
+          value={time}
+          onChange={handleTimeChange}
+          className='w-32 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none'
+          disabled={!date}
+        />
+      )}
+      {date && !compact && (
         <Button
           type='button'
           variant='outline'

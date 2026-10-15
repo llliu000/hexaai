@@ -1,0 +1,241 @@
+/*
+Copyright (C) 2023-2026 QuantumNous
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+For commercial licensing, please contact support@quantumnous.com
+*/
+.hero-config-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.hero-config-global {
+  display: grid;
+  grid-template-columns:
+    max-content max-content max-content minmax(150px, 180px)
+    minmax(160px, 220px);
+  align-items: center;
+  gap: 16px 24px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.hero-config-global > * {
+  white-space: nowrap;
+}
+.hero-config-global .hero-config-field {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+.hero-config-global .hero-config-field input,
+.hero-config-global .hero-config-field select {
+  width: 100%;
+}
+.hero-config-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.hero-config-check input {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+.hero-config-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.hero-config-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.hero-config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hero-config-list-row {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--card);
+}
+.hero-config-list-row[data-selected='true'] {
+  border-color: var(--primary);
+  background: color-mix(in oklch, var(--primary) 5%, var(--card));
+}
+.hero-config-select {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  width: 100%;
+  min-width: 0;
+}
+.hero-config-select strong {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.hero-config-select > span {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.hero-config-row-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.hero-config-edit {
+  min-width: 0;
+  padding-left: 24px;
+  border-left: 1px solid var(--border);
+}
+.hero-config-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.hero-config-action-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+.hero-config-action-row .hero-config-field {
+  min-width: 0;
+}
+.hero-config-action-options {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+}
+.hero-config-field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.hero-config-field:has(textarea),
+.hero-config-language {
+  grid-column: 1 / -1;
+}
+.hero-config-field select,
+.hero-config-field > input[type='number'],
+.hero-config-language select {
+  min-height: 36px;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+}
+.hero-config-fields legend {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.hero-config-swatches {
+  display: flex;
+  gap: 10px;
+}
+.hero-config-swatches button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 3px solid var(--background);
+  box-shadow: 0 0 0 1px var(--border);
+}
+.hero-config-swatches button[aria-pressed='true'] {
+  box-shadow: 0 0 0 2px var(--primary);
+}
+.hero-config-language {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+.hero-config-language label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+}
+.hero-config-add-locale {
+  min-height: 36px;
+  padding: 8px 12px;
+  background: var(--muted);
+  font-size: 14px;
+  border-radius: 6px;
+}
+.hero-config-notice {
+  padding: 12px 16px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-size: 14px;
+  line-height: 22px;
+  border-radius: 6px;
+}
+.hero-config-preview-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.hero-config-preview {
+  margin-inline: auto;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.hero-config-preview-desktop {
+  width: 1100px;
+}
+.hero-config-preview-mobile {
+  width: 390px;
+}
+@media (max-width: 900px) {
+  .hero-config-layout {
+    grid-template-columns: 1fr;
+  }
+  .hero-config-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .hero-config-edit {
+    border-left: 0;
+    padding-left: 0;
+  }
+}
+@media (max-width: 520px) {
+  .hero-config-fields,
+  .hero-config-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hero-config-action-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,15 @@
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 78">
+<circle id="Ellipse / Icon Background" cx="18" cy="18" r="18" fill="#F1EDFF"/>
+<g id="Icon / sparkles" clip-path="url(#clip0_1568_35442)">
+<path id="Vector" d="M18 11.25L16.875 14.625L13.5 15.75L16.875 16.875L18 20.25L19.125 16.875L22.5 15.75L19.125 14.625L18 11.25Z" stroke="#7D5CF5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_2" d="M12.75 21L12.225 22.725L10.5 23.25L12.225 23.775L12.75 25.5L13.275 23.775L15 23.25L13.275 22.725L12.75 21Z" stroke="#7D5CF5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Vector_3" d="M23.25 19.5L22.725 21.225L21 21.75L22.725 22.275L23.25 24L23.775 22.275L25.5 21.75L23.775 21.225L23.25 19.5Z" stroke="#7D5CF5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_1568_35442">
+<rect width="18" height="18" fill="white" transform="translate(9 9)"/>
+</clipPath>
+</defs>
+</svg>

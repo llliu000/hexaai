@@ -105,7 +105,7 @@ export function GroupRatioBadge(props: GroupRatioBadgeProps) {
     <Badge
       variant='outline'
       className={cn(
-        'max-w-full truncate text-[10px] sm:text-xs',
+        'max-w-full truncate text-[11px] sm:text-xs',
         getRatioBadgeClassName(props.ratio, props.isAuto === true)
       )}
     >

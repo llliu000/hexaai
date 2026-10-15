@@ -16,6 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { SystemLogo } from '@/components/system-logo'
 import { cn } from '@/lib/utils'
 
 interface HeaderLogoProps {
@@ -28,7 +29,7 @@ interface HeaderLogoProps {
 
 /**
  * Logo component for header with loading state
- * Shows image only when fully loaded for smooth UX
+ * Uses the inline system mark or the configured custom logo.
  */
 export function HeaderLogo({
   src,
@@ -38,11 +39,11 @@ export function HeaderLogo({
   className,
 }: HeaderLogoProps) {
   return (
-    <img
+    <SystemLogo
       src={src}
       alt={alt}
       className={cn(
-        'h-6 w-6 rounded-full transition-opacity duration-200',
+        'h-6 w-6 transition-opacity duration-200',
         !loading && logoLoaded ? 'opacity-100' : 'opacity-0',
         className
       )}

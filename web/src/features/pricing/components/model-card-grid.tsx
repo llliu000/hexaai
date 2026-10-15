@@ -72,8 +72,17 @@ export function ModelCardGrid(props: ModelCardGridProps) {
   }
 
   return (
-    <div className='space-y-4 sm:space-y-5'>
-      <div className='grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3'>
+    <div className='lanhu-model-results space-y-4 sm:space-y-5'>
+      <div className='lanhu-model-results-heading flex-wrap'>
+        <div className='lanhu-model-heading-copy'>
+          <h2>{t('Model selection')}</h2>
+          <p>{t('Compare model capabilities and pricing')}</p>
+        </div>
+        <span className='lanhu-model-results-count'>
+          {t('{{count}} models on this page', { count: pagedModels.length })}
+        </span>
+      </div>
+      <div className='lanhu-model-grid grid gap-4'>
         {pagedModels.map((model) => (
           <ModelCard
             key={model.id ?? model.model_name}
@@ -90,14 +99,14 @@ export function ModelCardGrid(props: ModelCardGridProps) {
       </div>
 
       {totalPages > 1 && (
-        <div className='text-muted-foreground flex flex-col items-center justify-between gap-3 border-t px-4 py-3 text-sm sm:flex-row'>
-          <p className='text-muted-foreground'>
+        <div className='lanhu-model-pagination text-muted-foreground flex flex-col items-center justify-between gap-3 border-t px-4 py-3 text-sm sm:flex-row'>
+          <p className='lanhu-model-pagination-summary text-muted-foreground'>
             {t('Page {{current}} of {{total}}', {
               current: currentPage,
               total: totalPages,
             })}
           </p>
-          <div className='flex items-center gap-2'>
+          <div className='lanhu-model-pagination-controls flex flex-wrap items-center justify-center gap-2'>
             <Button
               type='button'
               variant='outline'
@@ -109,6 +118,25 @@ export function ModelCardGrid(props: ModelCardGridProps) {
               <ChevronLeft className='size-4' />
               {t('Previous page')}
             </Button>
+            {Array.from({ length: Math.min(5, totalPages) }, (_, index) => {
+              const firstPage = Math.max(
+                1,
+                Math.min(currentPage - 2, totalPages - 4)
+              )
+              const pageNumber = firstPage + index
+              return (
+                <Button
+                  key={pageNumber}
+                  type='button'
+                  variant={currentPage === pageNumber ? 'secondary' : 'ghost'}
+                  size='icon-sm'
+                  aria-current={currentPage === pageNumber ? 'page' : undefined}
+                  onClick={() => setPage(pageNumber)}
+                >
+                  {pageNumber}
+                </Button>
+              )
+            })}
             <Button
               type='button'
               variant='outline'

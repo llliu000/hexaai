@@ -16,28 +16,51 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { type SVGProps } from 'react'
+import { useId, type SVGProps } from 'react'
 
+import { DEFAULT_SYSTEM_NAME } from '@/lib/constants'
+import {
+  SYSTEM_LOGO_PATH,
+  SYSTEM_LOGO_STOPS,
+  SYSTEM_LOGO_VIEW_BOX,
+} from '@/lib/system-logo'
 import { cn } from '@/lib/utils'
 
-export function Logo({ className, ...props }: SVGProps<SVGSVGElement>) {
+export function Logo(props: SVGProps<SVGSVGElement>) {
+  const gradientId = `system-logo-${useId()}`
   return (
     <svg
-      id='newapi-logo'
-      viewBox='0 0 24 24'
-      xmlns='http://www.w3.org/2000/svg'
-      height='24'
-      width='24'
-      fill='none'
-      stroke='currentColor'
-      strokeWidth='2'
-      strokeLinecap='round'
-      strokeLinejoin='round'
-      className={cn('size-6', className)}
       {...props}
+      data-system-logo='true'
+      viewBox={SYSTEM_LOGO_VIEW_BOX}
+      xmlns='http://www.w3.org/2000/svg'
+      height={props.height ?? 24}
+      width={props.width ?? 24}
+      fill='none'
+      focusable='false'
+      role={props.role ?? 'img'}
+      aria-label={props['aria-label'] ?? DEFAULT_SYSTEM_NAME}
+      className={cn('shrink-0', props.className)}
     >
-      <title>New API</title>
-      <path d='M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3' />
+      <defs>
+        <linearGradient
+          id={gradientId}
+          x1='16'
+          y1='16'
+          x2='216'
+          y2='168'
+          gradientUnits='userSpaceOnUse'
+        >
+          {SYSTEM_LOGO_STOPS.map((stop) => (
+            <stop
+              key={stop.offset}
+              offset={stop.offset}
+              stopColor={stop.color}
+            />
+          ))}
+        </linearGradient>
+      </defs>
+      <path d={SYSTEM_LOGO_PATH} fill={`url(#${gradientId})`} />
     </svg>
   )
 }

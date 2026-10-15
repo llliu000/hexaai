@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Gift, ExternalLink, Loader2, Receipt, WalletCards } from 'lucide-react'
+import { Gift, ExternalLink, Loader2, Receipt, Wallet } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -26,6 +26,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { IconBadge } from '@/components/ui/icon-badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PageIcon } from '@/components/ui/page-icon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TitledCard } from '@/components/ui/titled-card'
 import {
@@ -117,6 +118,7 @@ export function RechargeFormCard({
 
   useEffect(() => {
     // Empty string must survive, otherwise the field can never be cleared
+    // eslint-disable-next-line react/set-state-in-effect -- synchronize the draft with externally selected preset amounts
     setLocalAmount((prev) =>
       prev === '' && topupAmount === 0 ? prev : topupAmount.toString()
     )
@@ -196,10 +198,11 @@ export function RechargeFormCard({
 
   return (
     <TitledCard
+      className='wallet-recharge-card'
       title={t('Add Funds')}
       description={t('Choose an amount and payment method')}
-      icon={<WalletCards className='h-4 w-4' />}
-      iconTone='success'
+      icon={<PageIcon icon={Wallet} tone='green' />}
+      iconClassName='wallet-header-icon'
       disableHoverEffect
       action={
         onOpenBilling ? (
@@ -478,7 +481,7 @@ export function RechargeFormCard({
           )}
         </div>
       ) : (
-        <Alert>
+        <Alert className='wallet-topup-notice'>
           <AlertDescription>
             {t(
               'Online topup is not enabled. Please use redemption code or contact administrator.'

@@ -28,6 +28,7 @@ import {
 } from '@/components/status-badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { PageIcon } from '@/components/ui/page-icon'
 import { Progress } from '@/components/ui/progress'
 import {
   Select,
@@ -262,8 +263,8 @@ export function SubscriptionPlansCard({
       <TitledCard
         title={t('Subscription Plans')}
         description={t('Subscribe to a plan for model access')}
-        icon={<Crown className='h-4 w-4' />}
-        iconTone='warning'
+        icon={<PageIcon icon={Crown} tone='amber' />}
+        iconClassName='wallet-header-icon'
         disableHoverEffect
         contentClassName='space-y-4 sm:space-y-5'
       >

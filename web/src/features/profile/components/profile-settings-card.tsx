@@ -16,7 +16,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Link2, Settings } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -26,6 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { TitledCard } from '@/components/ui/titled-card'
 
 import type { UserProfile } from '../types'
+import { DesignIcon } from './design-icon'
 import { AccountBindingsTab } from './tabs/account-bindings-tab'
 import { NotificationTab } from './tabs/notification-tab'
 
@@ -67,8 +67,11 @@ export function ProfileSettingsCard({
   return (
     <TitledCard
       title={t('Settings')}
-      description={t('Configure your account preferences and integrations')}
-      icon={<Settings className='h-4 w-4' />}
+      description={t('profile.design.settingsDescription', {
+        defaultValue: '配置您的账户绑定和偏好',
+      })}
+      icon={<DesignIcon name='settings' />}
+      className='profile-settings'
       iconTone='info'
       disableHoverEffect
     >
@@ -78,7 +81,7 @@ export function ProfileSettingsCard({
             value='bindings'
             className='h-full gap-2 rounded-lg px-3 py-0 leading-none'
           >
-            <Link2 className='h-4 w-4' />
+            <DesignIcon name='binding' />
             <span className='hidden sm:inline'>{t('Account Bindings')}</span>
             <span className='sm:hidden'>{t('Bindings')}</span>
           </TabsTrigger>
@@ -86,7 +89,7 @@ export function ProfileSettingsCard({
             value='settings'
             className='h-full gap-2 rounded-lg px-3 py-0 leading-none'
           >
-            <Settings className='h-4 w-4' />
+            <DesignIcon name='preferences' />
             <span className='hidden sm:inline'>
               {t('Settings & Preferences')}
             </span>

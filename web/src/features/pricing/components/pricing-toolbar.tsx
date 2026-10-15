@@ -49,6 +49,7 @@ import { cn } from '@/lib/utils'
 
 import {
   VIEW_MODES,
+  FILTER_ALL,
   getSortLabels,
   type SortOption,
   type ViewMode,
@@ -64,6 +65,7 @@ type SegmentOption = {
 }
 
 export interface PricingToolbarProps {
+  search?: React.ReactNode
   filteredCount: number
   totalCount?: number
   sortBy: string
@@ -115,6 +117,7 @@ function SegmentedControl(props: {
             type='button'
             onClick={() => props.onChange(option.value)}
             aria-pressed={isActive}
+            aria-label={option.tooltip || option.label}
             className={cn(
               'inline-flex h-full items-center justify-center rounded-md text-xs font-medium transition-all',
               Icon && !option.label ? 'w-7' : 'gap-1.5 px-3',
@@ -134,7 +137,7 @@ function SegmentedControl(props: {
 
         return (
           <Tooltip key={option.value}>
-            <TooltipTrigger render={button}></TooltipTrigger>
+            <TooltipTrigger render={button} />
             <TooltipContent side='bottom' className='text-xs'>
               {option.tooltip}
             </TooltipContent>
@@ -166,39 +169,15 @@ export function PricingToolbar(props: PricingToolbarProps) {
   )
 
   return (
-    <div className='rounded-xl border p-3'>
-      <div className='flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between'>
-        <div className='flex items-center gap-2'>
-          <Button
-            type='button'
-            variant='outline'
-            size='sm'
-            onClick={() => setMobileFiltersOpen(true)}
-            className='gap-1.5 xl:hidden'
-          >
-            <Filter className='size-4' />
-            {t('Filter')}
-            {props.activeFilterCount > 0 && (
-              <Badge className='ml-0.5 size-5 justify-center p-0 text-[10px]'>
-                {props.activeFilterCount}
-              </Badge>
-            )}
-          </Button>
-
-          <div className='text-muted-foreground flex items-baseline gap-1 text-sm'>
-            <span className='text-foreground font-semibold tabular-nums'>
-              {props.filteredCount.toLocaleString()}
-            </span>
-            <span>{props.filteredCount === 1 ? t('model') : t('models')}</span>
-            {props.hasActiveFilters && props.totalCount && (
-              <span className='text-muted-foreground/60 text-xs'>
-                / {props.totalCount.toLocaleString()}
-              </span>
-            )}
+    <div className='lanhu-pricing-toolbar rounded-xl border p-3'>
+      <div className='lanhu-pricing-toolbar-controls flex flex-col gap-3 lg:flex-row lg:items-center'>
+        {props.search && (
+          <div className='lanhu-pricing-search min-w-0 flex-1'>
+            {props.search}
           </div>
-        </div>
+        )}
 
-        <div className='flex flex-wrap items-center gap-2'>
+        <div className='lanhu-pricing-actions flex flex-wrap items-center gap-2'>
           <div className='hidden items-center gap-2 sm:flex'>
             <SegmentedControl
               options={[
@@ -271,6 +250,70 @@ export function PricingToolbar(props: PricingToolbarProps) {
             ariaLabel={t('View mode')}
           />
         </div>
+      </div>
+
+      <div className='lanhu-pricing-toolbar-summary mt-2 flex items-center gap-2'>
+        <div className='flex items-center gap-2'>
+          <Button
+            type='button'
+            variant='outline'
+            size='sm'
+            onClick={() => setMobileFiltersOpen(true)}
+            className='gap-1.5 xl:hidden'
+          >
+            <Filter className='size-4' />
+            {t('Filter')}
+            {props.activeFilterCount > 0 && (
+              <Badge className='ml-0.5 size-5 justify-center p-0 text-[12px]'>
+                {props.activeFilterCount}
+              </Badge>
+            )}
+          </Button>
+
+          <div className='text-muted-foreground flex items-baseline gap-1 text-sm'>
+            <span className='text-foreground font-semibold tabular-nums'>
+              {props.filteredCount.toLocaleString()}
+            </span>
+            <span>{props.filteredCount === 1 ? t('model') : t('models')}</span>
+            {props.hasActiveFilters && props.totalCount && (
+              <span className='text-muted-foreground/60 text-xs'>
+                / {props.totalCount.toLocaleString()}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <dl className='lanhu-pricing-filter-values'>
+          <div>
+            <dt>{t('Provider')}</dt>
+            <dd>
+              {props.vendorFilter === FILTER_ALL
+                ? t('All')
+                : props.vendorFilter}
+            </dd>
+          </div>
+          <div>
+            <dt>{t('Capabilities')}</dt>
+            <dd>
+              {props.tagFilter === FILTER_ALL ? t('All') : props.tagFilter}
+            </dd>
+          </div>
+          <div>
+            <dt>{t('Price display mode')}</dt>
+            <dd>{props.showRechargePrice ? t('Recharge') : t('Standard')}</dd>
+          </div>
+        </dl>
+
+        <Button
+          type='button'
+          variant='ghost'
+          size='sm'
+          className='text-primary ml-auto'
+          onClick={props.onClearFilters}
+          disabled={!props.hasActiveFilters}
+        >
+          {t('Clear filters')}
+        </Button>
       </div>
 
       <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>

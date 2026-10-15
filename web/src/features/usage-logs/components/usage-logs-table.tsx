@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
-import { type ColumnDef } from '@tanstack/react-table'
+import type { ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
@@ -64,7 +64,9 @@ function getColumnVisibilityStorageKey(
 }
 
 function deserializeLogTypeFilter(value: unknown): unknown[] {
-  const values = Array.isArray(value) ? value : value ? [value] : []
+  let values: unknown[] = []
+  if (Array.isArray(value)) values = value
+  else if (value) values = [value]
   return values.filter((item) => String(item) !== LOG_TYPE_ALL_VALUE)
 }
 
@@ -178,6 +180,7 @@ export function UsageLogsTable({ logCategory }: UsageLogsTableProps) {
 
   return (
     <DataTablePage
+      className='usage-logs-table-layout'
       table={table}
       columns={columns as ColumnDef<Record<string, unknown>>[]}
       isLoading={isLoadingData}
@@ -186,6 +189,20 @@ export function UsageLogsTable({ logCategory }: UsageLogsTableProps) {
       emptyDescription={t(
         'No usage logs available. Logs will appear here once API calls are made.'
       )}
+      emptyIcon={
+        isCommon || logCategory === 'task' ? (
+          <img
+            src={
+              isCommon
+                ? '/lanhu/usage-logs-empty.png'
+                : '/lanhu/task-logs-empty.png'
+            }
+            alt=''
+            aria-hidden
+            className='usage-logs-empty-image'
+          />
+        ) : undefined
+      }
       skeletonKeyPrefix='usage-log-skeleton'
       applyHeaderSize
       tableClassName={cn(

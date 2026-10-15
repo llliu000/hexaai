@@ -16,8 +16,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { ChevronRight, Copy } from 'lucide-react'
-import { memo, type ReactNode } from 'react'
+import { ArrowRight, Copy } from 'lucide-react'
+import { memo, type KeyboardEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
@@ -31,10 +31,10 @@ import {
 } from '../lib/dynamic-price'
 import { parseTags } from '../lib/filters'
 import { isTokenBasedModel } from '../lib/model-helpers'
+import { getPricingVendorIcon } from '../lib/model-vendor-icon'
 import { formatPrice, formatRequestPrice } from '../lib/price'
 import type { PricingModel, TokenUnit } from '../types'
-import { ModelBillingModeBadge } from './model-billing-mode-badge'
-import { ModelPerfBadge, type ModelPerfBadgeData } from './model-perf-badge'
+import type { ModelPerfBadgeData } from './model-perf-badge'
 
 export interface ModelCardProps {
   model: PricingModel
@@ -58,10 +58,12 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
   const tokenUnitLabel = tokenUnit === 'K' ? '1K' : '1M'
   const tags = parseTags(props.model.tags)
   const groups = props.model.enable_groups || []
-  const endpoints = props.model.supported_endpoint_types || []
-  const modelIconKey = props.model.icon || props.model.vendor_icon
+  const modelIconKey = getPricingVendorIcon(props.model)
   const modelIcon = modelIconKey ? getLobeIcon(modelIconKey, 28) : null
-  const initial = props.model.model_name?.charAt(0).toUpperCase() || '?'
+  const initial =
+    (props.model.vendor_name?.trim() || props.model.model_name)
+      ?.charAt(0)
+      .toUpperCase() || '?'
   const isDynamicPricing =
     props.model.billing_mode === 'tiered_expr' &&
     Boolean(props.model.billing_expr)
@@ -80,15 +82,19 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
     : null
 
   const primaryGroup = groups[0]
-  const bottomTags = [...endpoints.slice(0, 2), ...tags.slice(0, 2)]
-  const hiddenCount =
-    Math.max(groups.length - 1, 0) +
-    Math.max(endpoints.length - 2, 0) +
-    Math.max(tags.length - 2, 0)
 
   const handleCopy = (e: React.MouseEvent) => {
     e.stopPropagation()
     copyToClipboard(props.model.model_name || '')
+  }
+
+  const handleCardKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      props.onClick()
+    }
   }
 
   let priceSummary: ReactNode
@@ -196,14 +202,21 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
   return (
     <div
       className={cn(
-        'group relative flex flex-col rounded-xl border p-3 transition-colors sm:p-5',
+        'lanhu-model-card group relative flex cursor-pointer flex-col rounded-xl border p-3 transition-colors sm:p-5',
         'hover:bg-muted/20'
       )}
+      role='button'
+      tabIndex={0}
+      onClick={props.onClick}
+      onKeyDown={handleCardKeyDown}
     >
-      {/* Header: icon + name + price + actions */}
-      <div className='flex items-start justify-between gap-2.5 sm:gap-3'>
-        <div className='flex min-w-0 items-start gap-2.5 sm:gap-3'>
-          <div className='bg-muted/40 flex size-9 shrink-0 items-center justify-center rounded-lg sm:size-10 sm:rounded-xl'>
+      {/* Header: model identity and actions */}
+      <div className='lanhu-model-card-header flex items-start justify-between gap-2.5 sm:gap-3'>
+        <div className='lanhu-model-card-identity flex min-w-0 items-start gap-2.5 sm:gap-3'>
+          <div
+            className='lanhu-model-card-logo bg-muted/40 text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg sm:size-10 sm:rounded-xl'
+            aria-hidden='true'
+          >
             {modelIcon || (
               <span className='text-muted-foreground text-sm font-bold'>
                 {initial}
@@ -211,28 +224,21 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
             )}
           </div>
           <div className='min-w-0'>
-            <h3 className='text-foreground truncate font-mono text-[15px] leading-tight font-bold'>
+            <h3
+              className='lanhu-model-card-name text-foreground truncate font-mono text-[15px] leading-tight font-bold'
+              title={props.model.model_name}
+            >
               {props.model.model_name}
             </h3>
-            <div className='mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-sm sm:mt-1 sm:gap-x-3'>
-              {priceSummary}
-            </div>
           </div>
         </div>
 
-        <div className='flex shrink-0 items-center gap-1.5'>
-          <button
-            type='button'
-            onClick={props.onClick}
-            className='text-muted-foreground hover:text-foreground hover:bg-muted inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs transition-colors sm:px-2.5 sm:py-1.5'
-          >
-            {t('Details')}
-            <ChevronRight className='size-3.5' />
-          </button>
+        <div className='lanhu-model-card-actions flex shrink-0 items-center gap-1.5'>
           <button
             type='button'
             onClick={handleCopy}
-            className='text-muted-foreground hover:text-foreground hover:bg-muted rounded-md border p-1.5 transition-colors'
+            className='lanhu-model-card-copy text-muted-foreground hover:text-foreground hover:bg-muted rounded-md border p-1.5 transition-colors'
+            aria-label={t('Copy')}
             title={t('Copy')}
           >
             <Copy className='size-3.5' />
@@ -240,38 +246,57 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
         </div>
       </div>
 
+      <div className='lanhu-model-tags'>
+        {(props.model.vendor_name || primaryGroup) && (
+          <span>{props.model.vendor_name || primaryGroup}</span>
+        )}
+        <span className='lanhu-model-billing-tag'>
+          {isDynamicPricing
+            ? t('Dynamic Pricing')
+            : t(isTokenBased ? 'Token-based' : 'Per Request')}
+        </span>
+        {tags.slice(0, 2).map((tag) => (
+          <span key={tag}>{tag}</span>
+        ))}
+      </div>
+      <div
+        className='lanhu-model-prices'
+        data-unit={isTokenBased ? `/${tokenUnitLabel}` : undefined}
+      >
+        {priceSummary}
+      </div>
+
       {/* Description */}
-      <p className='text-muted-foreground mt-2 line-clamp-1 flex-1 text-[13px] leading-relaxed sm:mt-4 sm:line-clamp-2 sm:min-h-[2.5rem]'>
+      <p className='lanhu-model-card-description text-muted-foreground mt-2 line-clamp-1 flex-1 text-[13px] leading-relaxed sm:mt-4 sm:line-clamp-2 sm:min-h-[2.5rem]'>
         {props.model.description || t('No description available.')}
       </p>
 
-      {/* Footer: left metadata and right performance summary share row alignment */}
-      <div className='mt-2 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-2 gap-y-1 sm:mt-4'>
-        <div className='flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1'>
-          {primaryGroup && (
-            <span className='text-muted-foreground text-sm font-medium'>
-              {primaryGroup}
-            </span>
-          )}
-          <ModelBillingModeBadge model={props.model} />
-        </div>
-        <ModelPerfBadge perf={props.perf} className='row-span-2 self-start' />
-
-        <div className='flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-0.5 sm:gap-x-3 sm:gap-y-1'>
-          {bottomTags.map((item) => (
-            <span key={item} className='text-muted-foreground/70 text-xs'>
-              {item}
-            </span>
-          ))}
-          <span className='text-muted-foreground/50 text-xs'>
-            {tokenUnitLabel}
-          </span>
-          {hiddenCount > 0 && (
-            <span className='text-muted-foreground/40 text-xs'>
-              +{hiddenCount}
-            </span>
-          )}
-        </div>
+      <div className='lanhu-model-footer'>
+        <span>
+          {t('Latency short')}{' '}
+          {props.perf && Number.isFinite(props.perf.avg_latency_ms)
+            ? `${(props.perf.avg_latency_ms / 1000).toFixed(1)}s`
+            : '—'}
+        </span>
+        <span>
+          {t('Context')}{' '}
+          {props.model.context_length
+            ? new Intl.NumberFormat('en', {
+                notation: 'compact',
+                maximumFractionDigits: 1,
+              }).format(props.model.context_length)
+            : '—'}
+        </span>
+        <button
+          type='button'
+          onClick={(e) => {
+            e.stopPropagation()
+            props.onClick()
+          }}
+        >
+          {t('Details')}
+          <ArrowRight className='size-3' aria-hidden />
+        </button>
       </div>
     </div>
   )

@@ -140,7 +140,7 @@ function SummaryField<TData>({
       className={cn('bg-muted/20 min-w-0 rounded-md px-2 py-1.5', className)}
     >
       {label != null && label !== '' && (
-        <div className='text-muted-foreground mb-1 text-[11px] leading-none font-medium select-none'>
+        <div className='text-muted-foreground mb-1 text-[12px] leading-none font-medium select-none'>
           {label}
         </div>
       )}
@@ -260,7 +260,7 @@ function MobileUserField({ log }: { log: UsageLog }) {
       <Avatar className='ring-border/60 size-6 shrink-0 ring-1'>
         <AvatarFallback
           className={cn(
-            'text-[11px] font-semibold',
+            'text-[12px] font-semibold',
             !sensitiveVisible && 'bg-muted text-muted-foreground'
           )}
           style={

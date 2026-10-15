@@ -539,7 +539,7 @@ function CodeSamplesSection(props: {
 
       <p className='text-muted-foreground mt-2 text-xs'>
         {t('Replace')}{' '}
-        <code className='bg-muted rounded px-1 py-0.5 font-mono text-[11px]'>
+        <code className='bg-muted rounded px-1 py-0.5 font-mono text-[12px]'>
           {'<YOUR_API_KEY>'}
         </code>{' '}
         {t('with the API key from your token settings.')}
@@ -734,11 +734,11 @@ function AuthSection() {
         <div className='space-y-1.5 text-xs leading-relaxed'>
           <p>
             {t('All requests must include')}{' '}
-            <code className='bg-muted rounded px-1 py-0.5 font-mono text-[11px]'>
+            <code className='bg-muted rounded px-1 py-0.5 font-mono text-[12px]'>
               Authorization: Bearer &lt;TOKEN&gt;
             </code>{' '}
             {t('header. Anthropic-formatted endpoints accept the')}{' '}
-            <code className='bg-muted rounded px-1 py-0.5 font-mono text-[11px]'>
+            <code className='bg-muted rounded px-1 py-0.5 font-mono text-[12px]'>
               x-api-key
             </code>{' '}
             {t('header instead.')}

@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import React, { useEffect, useState } from 'react';
+import { IconDelete, IconPlus } from '@douyinfe/semi-icons'
 import {
   Button,
   Empty,
@@ -25,128 +25,129 @@ import {
   InputNumber,
   Modal,
   Typography,
-} from '@douyinfe/semi-ui';
-import { IconDelete, IconPlus } from '@douyinfe/semi-icons';
-import { API, showError, showSuccess } from '../../../../helpers';
+} from '@douyinfe/semi-ui'
+import React, { useEffect, useState } from 'react'
 
-const { Text } = Typography;
+import { API, showError, showSuccess } from '../../../../helpers'
 
-const DISCOUNT_SCALE = 10000;
-const DECIMAL_DISCOUNT_PATTERN = /^\d+(\.\d{0,2})?$/;
+const { Text } = Typography
+
+const DISCOUNT_SCALE = 10000
+const DECIMAL_DISCOUNT_PATTERN = /^\d+(\.\d{0,2})?$/
 
 const formatStoredDiscount = (discount) => {
-  return Number((Number(discount) / DISCOUNT_SCALE).toFixed(2));
-};
+  return Number((Number(discount) / DISCOUNT_SCALE).toFixed(2))
+}
 
 const createRow = (model = '', discount = 1) => ({
   id: `${Date.now()}-${Math.random()}`,
   model,
   discount,
-});
+})
 
 const parseModelDiscounts = (user) => {
   if (!user?.setting) {
-    return {};
+    return {}
   }
   try {
-    const setting = JSON.parse(user.setting);
+    const setting = JSON.parse(user.setting)
     if (
       setting?.model_discounts &&
       typeof setting.model_discounts === 'object' &&
       !Array.isArray(setting.model_discounts)
     ) {
-      return setting.model_discounts;
+      return setting.model_discounts
     }
   } catch (e) {
-    return {};
+    return {}
   }
-  return {};
-};
+  return {}
+}
 
 const modelDiscountsToRows = (user) => {
   return Object.entries(parseModelDiscounts(user)).map(([model, discount]) =>
-    createRow(model, formatStoredDiscount(discount)),
-  );
-};
+    createRow(model, formatStoredDiscount(discount))
+  )
+}
 
 const normalizeModelDiscounts = (rows) => {
-  const normalized = {};
+  const normalized = {}
   for (const row of rows) {
-    const model = row.model.trim();
-    const discountText = String(row.discount).trim();
-    const discount = Number(discountText);
+    const model = row.model.trim()
+    const discountText = String(row.discount).trim()
+    const discount = Number(discountText)
     if (
       !model ||
       !DECIMAL_DISCOUNT_PATTERN.test(discountText) ||
       !Number.isFinite(discount) ||
       discount <= 0
     ) {
-      return null;
+      return null
     }
     if (normalized[model] !== undefined) {
-      return null;
+      return null
     }
-    normalized[model] = Math.round(discount * DISCOUNT_SCALE);
+    normalized[model] = Math.round(discount * DISCOUNT_SCALE)
   }
-  return normalized;
-};
+  return normalized
+}
 
 const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
-  const [rows, setRows] = useState([]);
-  const [saving, setSaving] = useState(false);
+  const [rows, setRows] = useState([])
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (visible) {
-      setRows(modelDiscountsToRows(user));
+      setRows(modelDiscountsToRows(user))
     }
-  }, [visible, user]);
+  }, [visible, user])
 
   const addRow = () => {
-    setRows((currentRows) => [...currentRows, createRow()]);
-  };
+    setRows((currentRows) => [...currentRows, createRow()])
+  }
 
   const updateRow = (id, field, value) => {
     setRows((currentRows) =>
       currentRows.map((row) =>
-        row.id === id ? { ...row, [field]: value } : row,
-      ),
-    );
-  };
+        row.id === id ? { ...row, [field]: value } : row
+      )
+    )
+  }
 
   const removeRow = (id) => {
-    setRows((currentRows) => currentRows.filter((row) => row.id !== id));
-  };
+    setRows((currentRows) => currentRows.filter((row) => row.id !== id))
+  }
 
   const handleSave = async () => {
     if (!user?.id) {
-      return;
+      return
     }
-    const modelDiscounts = normalizeModelDiscounts(rows);
+    const modelDiscounts = normalizeModelDiscounts(rows)
     if (!modelDiscounts) {
-      showError(t('请填写不重复的模型名称，折扣值必须是最多两位小数的正数'));
-      return;
+      showError(t('请填写不重复的模型名称，折扣值必须是最多两位小数的正数'))
+      return
     }
 
-    setSaving(true);
+    setSaving(true)
     try {
       const res = await API.put(
         `/api/user/${user.id}/model_discounts`,
-        modelDiscounts,
-      );
-      const { success, message } = res.data;
+        modelDiscounts
+      )
+      const { success, message } = res.data
       if (success) {
-        showSuccess(t('折扣配置已更新'));
-        onSuccess?.();
-        onCancel?.();
+        showSuccess(t('折扣配置已更新'))
+        onSuccess?.()
+        onCancel?.()
       } else {
-        showError(message || t('保存失败'));
+        showError(message || t('保存失败'))
       }
     } catch (e) {
-      showError(t('请求失败'));
+      showError(t('请求失败'))
     } finally {
-      setSaving(false);
+      setSaving(false)
     }
-  };
+  }
 
   return (
     <Modal
@@ -179,10 +180,13 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
           </Button>
         </div>
         {rows.length === 0 ? (
-          <Empty description={t('暂无折扣配置')} style={{ padding: '32px 0' }} />
+          <Empty
+            description={t('暂无折扣配置')}
+            style={{ padding: '32px 0' }}
+          />
         ) : (
           <div className='space-y-2'>
-            <div className='grid grid-cols-[1fr_150px_36px] gap-2 text-xs px-1'>
+            <div className='grid grid-cols-[1fr_150px_36px] gap-2 px-1 text-xs'>
               <Text type='tertiary'>{t('模型名称')}</Text>
               <Text type='tertiary'>{t('折扣值')}</Text>
               <span />
@@ -190,7 +194,7 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
             {rows.map((row) => (
               <div
                 key={row.id}
-                className='grid grid-cols-[1fr_150px_36px] gap-2 items-center'
+                className='grid grid-cols-[1fr_150px_36px] items-center gap-2'
               >
                 <Input
                   value={row.model}
@@ -207,7 +211,7 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
                     updateRow(
                       row.id,
                       'discount',
-                      value === '' || value == null ? '' : value,
+                      value === '' || value == null ? '' : value
                     )
                   }
                   style={{ width: '100%' }}
@@ -227,7 +231,7 @@ const UserModelDiscountsModal = ({ visible, onCancel, user, t, onSuccess }) => {
         </Text>
       </div>
     </Modal>
-  );
-};
+  )
+}
 
-export default UserModelDiscountsModal;
+export default UserModelDiscountsModal

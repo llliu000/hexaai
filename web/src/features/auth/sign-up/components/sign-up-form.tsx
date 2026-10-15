@@ -255,7 +255,11 @@ export function SignUpForm({
             <FormItem>
               <FormLabel>{t('Username')}</FormLabel>
               <FormControl>
-                <Input placeholder={t('Enter your username')} {...field} />
+                <Input
+                  placeholder={t('Enter your username')}
+                  autoComplete='username'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -272,6 +276,7 @@ export function SignUpForm({
               <FormControl>
                 <PasswordInput
                   placeholder={t('Enter password (8-20 characters)')}
+                  autoComplete='new-password'
                   {...field}
                 />
               </FormControl>
@@ -288,7 +293,11 @@ export function SignUpForm({
             <FormItem>
               <FormLabel>{t('Confirm password')}</FormLabel>
               <FormControl>
-                <PasswordInput placeholder={t('Confirm password')} {...field} />
+                <PasswordInput
+                  placeholder={t('Confirm password')}
+                  autoComplete='new-password'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -311,6 +320,7 @@ export function SignUpForm({
                     <Input
                       placeholder={t('name@example.com')}
                       type='email'
+                      autoComplete='email'
                       {...field}
                     />
                   </FormControl>
@@ -320,10 +330,13 @@ export function SignUpForm({
             />
 
             {/* Verification Code Field */}
-            <div className='flex items-end gap-2'>
+            <div className='auth-page-code'>
               <div className='flex-1'>
                 <Input
                   placeholder={t('Verification code')}
+                  aria-label={t('Verification code')}
+                  autoComplete='one-time-code'
+                  inputMode='numeric'
                   value={verificationCode}
                   onChange={(e) => setVerificationCode(e.target.value)}
                 />
@@ -361,7 +374,7 @@ export function SignUpForm({
           status={status}
           checked={agreedToLegal}
           onCheckedChange={setAgreedToLegal}
-          className='mt-1'
+          className='auth-page-consent mt-1'
         />
 
         {/* Submit Button */}
@@ -397,7 +410,7 @@ export function SignUpForm({
           description={t(
             'Scan the QR code to follow the official account and reply with “验证码” to receive your verification code.'
           )}
-          contentClassName='max-w-sm'
+          contentClassName='auth-page-dialog max-w-sm'
           headerClassName='text-left'
           contentHeight='auto'
           bodyClassName='space-y-4'

@@ -144,7 +144,7 @@ export function MarketShareSection(props: MarketShareSectionProps) {
         {
           orient: 'bottom',
           label: {
-            style: { fill: chartTextColor, fontSize: 10 },
+            style: { fill: chartTextColor, fontSize: 11 },
             autoHide: true,
             autoLimit: true,
           },
@@ -157,7 +157,7 @@ export function MarketShareSection(props: MarketShareSectionProps) {
           label: {
             formatMethod: (val: number | string) =>
               `${Math.round(Number(val) * 100)}%`,
-            style: { fill: chartTextColor, fontSize: 10 },
+            style: { fill: chartTextColor, fontSize: 11 },
           },
           grid: {
             visible: true,

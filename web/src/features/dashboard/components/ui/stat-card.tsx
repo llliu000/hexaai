@@ -213,7 +213,7 @@ function StatCardDetails(props: { details: StatCardDetail[] }) {
           key={detail.label}
           className='bg-muted/40 rounded-lg border border-transparent px-2.5 py-2'
         >
-          <div className='text-muted-foreground truncate text-[11px] leading-none font-medium'>
+          <div className='text-muted-foreground truncate text-[12px] leading-none font-medium'>
             {detail.label}
           </div>
           <div
@@ -305,7 +305,7 @@ export function StatCard(props: StatCardProps) {
       )}
     >
       <div className='flex items-start justify-between gap-1'>
-        <div className='text-muted-foreground flex items-center gap-1 text-[11px] font-medium sm:gap-2 sm:text-xs'>
+        <div className='text-muted-foreground flex items-center gap-1 text-[12px] font-medium sm:gap-2 sm:text-xs'>
           <IconBadge
             tone={iconTone}
             size='stat'

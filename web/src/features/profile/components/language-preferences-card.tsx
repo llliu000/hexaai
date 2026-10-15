@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Languages, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -39,6 +39,7 @@ import { useAuthStore } from '@/stores/auth-store'
 import { updateUserLanguage } from '../api'
 import { parseUserSettings } from '../lib'
 import type { UserProfile } from '../types'
+import { DesignIcon } from './design-icon'
 
 type LanguagePreferencesCardProps = {
   profile: UserProfile | null
@@ -58,6 +59,8 @@ export function LanguagePreferencesCard(props: LanguagePreferencesCardProps) {
   const [currentLanguage, setCurrentLanguage] = useState(savedLanguage)
 
   useEffect(() => {
+    // Synchronize the optimistic selection with asynchronously loaded account settings.
+    // eslint-disable-next-line react/set-state-in-effect
     setCurrentLanguage(savedLanguage)
   }, [savedLanguage])
 
@@ -106,7 +109,8 @@ export function LanguagePreferencesCard(props: LanguagePreferencesCardProps) {
     <TitledCard
       title={t('Language Preferences')}
       description={t('Set the language used across the interface')}
-      icon={<Languages className='h-4 w-4' />}
+      icon={<DesignIcon name='language' />}
+      className='profile-language'
       iconTone='chart-4'
       disableHoverEffect
     >
@@ -131,6 +135,7 @@ export function LanguagePreferencesCard(props: LanguagePreferencesCardProps) {
           >
             <SelectTrigger className='w-full sm:w-48'>
               <SelectValue placeholder={t('Select language')} />
+              <DesignIcon name='chevron-down' />
             </SelectTrigger>
             <SelectContent alignItemWithTrigger={false}>
               <SelectGroup>

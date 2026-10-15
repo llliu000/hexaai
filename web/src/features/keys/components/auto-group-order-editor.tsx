@@ -24,6 +24,7 @@ import {
   Drag01Icon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { RotateCw } from 'lucide-react'
 import { Reorder, useDragControls } from 'motion/react'
 import {
   useMemo,
@@ -54,6 +55,7 @@ type AutoGroupOrderEditorProps = Omit<ComponentProps<'div'>, 'onChange'> & {
   options: ApiKeyGroupOption[]
   globalOptions: ApiKeyGroupOption[]
   maxCount: number
+  compact?: boolean
   onChange: (value: { groups: string[]; mode: 'inherit' | 'custom' }) => void
   'data-slot'?: string
   'data-form-root'?: string
@@ -202,7 +204,11 @@ export function AutoGroupOrderEditor(props: AutoGroupOrderEditorProps) {
       aria-label={props['aria-label'] || t('Auto group order')}
       aria-describedby={props['aria-describedby']}
       aria-invalid={props['aria-invalid']}
-      className={cn('flex flex-col gap-3', props.className)}
+      className={cn(
+        'flex flex-col gap-3',
+        props.compact && 'api-key-auto-editor',
+        props.className
+      )}
     >
       <div className='flex items-center justify-between gap-3'>
         <p className='text-muted-foreground text-xs' aria-live='polite'>
@@ -224,11 +230,13 @@ export function AutoGroupOrderEditor(props: AutoGroupOrderEditorProps) {
             props.onChange({ groups: [], mode: 'inherit' })
           }}
         >
+          {props.compact && <RotateCw className='size-3.5' aria-hidden />}
           {t('Restore global Auto')}
         </Button>
       </div>
 
       <ApiKeyGroupCombobox
+        compact={props.compact}
         options={candidates}
         value={undefined}
         onValueChange={handleAdd}
@@ -259,7 +267,7 @@ export function AutoGroupOrderEditor(props: AutoGroupOrderEditorProps) {
         >
           {props.globalOptions.map((option, index) => (
             <li key={option.value} className='flex min-w-0 items-center gap-1'>
-              {index > 0 && (
+              {index > 0 && !props.compact && (
                 <HugeiconsIcon
                   icon={ArrowRight01Icon}
                   strokeWidth={2}
@@ -276,7 +284,7 @@ export function AutoGroupOrderEditor(props: AutoGroupOrderEditorProps) {
                 <span
                   data-slot='global-auto-order-index'
                   aria-hidden='true'
-                  className='bg-primary/10 text-primary flex size-4 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums'
+                  className='bg-primary/10 text-primary flex size-4 shrink-0 items-center justify-center rounded-full text-[12px] font-semibold tabular-nums'
                 >
                   {index + 1}
                 </span>
@@ -294,7 +302,7 @@ export function AutoGroupOrderEditor(props: AutoGroupOrderEditorProps) {
                     {option.desc}
                   </span>
                 )}
-                <GroupRatioBadge ratio={option.ratio} />
+                {!props.compact && <GroupRatioBadge ratio={option.ratio} />}
               </span>
             </li>
           ))}

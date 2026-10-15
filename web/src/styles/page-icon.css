@@ -1,0 +1,50 @@
+.page-icon {
+  display: inline-flex;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.page-icon > svg {
+  display: block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.page-icon.page-icon-blue {
+  background: #e7f0ff;
+  color: #246bfe;
+}
+.page-icon.page-icon-green {
+  background: #e2f8ef;
+  color: #16b883;
+}
+.page-icon.page-icon-purple {
+  background: #f6e7ff;
+  color: #c460ff;
+}
+.page-icon.page-icon-cyan {
+  background: #e0f8fa;
+  color: #18b9c2;
+}
+.page-icon.page-icon-amber {
+  background: #fff3d9;
+  color: #f3a21c;
+}
+.page-icon.page-icon-red {
+  background: #ffebee;
+  color: #e45b72;
+}
+.page-icon.page-icon-slate {
+  background: #edf2f8;
+  color: #71829d;
+}

@@ -33,6 +33,7 @@ import { DataTableViewOptions } from './view-options'
 type FilterDef = {
   columnId: string
   title: string
+  triggerIcon?: ReactNode
   options: {
     label: string
     value: string
@@ -266,6 +267,7 @@ export function DataTableToolbar<TData>(props: DataTableToolbarProps<TData>) {
             title={filter.title}
             options={filter.options}
             singleSelect={filter.singleSelect}
+            triggerIcon={filter.triggerIcon}
           />
         )
       }),

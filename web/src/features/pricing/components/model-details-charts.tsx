@@ -138,7 +138,7 @@ export function LatencyTrendChart(props: {
         {
           orient: 'bottom',
           label: {
-            style: { fill: textColor, fontSize: 10 },
+            style: { fill: textColor, fontSize: 11 },
           },
           tick: { visible: false },
         },
@@ -146,7 +146,7 @@ export function LatencyTrendChart(props: {
           orient: 'left',
           label: {
             formatMethod: (val: number | string) => `${val} ms`,
-            style: { fill: textColor, fontSize: 10 },
+            style: { fill: textColor, fontSize: 11 },
           },
           grid: {
             visible: true,
@@ -263,7 +263,7 @@ export function UptimeTrendChart(props: {
           label: {
             formatMethod: (val: number | string) =>
               stripUptimePointSuffix(String(val)),
-            style: { fill: textColor, fontSize: 10 },
+            style: { fill: textColor, fontSize: 11 },
             autoLimit: true,
           },
           tick: { visible: false },
@@ -274,7 +274,7 @@ export function UptimeTrendChart(props: {
           max: UPTIME_AXIS_MAX,
           label: {
             formatMethod: (val: number | string) => `${val}%`,
-            style: { fill: textColor, fontSize: 10 },
+            style: { fill: textColor, fontSize: 11 },
           },
           grid: {
             visible: true,
@@ -360,12 +360,12 @@ export function ThroughputBarChart(props: {
       axes: [
         {
           orient: 'left',
-          label: { style: { fill: textColor, fontSize: 10 } },
+          label: { style: { fill: textColor, fontSize: 11 } },
           tick: { visible: false },
         },
         {
           orient: 'bottom',
-          label: { style: { fill: textColor, fontSize: 10 } },
+          label: { style: { fill: textColor, fontSize: 11 } },
           grid: {
             visible: true,
             style: { lineDash: [3, 3], stroke: gridColor },

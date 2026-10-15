@@ -20,6 +20,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 import { DEFAULT_SYSTEM_NAME, DEFAULT_LOGO } from '@/lib/constants'
+import { resolveSystemLogo } from '@/lib/system-logo'
 
 export type CurrencyDisplayType = 'USD' | 'CNY' | 'TOKENS' | 'CUSTOM'
 
@@ -107,7 +108,8 @@ export const useSystemConfigStore = create<SystemConfigState>()(
 export const getSystemName = () =>
   useSystemConfigStore.getState().config.systemName
 
-export const getLogo = () => useSystemConfigStore.getState().config.logo
+export const getLogo = () =>
+  resolveSystemLogo(useSystemConfigStore.getState().config.logo)
 
 export const getFooterHtml = () =>
   useSystemConfigStore.getState().config.footerHtml

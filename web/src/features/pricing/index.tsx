@@ -22,6 +22,8 @@ import { useTranslation } from 'react-i18next'
 import { PublicLayout } from '@/components/layout'
 import { PageTransition } from '@/components/page-transition'
 
+import '@/styles/pricing-lanhu.css'
+
 import {
   LoadingSkeleton,
   EmptyState,
@@ -151,7 +153,7 @@ export function Pricing() {
   if (isLoading) {
     return (
       <PublicLayout showMainContainer={false}>
-        <div className='mx-auto w-full max-w-[1800px] px-3 pt-16 pb-8 sm:px-6 sm:pt-20 sm:pb-10 xl:px-8'>
+        <div className='lujiyun-pricing-loading w-full max-w-none'>
           <LoadingSkeleton viewMode={viewMode} />
         </div>
       </PublicLayout>
@@ -176,7 +178,7 @@ export function Pricing() {
               'linear-gradient(to bottom, black 40%, transparent 100%)',
           }}
         />
-        <PageTransition className='relative mx-auto w-full max-w-[1800px] px-3 pt-16 pb-8 sm:px-6 sm:pt-20 sm:pb-10 xl:px-8'>
+        <PageTransition className='lujiyun-pricing-page relative w-full max-w-none'>
           <header className='mx-auto mb-5 max-w-3xl pt-5 text-center sm:mb-10 sm:pt-10'>
             <h1 className='text-[clamp(2rem,5.5vw,3.5rem)] leading-[1.15] font-bold tracking-tight'>
               {t('Model Square')}
@@ -191,15 +193,6 @@ export function Pricing() {
                 'Discover curated AI models, compare pricing and capabilities, and choose the right model for every scenario.'
               )}
             </p>
-            <SearchBar
-              value={searchInput}
-              onChange={setSearchInput}
-              onClear={clearSearch}
-              placeholder={t(
-                'Search model name, provider, endpoint, or tag...'
-              )}
-              className='mx-auto mt-4 max-w-2xl sm:mt-6'
-            />
           </header>
 
           <div className='grid gap-4 xl:grid-cols-[330px_minmax(0,1fr)]'>
@@ -220,12 +213,22 @@ export function Pricing() {
               tags={availableTags}
               models={models || []}
               hasActiveFilters={hasActiveFilters}
-              onClearFilters={clearFilters}
+              onClearFilters={handleClearAll}
               className='hover-scrollbar sticky top-4 hidden max-h-[calc(100dvh-2rem)] self-start overflow-y-auto xl:block'
             />
 
             <main className='min-w-0 space-y-4'>
               <PricingToolbar
+                search={
+                  <SearchBar
+                    value={searchInput}
+                    onChange={setSearchInput}
+                    onClear={clearSearch}
+                    placeholder={t(
+                      'Search model name, provider, endpoint, or tag...'
+                    )}
+                  />
+                }
                 filteredCount={filteredModels.length}
                 totalCount={models?.length}
                 sortBy={sortBy}
@@ -253,7 +256,7 @@ export function Pricing() {
                 models={models || []}
                 hasActiveFilters={hasActiveFilters}
                 activeFilterCount={activeFilterCount}
-                onClearFilters={clearFilters}
+                onClearFilters={handleClearAll}
               />
 
               {renderPricingContent()}

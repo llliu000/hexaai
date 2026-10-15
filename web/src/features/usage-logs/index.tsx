@@ -26,6 +26,9 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CacheStatsDialog } from '@/features/system-settings/general/channel-affinity/cache-stats-dialog'
 import { useSidebarConfig } from '@/hooks/use-sidebar-config'
 
+import '@/styles/usage-logs-lanhu.css'
+import '@/styles/task-logs-lanhu.css'
+
 import { UserInfoDialog } from './components/dialogs/user-info-dialog'
 import {
   type LogsViewScope,
@@ -119,15 +122,26 @@ function UsageLogsContent() {
 
   const pageMeta =
     activeCategory === 'common' ? SECTION_META.common : SECTION_META.task
+  const pageDescription =
+    activeCategory === 'common'
+      ? 'View and filter API call logs, usage, and performance.'
+      : 'Review asynchronous task execution records, status, and progress.'
   const showTaskSwitcher =
     activeCategory !== 'common' && visibleSections.length > 1
 
   return (
     <>
-      <SectionPageLayout fixedContent>
+      <SectionPageLayout
+        contentClassName='usage-logs-content px-0 pb-0 sm:px-0 sm:pb-0'
+        fixedContent
+        headerClassName='px-0 pt-0 sm:px-0 sm:pt-0'
+      >
         <SectionPageLayout.Title>
           {t(pageMeta.titleKey)}
         </SectionPageLayout.Title>
+        <SectionPageLayout.Description>
+          {t(pageDescription)}
+        </SectionPageLayout.Description>
         {canManageScope && (
           <SectionPageLayout.Actions>
             <Tabs value={viewScope} onValueChange={handleViewScopeChange}>
@@ -139,7 +153,9 @@ function UsageLogsContent() {
           </SectionPageLayout.Actions>
         )}
         <SectionPageLayout.Content>
-          <div className='flex h-full min-h-0 flex-col gap-4'>
+          <div
+            className={`lujiyun-usage-page lujiyun-usage-${activeCategory} flex h-full min-h-0 w-full max-w-none flex-col gap-4`}
+          >
             {showTaskSwitcher && (
               <Tabs value={activeCategory} onValueChange={handleSectionChange}>
                 <TabsList className='max-w-full flex-wrap justify-start group-data-horizontal/tabs:h-auto'>

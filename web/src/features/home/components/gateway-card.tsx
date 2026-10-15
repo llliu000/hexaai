@@ -18,6 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useTranslation } from 'react-i18next'
 
+import { SystemLogo } from '@/components/system-logo'
 import { Separator } from '@/components/ui/separator'
 
 import { getGatewayFeatures } from '../constants'
@@ -45,11 +46,7 @@ export function GatewayCard({ logo, systemName }: GatewayCardProps) {
       <div className='relative'>
         {/* Gateway Header */}
         <div className='mb-8 flex items-center justify-center gap-3'>
-          <img
-            src={logo}
-            alt={systemName}
-            className='h-12 w-12 rounded-lg object-cover'
-          />
+          <SystemLogo src={logo} alt={systemName} className='h-12 w-12' />
           <h3 className='from-foreground to-foreground/70 bg-gradient-to-r bg-clip-text text-2xl font-bold text-transparent'>
             {systemName}
           </h3>
@@ -57,9 +54,9 @@ export function GatewayCard({ logo, systemName }: GatewayCardProps) {
 
         {/* Features Grid */}
         <div className='grid grid-cols-2 gap-3'>
-          {features.map((feature, i) => (
+          {features.map((feature) => (
             <div
-              key={i}
+              key={feature}
               className='glass-morphism group/item border-border/40 dark:border-border/20 relative overflow-hidden rounded-xl border px-4 py-3.5 text-center shadow-sm transition-all duration-300 hover:scale-[1.02] hover:border-amber-500/40 hover:shadow-md'
             >
               <div className='absolute inset-0 bg-gradient-to-br from-amber-500/0 to-amber-500/0 transition-all duration-300 group-hover/item:from-amber-500/10' />

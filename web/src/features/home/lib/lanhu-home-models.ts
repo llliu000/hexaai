@@ -1,0 +1,20 @@
+// Original homepage marquee and ecosystem entries, without duplicate model names.
+export const HOME_MODELS = [
+  { name: 'DeepSeek R1', provider: 'DeepSeek' },
+  { name: 'Seedance 2.0', provider: 'ByteDance' },
+  { name: 'Qwen-Max', provider: 'Qwen' },
+  { name: 'GPT-4o', provider: 'OpenAI' },
+  { name: 'Kimi K2', provider: 'Kimi' },
+  { name: 'Claude 3.5', provider: 'Claude' },
+  { name: 'Llama 3', provider: 'Meta' },
+  { name: 'Doubao 1.5 Pro', provider: 'ByteDance' },
+  { name: 'Qwen3', provider: 'Qwen' },
+  { name: 'Kimi K2 Think', provider: 'Kimi' },
+  { name: 'GLM-5', provider: 'Zhipu' },
+  { name: 'Hunyuan Turbo S', provider: 'Hunyuan' },
+  { name: 'Hunyuan Vision', provider: 'Hunyuan' },
+  { name: 'ERNIE 4.5', provider: 'Baidu' },
+  { name: 'MiniMax M2.1', provider: 'Minimax' },
+  { name: 'Claude Sonnet', provider: 'Claude' },
+  { name: 'GPT-4o / GPT-5', provider: 'OpenAI' },
+] as const

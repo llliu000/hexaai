@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useQueryClient, useIsFetching } from '@tanstack/react-query'
 import { useNavigate, getRouteApi } from '@tanstack/react-router'
-import { type Table } from '@tanstack/react-table'
+import type { Table } from '@tanstack/react-table'
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -99,6 +99,8 @@ export function TaskLogsFilterBar<TData>(props: TaskLogsFilterBarProps<TData>) {
             ...(searchParams.filter ? { taskId: searchParams.filter } : {}),
           }
 
+    // Synchronize editable filter drafts with browser back/forward navigation.
+    // eslint-disable-next-line react/set-state-in-effect
     setFilters(next)
   }, [
     props.logCategory,
@@ -201,6 +203,7 @@ export function TaskLogsFilterBar<TData>(props: TaskLogsFilterBarProps<TData>) {
 
   return (
     <LogsFilterToolbar
+      className='task-logs-filter-card'
       table={props.table}
       primaryFilters={
         <>

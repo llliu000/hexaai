@@ -76,9 +76,11 @@ export function UserAuthForm({
   const loginFailedMessage = t('Login failed')
 
   const { status } = useStatus()
-  const passkeyLoginEnabled = Boolean(
-    status?.passkey_login ?? status?.data?.passkey_login
-  )
+  // Passkey login is temporarily hidden from the sign-in page.
+  // const passkeyLoginEnabled = Boolean(
+  //   status?.passkey_login ?? status?.data?.passkey_login
+  // )
+  const passkeyLoginEnabled = false
   const passwordLoginEnabled =
     (status?.password_login_enabled ??
       status?.data?.password_login_enabled ??
@@ -348,8 +350,6 @@ export function UserAuthForm({
         className={cn('grid gap-4', className)}
         {...props}
       >
-        {hasAlternativeLogin && alternativeLoginMethods}
-
         {passwordLoginEnabled && (
           <>
             {/* Username Field */}
@@ -362,6 +362,7 @@ export function UserAuthForm({
                   <FormControl>
                     <Input
                       placeholder={t('Enter your username or email')}
+                      autoComplete='username'
                       {...field}
                     />
                   </FormControl>
@@ -380,14 +381,12 @@ export function UserAuthForm({
                   <FormControl>
                     <PasswordInput
                       placeholder={t('Enter password')}
+                      autoComplete='current-password'
                       {...field}
                     />
                   </FormControl>
                   <FormMessage />
-                  <Link
-                    to='/forgot-password'
-                    className='text-muted-foreground absolute end-0 -top-0.5 z-10 text-sm font-medium hover:opacity-75'
-                  >
+                  <Link to='/forgot-password' className='auth-page-forgot'>
                     {t('Forgot password?')}
                   </Link>
                 </FormItem>
@@ -420,9 +419,10 @@ export function UserAuthForm({
           status={status}
           checked={agreedToLegal}
           onCheckedChange={setAgreedToLegal}
-          className='mt-1'
+          className='auth-page-consent mt-1'
         />
 
+        {hasAlternativeLogin && alternativeLoginMethods}
         {!hasAlternativeLogin && alternativeLoginMethods}
       </form>
 
@@ -434,7 +434,7 @@ export function UserAuthForm({
           description={t(
             'Scan the QR code to follow the official account and reply with “验证码” to receive your verification code.'
           )}
-          contentClassName='max-w-sm'
+          contentClassName='auth-page-dialog max-w-sm'
           headerClassName='text-left'
           contentHeight='auto'
           bodyClassName='space-y-4'

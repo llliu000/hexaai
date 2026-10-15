@@ -19,9 +19,9 @@ For commercial licensing, please contact support@quantumnous.com
 import type { Row } from '@tanstack/react-table'
 import {
   Trash2,
-  Edit,
-  Power,
-  PowerOff,
+  Eye,
+  EyeOff,
+  PencilLine,
   ExternalLink,
   ArrowRightLeft,
   Copy,
@@ -182,11 +182,11 @@ export function DataTableRowActions<TData>({
     }
   }
 
-  let statusIcon = <Power className='size-4' />
+  let statusIcon = <Eye className='size-4' />
   if (isTogglingStatus) {
     statusIcon = <Loader2 className='size-4 animate-spin' />
   } else if (isEnabled) {
-    statusIcon = <PowerOff className='size-4' />
+    statusIcon = <EyeOff className='size-4' />
   }
 
   return (
@@ -202,8 +202,8 @@ export function DataTableRowActions<TData>({
               aria-label={toggleLabel}
               className={
                 isEnabled
-                  ? 'text-destructive hover:text-destructive'
-                  : 'text-emerald-600 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-400'
+                  ? 'api-key-status-action text-destructive hover:text-destructive'
+                  : 'api-key-status-action text-emerald-600 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-400'
               }
             />
           }
@@ -224,10 +224,11 @@ export function DataTableRowActions<TData>({
                 setOpen('update')
               }}
               aria-label={t('Edit')}
+              className='api-key-edit-action'
             />
           }
         >
-          <Edit />
+          <PencilLine />
         </TooltipTrigger>
         <TooltipContent>{t('Edit')}</TooltipContent>
       </Tooltip>

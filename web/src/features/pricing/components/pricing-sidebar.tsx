@@ -16,8 +16,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { ChevronDown, RotateCcw } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { ArrowRight, ChevronDown, RotateCcw } from 'lucide-react'
+import { useId, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Badge } from '@/components/ui/badge'
@@ -83,14 +83,6 @@ function countBy(
   return models.reduce((count, model) => count + (predicate(model) ? 1 : 0), 0)
 }
 
-function formatGroupRatio(ratio: number | undefined): string | undefined {
-  if (ratio == null) return undefined
-  const formatted = Number.isInteger(ratio)
-    ? ratio.toString()
-    : ratio.toFixed(3).replace(/0+$/, '').replace(/\.$/, '')
-  return `x${formatted}`
-}
-
 function FilterChip(props: {
   option: FilterOption
   active: boolean
@@ -99,9 +91,10 @@ function FilterChip(props: {
   return (
     <button
       type='button'
+      aria-pressed={props.active}
       onClick={props.onClick}
       className={cn(
-        'group inline-flex max-w-full items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium transition-all',
+        'lanhu-filter-option group inline-flex max-w-full items-center gap-1.5 rounded-md border px-2 py-1 text-xs font-medium transition-all',
         props.active
           ? 'border-foreground/30 bg-foreground/5 text-foreground shadow-sm'
           : 'border-border/70 bg-background text-muted-foreground hover:border-border hover:bg-muted/50 hover:text-foreground'
@@ -129,6 +122,15 @@ function FilterChip(props: {
 }
 
 function FilterSection(props: FilterSectionProps) {
+  const { t } = useTranslation()
+  const [expanded, setExpanded] = useState(false)
+  const optionsId = useId()
+  const allOption = props.options[0]
+  const rankedOptions = props.options
+    .slice(1)
+    .sort((a, b) => (b.count ?? 0) - (a.count ?? 0))
+  const visibleOptions = expanded ? rankedOptions : rankedOptions.slice(0, 4)
+  const options = allOption ? [allOption, ...visibleOptions] : visibleOptions
   return (
     <Collapsible
       defaultOpen
@@ -138,11 +140,14 @@ function FilterSection(props: FilterSectionProps) {
         <span className='text-foreground text-sm font-semibold'>
           {props.title}
         </span>
-        <ChevronDown className='text-muted-foreground size-4 transition-transform group-data-[panel-open]:rotate-180' />
+        <span className='text-muted-foreground flex items-center gap-2 text-xs'>
+          {rankedOptions.length}
+          <ChevronDown className='size-3 transition-transform group-data-[panel-open]:rotate-180' />
+        </span>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className='flex flex-wrap gap-1.5'>
-          {props.options.map((option) => (
+        <div id={optionsId} className='flex flex-wrap gap-1.5'>
+          {options.map((option) => (
             <FilterChip
               key={option.value}
               option={option}
@@ -151,6 +156,20 @@ function FilterSection(props: FilterSectionProps) {
             />
           ))}
         </div>
+        {rankedOptions.length > 4 && (
+          <button
+            type='button'
+            className='lanhu-filter-more'
+            aria-expanded={expanded}
+            aria-controls={optionsId}
+            onClick={() => setExpanded((value) => !value)}
+          >
+            {expanded
+              ? t('Collapse')
+              : t('Show {{count}} more', { count: rankedOptions.length - 4 })}
+            <ArrowRight className='size-3' aria-hidden />
+          </button>
+        )}
       </CollapsibleContent>
     </Collapsible>
   )
@@ -184,11 +203,15 @@ export function PricingSidebar(props: PricingSidebarProps) {
     {
       value: FILTER_ALL,
       label: t('All Groups'),
+      count: props.models.length,
     },
     ...props.groups.map((group) => ({
       value: group,
       label: group,
-      suffix: formatGroupRatio(props.groupRatios?.[group]),
+      count: countBy(
+        props.models,
+        (model) => model.enable_groups?.includes(group) ?? false
+      ),
     })),
   ]
 
@@ -249,10 +272,9 @@ export function PricingSidebar(props: PricingSidebarProps) {
     <aside className={cn('rounded-xl border p-3', props.className)}>
       <div className='mb-2.5 flex items-center justify-between gap-2'>
         <div>
-          <h2 className='text-foreground text-sm font-bold'>{t('Filter')}</h2>
-          <p className='text-muted-foreground mt-1 text-xs'>
-            {t('Refine models by provider, group, type, and tags.')}
-          </p>
+          <h2 className='text-foreground text-sm font-bold'>
+            {t('Filter models')}
+          </h2>
         </div>
         <Button
           type='button'
@@ -265,6 +287,29 @@ export function PricingSidebar(props: PricingSidebarProps) {
           <RotateCcw className='size-3.5' />
           {t('Reset')}
         </Button>
+      </div>
+
+      <div className='lanhu-filter-summary'>
+        <span>{t('Current filters')}</span>
+        <strong>
+          {[
+            props.groupFilter !== FILTER_ALL
+              ? props.groupFilter
+              : t('All Groups'),
+            props.vendorFilter !== FILTER_ALL ? props.vendorFilter : '',
+            props.tagFilter !== FILTER_ALL ? props.tagFilter : '',
+            quotaOptions.find(
+              (option) => option.value === props.quotaTypeFilter
+            )?.label,
+            props.endpointTypeFilter !== ENDPOINT_TYPES.ALL
+              ? endpointOptions.find(
+                  (option) => option.value === props.endpointTypeFilter
+                )?.label
+              : '',
+          ]
+            .filter(Boolean)
+            .join(' · ')}
+        </strong>
       </div>
 
       {props.hasActiveFilters && (
@@ -305,6 +350,11 @@ export function PricingSidebar(props: PricingSidebarProps) {
           onChange={props.onEndpointTypeChange}
         />
       </div>
+      <p className='lanhu-filter-note'>
+        {t(
+          'Combine filters. Model prices are shown on the page; open model details for available capabilities.'
+        )}
+      </p>
     </aside>
   )
 }

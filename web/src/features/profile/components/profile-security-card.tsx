@@ -16,16 +16,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Shield, Key, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { IconBadge } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TitledCard } from '@/components/ui/titled-card'
 import { useDialogs } from '@/hooks/use-dialog'
 
 import type { UserProfile } from '../types'
+import { DesignIcon } from './design-icon'
 import { AccessTokenDialog } from './dialogs/access-token-dialog'
 import { ChangePasswordDialog } from './dialogs/change-password-dialog'
 import { DeleteAccountDialog } from './dialogs/delete-account-dialog'
@@ -68,23 +67,29 @@ export function ProfileSecurityCard({
 
   const securityActions = [
     {
-      icon: Shield,
+      icon: 'password' as const,
       title: t('Change Password'),
-      description: t('Update your password to keep your account secure'),
+      description: t('profile.design.passwordDescription', {
+        defaultValue: '更新密码确保账户安全',
+      }),
       action: () => dialogs.open('password'),
       variant: 'default' as const,
     },
     {
-      icon: Key,
+      icon: 'token' as const,
       title: t('Access Token'),
-      description: t('Generate and manage your API access token'),
+      description: t('profile.design.tokenDescription', {
+        defaultValue: '管理 API 访问令牌',
+      }),
       action: () => dialogs.open('token'),
       variant: 'default' as const,
     },
     {
-      icon: Trash2,
+      icon: 'delete' as const,
       title: t('Delete Account'),
-      description: t('Permanently delete your account and all data'),
+      description: t('profile.design.deleteDescription', {
+        defaultValue: '永久删除账户与数据',
+      }),
       action: () => dialogs.open('delete'),
       variant: 'destructive' as const,
     },
@@ -95,7 +100,8 @@ export function ProfileSecurityCard({
       <TitledCard
         title={t('Security')}
         description={t('Manage your security settings and account access')}
-        icon={<Shield className='h-4 w-4' />}
+        icon={<DesignIcon name='security' />}
+        className='profile-security'
         iconTone='success'
         disableHoverEffect
       >
@@ -109,15 +115,17 @@ export function ProfileSecurityCard({
                 item.variant === 'destructive' ? 'border-destructive/30' : ''
               }`}
             >
-              <IconBadge tone='neutral' size='sm'>
-                <item.icon />
-              </IconBadge>
+              <DesignIcon name={item.icon} />
               <div className='min-w-0 md:contents'>
                 <p className='text-sm font-medium'>{item.title}</p>
                 <p className='text-muted-foreground line-clamp-1 text-xs md:line-clamp-none'>
                   {item.description}
                 </p>
               </div>
+              <DesignIcon
+                name='chevron-right'
+                className='profile-security-arrow'
+              />
             </button>
           ))}
         </div>

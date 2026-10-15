@@ -62,7 +62,7 @@ export function AppSidebar() {
             animate={MOTION_VARIANTS.sidebarSlide.animate}
             exit={shouldReduce ? undefined : MOTION_VARIANTS.sidebarSlide.exit}
             transition={MOTION_TRANSITION.fast}
-            className='flex flex-col'
+            className='flex w-full min-w-0 flex-col'
           >
             {navGroups.map((props) => (
               <NavGroup key={props.id || props.title} {...props} />

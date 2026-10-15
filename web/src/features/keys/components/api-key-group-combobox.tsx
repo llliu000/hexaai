@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Check, ChevronsUpDown } from 'lucide-react'
+import { Check, ChevronDown, ChevronsUpDown } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -56,6 +56,7 @@ type ApiKeyGroupComboboxProps = {
   onValueChange: (value: string) => void
   placeholder?: string
   disabled?: boolean
+  compact?: boolean
 }
 
 export function ApiKeyGroupCombobox({
@@ -64,6 +65,7 @@ export function ApiKeyGroupCombobox({
   onValueChange,
   placeholder,
   disabled,
+  compact = false,
 }: ApiKeyGroupComboboxProps) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)
@@ -106,7 +108,9 @@ export function ApiKeyGroupCombobox({
             disabled={disabled}
             className={cn(
               'border-input bg-muted/40 hover:bg-muted/55 hover:text-foreground active:bg-background data-popup-open:border-ring data-popup-open:bg-background data-popup-open:ring-ring/20 relative h-auto min-h-14 w-full justify-between gap-2 rounded-lg px-3 py-2 text-start shadow-none transition-[background-color,border-color,box-shadow] duration-150 data-popup-open:ring-[3px] sm:min-h-20 sm:gap-3 sm:px-4 sm:py-3',
+              compact && 'api-key-group-compact',
               isAutoSelected &&
+                !compact &&
                 cn(
                   AUTO_GROUP_FRAME_CLASS_NAME,
                   'hover:border-primary/55 data-popup-open:border-primary/55 data-popup-open:ring-primary/20'
@@ -115,32 +119,40 @@ export function ApiKeyGroupCombobox({
           />
         }
       >
-        {isAutoSelected && (
+        {isAutoSelected && !compact && (
           <AutoGroupFlowBorder shouldReduceMotion={shouldReduceMotion} />
         )}
         <span className='flex min-w-0 flex-1 items-center justify-between gap-2 sm:gap-3'>
           <span className='min-w-0'>
             <span className='block truncate font-medium'>
-              {selectedOption?.label || placeholder || t('Select a group')}
+              {isAutoSelected && compact
+                ? t('Automatic group')
+                : selectedOption?.label || placeholder || t('Select a group')}
             </span>
-            {selectedOption?.desc && (
+            {selectedOption?.desc && !compact && (
               <span className='text-muted-foreground block truncate text-[11px] sm:text-xs'>
                 {selectedOption.desc}
               </span>
             )}
           </span>
-          <span className='hidden sm:block'>
-            <GroupRatioBadge
-              ratio={selectedOption?.ratio}
-              isAuto={isAutoSelected}
-              shouldReduceMotion={shouldReduceMotion}
-            />
-          </span>
+          {!compact && (
+            <span className='hidden sm:block'>
+              <GroupRatioBadge
+                ratio={selectedOption?.ratio}
+                isAuto={isAutoSelected}
+                shouldReduceMotion={shouldReduceMotion}
+              />
+            </span>
+          )}
         </span>
-        <ChevronsUpDown
-          aria-hidden='true'
-          className='size-4 shrink-0 opacity-50'
-        />
+        {compact ? (
+          <ChevronDown aria-hidden className='size-3.5 shrink-0' />
+        ) : (
+          <ChevronsUpDown
+            aria-hidden='true'
+            className='size-4 shrink-0 opacity-50'
+          />
+        )}
       </PopoverTrigger>
       <PopoverContent
         className='data-closed:zoom-out-100 data-open:zoom-in-100 data-[side=bottom]:slide-in-from-top-0 data-[side=left]:slide-in-from-right-0 data-[side=right]:slide-in-from-left-0 data-[side=top]:slide-in-from-bottom-0 w-[var(--anchor-width)] overflow-hidden rounded-xl p-0 shadow-lg data-closed:duration-75 data-open:duration-100'

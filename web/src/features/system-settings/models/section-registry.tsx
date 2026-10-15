@@ -25,7 +25,6 @@ import { GeminiSettingsCard } from './gemini-settings-card'
 import { GlobalSettingsCard } from './global-settings-card'
 import { GrokSettingsCard } from './grok-settings-card'
 import { RoutingReliabilitySection } from './routing-reliability-section'
-import { VideoEnhancementSettingsSection } from './video-enhancement-settings-section'
 
 function formatJsonForEditor(value: string, fallback: string) {
   const raw = (value ?? '').toString().trim()
@@ -86,24 +85,6 @@ const MODELS_SECTIONS = [
             settings['monitor_setting.auto_test_channel_minutes'],
           'monitor_setting.channel_test_mode':
             settings['monitor_setting.channel_test_mode'],
-        }}
-      />
-    ),
-  },
-  {
-    id: 'video-enhancement',
-    titleKey: 'Video Enhancement',
-    build: (settings: ModelSettings) => (
-      <VideoEnhancementSettingsSection
-        defaultValues={{
-          enhance: {
-            channel: settings['enhance.channel'],
-            base_url: settings['enhance.base_url'],
-            api_key: '',
-            tool_version: settings['enhance.tool_version'],
-            scene: settings['enhance.scene'],
-            bitrate_level: settings['enhance.bitrate_level'],
-          },
         }}
       />
     ),

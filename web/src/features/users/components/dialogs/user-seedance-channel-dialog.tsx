@@ -76,7 +76,9 @@ export function UserSeedanceChannelDialog({
     getSeedanceChannels()
       .then((result) => {
         if (result.success) {
-          setChannels((result.data ?? []).filter((channel) => channel.status === 1))
+          setChannels(
+            (result.data ?? []).filter((channel) => channel.status === 1)
+          )
         } else {
           toast.error(result.message || t('Failed to load Seedance channels'))
           setChannels([])
@@ -170,9 +172,7 @@ export function UserSeedanceChannelDialog({
           <SelectTrigger className='w-full'>
             <SelectValue
               placeholder={
-                loading
-                  ? t('Loading...')
-                  : t('Select Seedance channel')
+                loading ? t('Loading...') : t('Select Seedance channel')
               }
             />
           </SelectTrigger>

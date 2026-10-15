@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { AlertTriangle, KeyRound, Loader2, ShieldAlert } from 'lucide-react'
+import { AlertTriangle, Loader2, ShieldAlert } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -41,7 +41,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { IconBadge } from '@/components/ui/icon-badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { usePasskeyManagement } from '@/features/auth/passkey'
 import {
@@ -51,6 +50,8 @@ import {
   type VerificationMethods,
 } from '@/features/auth/secure-verification'
 import dayjs from '@/lib/dayjs'
+
+import { DesignIcon } from './design-icon'
 
 interface PasskeyCardProps {
   loading: boolean
@@ -192,7 +193,10 @@ export function PasskeyCard({ loading: pageLoading }: PasskeyCardProps) {
 
   if (pageLoading || loading) {
     return (
-      <Card data-card-hover='false' className='gap-0 overflow-hidden py-0'>
+      <Card
+        data-card-hover='false'
+        className='profile-auth profile-passkey gap-0 overflow-hidden py-0'
+      >
         <CardHeader className='p-3 sm:p-5'>
           <Skeleton className='h-6 w-48' />
           <Skeleton className='mt-2 h-4 w-64' />
@@ -231,7 +235,10 @@ export function PasskeyCard({ loading: pageLoading }: PasskeyCardProps) {
 
   return (
     <>
-      <Card data-card-hover='false' className='gap-0 overflow-hidden py-0'>
+      <Card
+        data-card-hover='false'
+        className='profile-auth profile-passkey gap-0 overflow-hidden py-0'
+      >
         <CardHeader className='p-3 sm:p-5'>
           <CardTitle className='text-lg tracking-tight sm:text-xl'>
             {t('Passkey Login')}
@@ -245,9 +252,7 @@ export function PasskeyCard({ loading: pageLoading }: PasskeyCardProps) {
           <div className='space-y-6'>
             <div className='flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between xl:flex-col 2xl:flex-row'>
               <div className='flex items-start gap-4'>
-                <IconBadge tone='info' size='sm'>
-                  <KeyRound />
-                </IconBadge>
+                <DesignIcon name='passkey' />
                 <div className='space-y-1'>
                   <div className='flex flex-wrap items-center gap-2'>
                     <p className='font-medium'>{t('Passkey Authentication')}</p>
@@ -267,7 +272,11 @@ export function PasskeyCard({ loading: pageLoading }: PasskeyCardProps) {
                     )}
                   </div>
                   <p className='text-muted-foreground text-sm'>
-                    {t('Last used:')} {formattedLastUsed}
+                    {enabled
+                      ? `${t('Last used:')} ${formattedLastUsed}`
+                      : t('Simpler and safer sign-in', {
+                          defaultValue: '让登录更简单、更安全',
+                        })}
                   </p>
                 </div>
               </div>

@@ -618,7 +618,7 @@ function InfoField(props: {
         props.className
       )}
     >
-      <div className='text-muted-foreground text-[11px] font-medium'>
+      <div className='text-muted-foreground text-[12px] font-medium'>
         {props.label}
       </div>
       <div className='mt-1 flex min-w-0 items-start justify-between gap-2'>
@@ -653,7 +653,7 @@ function ResetCreditTimeField(props: {
 }) {
   return (
     <div className='min-w-0'>
-      <div className='text-muted-foreground text-[11px] font-medium'>
+      <div className='text-muted-foreground text-[12px] font-medium'>
         {props.label}
       </div>
       <div
@@ -697,13 +697,13 @@ function ResetCreditItem(props: { credit: CodexResetCredit; index: number }) {
             </div>
           ) : null}
           {props.credit.id ? (
-            <div className='text-muted-foreground mt-1 font-mono text-[11px] break-all'>
+            <div className='text-muted-foreground mt-1 font-mono text-[12px] break-all'>
               {props.credit.id}
             </div>
           ) : null}
         </div>
         <div className='shrink-0 text-right'>
-          <div className='text-muted-foreground text-[11px] font-medium'>
+          <div className='text-muted-foreground text-[12px] font-medium'>
             {t('Expires in')}
           </div>
           <div

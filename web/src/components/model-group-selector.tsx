@@ -271,7 +271,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = React.memo(
                   <div
                     className={cn(
                       'text-muted-foreground px-2 py-1 font-medium',
-                      isMobile ? 'text-xs' : 'text-[10px]'
+                      isMobile ? 'text-xs' : 'text-[11px]'
                     )}
                   >
                     {t('{{category}} Models', { category })}
@@ -292,7 +292,7 @@ export const ModelSelector: React.FC<ModelSelectorProps> = React.memo(
                         <div
                           className={cn(
                             'truncate font-medium',
-                            isMobile ? 'text-sm' : 'text-[11px]'
+                            isMobile ? 'text-sm' : 'text-xs'
                           )}
                         >
                           <span className='inline'>{model.label}</span>
@@ -418,7 +418,7 @@ export const GroupSelector: React.FC<GroupSelectorProps> = React.memo(
           className={isMobile ? '!max-h-full flex-1 p-2' : 'max-h-[240px]'}
         >
           <CommandGroup>
-            <div className='text-muted-foreground px-2 py-1 text-[10px] font-medium'>
+            <div className='text-muted-foreground px-2 py-1 text-[12px] font-medium'>
               {t('Model Group')}
             </div>
             {groups.map((group) => (
@@ -435,11 +435,11 @@ export const GroupSelector: React.FC<GroupSelectorProps> = React.memo(
               >
                 <div className='flex min-w-0 flex-1 items-center gap-2 pr-4'>
                   <div className='flex min-w-0 flex-1 flex-col'>
-                    <span className='text-foreground truncate text-[11px] font-medium'>
+                    <span className='text-foreground truncate text-[12px] font-medium'>
                       {group.label}
                     </span>
                     {(group.desc || group.description) && (
-                      <div className='text-muted-foreground truncate text-[9px] leading-tight'>
+                      <div className='text-muted-foreground truncate text-[11px] leading-tight'>
                         {group.desc || group.description}
                         {group.ratio && (
                           <>
@@ -676,7 +676,7 @@ export const ModelGroupSelector: React.FC<ModelGroupSelectorProps> = ({
       <span className='min-w-0 truncate text-xs'>
         {currentModel?.label || t('Model')}
       </span>
-      <span className='bg-muted text-muted-foreground hidden max-w-20 shrink-0 rounded px-1.5 py-0.5 text-[10px] sm:inline-flex'>
+      <span className='bg-muted text-muted-foreground hidden max-w-20 shrink-0 rounded px-1.5 py-0.5 text-[11px] sm:inline-flex'>
         {currentGroup?.label || t('Group')}
       </span>
       <ChevronsUpDown className='text-muted-foreground ml-auto size-3.5 shrink-0 opacity-60' />
@@ -690,7 +690,7 @@ export const ModelGroupSelector: React.FC<ModelGroupSelectorProps> = ({
         !isMobile && modelGroupSelectorLayoutClasses.groupColumn
       )}
     >
-      <div className='text-muted-foreground px-1 text-[11px] leading-4 font-medium'>
+      <div className='text-muted-foreground px-1 text-[12px] leading-4 font-medium'>
         {t('Model Group')}
       </div>
       <div

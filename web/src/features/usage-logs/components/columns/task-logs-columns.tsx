@@ -143,7 +143,7 @@ export function useTaskLogsColumns(isAdmin: boolean): ColumnDef<TaskLog>[] {
             <Avatar className='ring-border/60 size-6 ring-1 max-sm:hidden'>
               <AvatarFallback
                 className={cn(
-                  'text-[11px] font-semibold',
+                  'text-[12px] font-semibold',
                   !sensitiveVisible && 'bg-muted text-muted-foreground'
                 )}
                 style={

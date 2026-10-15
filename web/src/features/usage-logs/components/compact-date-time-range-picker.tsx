@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { CalendarDays } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -131,7 +131,7 @@ export function CompactDateTimeRangePicker({
           />
         }
       >
-        <CalendarDays className='text-muted-foreground size-4 shrink-0' />
+        <Calendar className='text-muted-foreground size-4 shrink-0' />
         <span className='truncate'>{label}</span>
       </PopoverTrigger>
       <PopoverContent

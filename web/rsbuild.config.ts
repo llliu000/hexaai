@@ -13,7 +13,8 @@ export default defineConfig(({ envMode }) => {
   const serverUrl =
     process.env.VITE_REACT_APP_SERVER_URL ||
     env.rawPublicVars.VITE_REACT_APP_SERVER_URL ||
-    'http://localhost:3000'
+    //'http://localhost:3000'
+    'https://666api.ai'
 
   const isProd = envMode === 'production'
   const devProxy = Object.fromEntries(
@@ -64,6 +65,7 @@ export default defineConfig(({ envMode }) => {
     },
     html: {
       template: './index.html',
+      favicon: './public/logo.svg',
     },
     server: {
       host: '0.0.0.0',
@@ -88,6 +90,14 @@ export default defineConfig(({ envMode }) => {
     },
     tools: {
       rspack: {
+        module: {
+          rules: [
+            {
+              resourceQuery: /raw/,
+              type: 'asset/source',
+            },
+          ],
+        },
         plugins: [
           tanstackRouter({
             target: 'react',

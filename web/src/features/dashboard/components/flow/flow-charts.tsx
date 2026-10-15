@@ -20,16 +20,12 @@ import { useQuery } from '@tanstack/react-query'
 import { VChart } from '@visactor/react-vchart'
 import type { EventParamsDefinition, IVChart } from '@visactor/vchart'
 import {
-  Activity,
   ChevronRight,
   CircleAlert,
   EyeOff,
   GitBranch,
-  Hash,
   Info,
   Loader2,
-  Route,
-  WalletCards,
 } from 'lucide-react'
 import {
   Fragment,
@@ -96,14 +92,15 @@ import { FlowNodeFilterControl } from './flow-node-filter'
 
 interface FlowChartsProps {
   filters?: DashboardFilters
+  filterAction?: React.ReactNode
   // When false, sensitive node labels are masked in the rendered Sankey.
   sensitiveVisible?: boolean
 }
 
 const FLOW_METRIC_OPTIONS = [
-  { value: 'quota', labelKey: 'By quota', icon: WalletCards },
-  { value: 'tokens', labelKey: 'By tokens', icon: Hash },
-  { value: 'requests', labelKey: 'By requests', icon: Activity },
+  { value: 'quota', labelKey: 'By quota' },
+  { value: 'tokens', labelKey: 'By tokens' },
+  { value: 'requests', labelKey: 'By requests' },
 ] as const
 
 const FLOW_METRIC_LABEL_KEYS: Record<FlowMetric, string> = {
@@ -286,6 +283,7 @@ export function FlowCharts(props: FlowChartsProps) {
   )
   useEffect(() => {
     const visible = new Set(visibleStages)
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- keep selections valid after the visible stage set changes
     setSelectedNodes((prev) => {
       const next = prev.filter((filter) => visible.has(filter.kind))
       return next.length === prev.length ? prev : next
@@ -521,7 +519,7 @@ export function FlowCharts(props: FlowChartsProps) {
       <Empty className='h-full border-0 py-12'>
         <EmptyHeader>
           <EmptyMedia variant='icon'>
-            <Route />
+            <span className='flow-empty-art' aria-hidden='true' />
           </EmptyMedia>
           <EmptyTitle>{t('No flow data available')}</EmptyTitle>
           <EmptyDescription>{t('No data available')}</EmptyDescription>
@@ -532,7 +530,7 @@ export function FlowCharts(props: FlowChartsProps) {
 
   return (
     <div className='flex flex-col gap-3'>
-      <div className='flex flex-col gap-2 xl:flex-row xl:items-end xl:justify-between'>
+      <div className='lujiyun-flow-controls flex flex-col gap-2 xl:flex-row xl:items-end xl:justify-between'>
         <div className='flex min-w-0 flex-wrap items-end gap-2'>
           <div className='flex min-w-0 flex-col gap-1.5'>
             <div className='flex items-center gap-1.5'>
@@ -565,15 +563,17 @@ export function FlowCharts(props: FlowChartsProps) {
             >
               <TabsList aria-label={t('Flow width metric')}>
                 {FLOW_METRIC_OPTIONS.map((option) => {
-                  const Icon = option.icon
                   return (
                     <TabsTrigger
                       key={option.value}
                       value={option.value}
+                      data-flow-metric={option.value}
                       className='gap-1.5 px-2.5 text-xs'
                     >
-                      <Icon data-icon='inline-start' aria-hidden='true' />
-                      {t(option.labelKey)}
+                      <span className='flow-metric-content'>
+                        <span className='flow-metric-icon' aria-hidden='true' />
+                        <span>{t(option.labelKey)}</span>
+                      </span>
                     </TabsTrigger>
                   )
                 })}
@@ -661,10 +661,11 @@ export function FlowCharts(props: FlowChartsProps) {
           {isLoading && (
             <Loader2 className='text-muted-foreground size-4 animate-spin' />
           )}
+          {props.filterAction}
         </div>
       </div>
 
-      <div className='overflow-hidden rounded-lg border'>
+      <div className='lujiyun-flow-card overflow-hidden rounded-lg border'>
         <div className='flex w-full flex-col gap-2 border-b px-3 py-2 sm:px-5 sm:py-3 lg:flex-row lg:items-center lg:justify-between'>
           <div className='flex min-w-0 items-center gap-2'>
             <IconBadge tone='info' size='sm'>
@@ -705,9 +706,13 @@ export function FlowCharts(props: FlowChartsProps) {
                             variant='outline'
                             size='sm'
                             pressed={visible}
+                            data-flow-stage={stage}
                             onPressedChange={() => toggleStage(stage)}
                             aria-label={t(meta.labelKey)}
-                            className={cn('shrink-0', !visible && 'opacity-50')}
+                            className={cn(
+                              'flow-stage-toggle shrink-0',
+                              !visible && 'opacity-50'
+                            )}
                           />
                         }
                       >
@@ -722,7 +727,7 @@ export function FlowCharts(props: FlowChartsProps) {
             </div>
           </TooltipProvider>
         </div>
-        <div className='h-[560px] p-1.5 sm:h-[680px] sm:p-2 2xl:h-[760px]'>
+        <div className='lujiyun-flow-canvas h-[560px] p-1.5 sm:h-[680px] sm:p-2 2xl:h-[760px]'>
           {chartContent}
         </div>
       </div>

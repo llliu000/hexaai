@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Logout01Icon, SmartPhone01Icon } from '@hugeicons/core-free-icons'
+import { SmartPhone01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -40,7 +40,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
-import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { clearAuthenticatedClientState } from '@/lib/api'
 import type { LoginSession } from '@/stores/auth-store'
@@ -50,6 +49,7 @@ import {
   revokeLoginSession,
   revokeOtherLoginSessions,
 } from '../api'
+import { DesignIcon } from './design-icon'
 import { LoginSessionDialogs } from './login-session-dialogs'
 import { LoginSessionItem } from './login-session-item'
 
@@ -119,9 +119,9 @@ export function LoginSessionsCard() {
   let sessionsContent: ReactNode
   if (sessionsQuery.isLoading) {
     sessionsContent = (
-      <div className='flex flex-col gap-3'>
-        <Skeleton className='h-20 w-full' />
-        <Skeleton className='h-20 w-full' />
+      <div className='profile-session-list'>
+        <Skeleton className='h-28 w-full rounded-xl' />
+        <Skeleton className='h-28 w-full rounded-xl' />
       </div>
     )
   } else if (sessionsQuery.isError) {
@@ -158,12 +158,13 @@ export function LoginSessionsCard() {
     )
   } else {
     sessionsContent = (
-      <div className='flex flex-col'>
-        {sessions.map((session, index) => (
-          <div key={session.sid}>
-            {index > 0 && <Separator />}
-            <LoginSessionItem session={session} onRevoke={setRevokeTarget} />
-          </div>
+      <div className='profile-session-list'>
+        {sessions.map((session) => (
+          <LoginSessionItem
+            key={session.sid}
+            session={session}
+            onRevoke={setRevokeTarget}
+          />
         ))}
       </div>
     )
@@ -171,12 +172,17 @@ export function LoginSessionsCard() {
 
   return (
     <>
-      <Card data-card-hover='false'>
+      <Card data-card-hover='false' className='profile-sessions'>
         <CardHeader>
-          <CardTitle>{t('Login sessions')}</CardTitle>
-          <CardDescription>
-            {t('Review and sign out devices currently using your account.')}
-          </CardDescription>
+          <div className='profile-sessions-heading'>
+            <DesignIcon name='sessions' />
+            <div className='profile-sessions-heading-copy'>
+              <CardTitle>{t('Login sessions')}</CardTitle>
+              <CardDescription>
+                {t('Review and sign out devices currently using your account.')}
+              </CardDescription>
+            </div>
+          </div>
           <CardAction>
             <Button
               type='button'
@@ -185,11 +191,7 @@ export function LoginSessionsCard() {
               disabled={!hasOtherSessions || revokeOthersMutation.isPending}
               onClick={() => setConfirmOthers(true)}
             >
-              <HugeiconsIcon
-                icon={Logout01Icon}
-                data-icon='inline-start'
-                strokeWidth={2}
-              />
+              <DesignIcon name='logout' />
               {t('Sign out other sessions')}
             </Button>
           </CardAction>

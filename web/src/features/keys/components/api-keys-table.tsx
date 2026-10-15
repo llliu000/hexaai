@@ -19,8 +19,8 @@ For commercial licensing, please contact support@quantumnous.com
 import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
 import type { Table as TanstackTable } from '@tanstack/react-table'
-import { Database } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Database, Search } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
@@ -40,6 +40,14 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { formatQuota } from '@/lib/format'
@@ -60,7 +68,9 @@ import { DataTableBulkActions } from './data-table-bulk-actions'
 import { DataTableRowActions } from './data-table-row-actions'
 
 const route = getRouteApi('/_authenticated/keys/')
-const API_KEYS_COLUMN_VISIBILITY_STORAGE_KEY = 'api-keys:column-visibility'
+const API_KEYS_COLUMN_VISIBILITY_STORAGE_KEY =
+  'api-keys:column-visibility:lanhu-v2'
+const API_KEY_STATUS_ALL_VALUE = 'all'
 const API_KEYS_MOBILE_SKELETON_IDS = Array.from(
   { length: 5 },
   (_, index) => `api-key-mobile-skeleton-${index + 1}`
@@ -229,6 +239,22 @@ export function ApiKeysTable() {
     onColumnFiltersChange,
   })
   const shouldSearch = Boolean(globalFilter?.trim() || tokenFilter.trim())
+  const statusFilter =
+    (columnFilters.find((filter) => filter.id === 'status')?.value as
+      | string[]
+      | undefined) ?? []
+  const selectedStatus = statusFilter[0]
+  const statusItems = useMemo(
+    () =>
+      API_KEY_STATUS_OPTIONS.map((option) => ({
+        value: option.value,
+        label: t(option.label),
+      })),
+    [t]
+  )
+  const selectedStatusLabel = statusItems.find(
+    (option) => option.value === selectedStatus
+  )?.label
 
   // Fetch data with React Query
   // eslint-disable-next-line @tanstack/query/exhaustive-deps
@@ -295,6 +321,7 @@ export function ApiKeysTable() {
 
   return (
     <DataTablePage
+      className='lujiyun-keys-page'
       table={table}
       columns={columns}
       isLoading={isLoading}
@@ -306,25 +333,62 @@ export function ApiKeysTable() {
       skeletonKeyPrefix='api-keys-skeleton'
       applyHeaderSize
       toolbarProps={{
-        searchPlaceholder: t('Filter by name...'),
-        searchDebounceMs: 500,
-        additionalSearch: (
-          <Input
-            placeholder={t('Filter by API key...')}
-            aria-label={t('Filter by API key...')}
-            value={tokenFilterInput}
-            onChange={(e) => setTokenFilterInput(e.target.value)}
-            className='w-full sm:w-50 lg:w-60'
-          />
+        customSearch: (
+          <div className='api-key-filter-field api-key-name-filter'>
+            <Input
+              placeholder={t('Filter by name...')}
+              aria-label={t('Filter by name...')}
+              value={globalFilter ?? ''}
+              onChange={(event) => onGlobalFilterChange?.(event.target.value)}
+            />
+            <Search aria-hidden='true' />
+          </div>
         ),
-        filters: [
-          {
-            columnId: 'status',
-            title: t('Status'),
-            options: API_KEY_STATUS_OPTIONS,
-            singleSelect: true,
-          },
-        ],
+        additionalSearch: (
+          <>
+            <div className='api-key-filter-field api-key-token-filter'>
+              <Input
+                placeholder={t('Filter by API key...')}
+                aria-label={t('Filter by API key...')}
+                value={tokenFilterInput}
+                onChange={(event) => setTokenFilterInput(event.target.value)}
+              />
+              <Search aria-hidden='true' />
+            </div>
+            <Select
+              items={statusItems}
+              value={selectedStatus}
+              onValueChange={(value) => {
+                table
+                  .getColumn('status')
+                  ?.setFilterValue(
+                    value === API_KEY_STATUS_ALL_VALUE ? undefined : [value]
+                  )
+              }}
+            >
+              <SelectTrigger
+                className='api-key-status-filter'
+                aria-label={t('Status')}
+              >
+                <SelectValue placeholder={t('Select status')}>
+                  {selectedStatusLabel}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent alignItemWithTrigger={false}>
+                <SelectGroup>
+                  <SelectItem value={API_KEY_STATUS_ALL_VALUE}>
+                    {t('All')}
+                  </SelectItem>
+                  {statusItems.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </>
+        ),
       }}
       mobile={<ApiKeysMobileList table={table} isLoading={isLoading} />}
       getRowClassName={(row) =>

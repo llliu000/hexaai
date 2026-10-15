@@ -22,8 +22,6 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-const FEEDBACK_URL = 'https://github.com/QuantumNous/new-api/issues'
-
 type GeneralErrorProps = React.HTMLAttributes<HTMLDivElement> & {
   minimal?: boolean
   error?: unknown
@@ -76,7 +74,7 @@ export function GeneralError({
             <Button variant='outline' onClick={() => history.go(-1)}>
               {t('Go Back')}
             </Button>
-            <Button
+            {/* <Button
               variant='outline'
               render={
                 <a
@@ -87,7 +85,7 @@ export function GeneralError({
               }
             >
               {t('Report an issue')}
-            </Button>
+            </Button> */}
             <Button onClick={() => navigate({ to: '/' })}>
               {t('Back to Home')}
             </Button>

@@ -17,6 +17,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+
+import '@/styles/wallet-lanhu.css'
 import { useTranslation } from 'react-i18next'
 
 import { SectionPageLayout } from '@/components/layout'
@@ -126,11 +128,13 @@ export function Wallet(props: WalletProps) {
   }, [])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial server synchronization owns the loading state
     fetchUser()
   }, [fetchUser])
 
   useEffect(() => {
     if (props.initialShowHistory) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- the route flag intentionally opens this controlled dialog
       setBillingDialogOpen(true)
       window.history.replaceState({}, '', window.location.pathname)
     }
@@ -285,9 +289,12 @@ export function Wallet(props: WalletProps) {
   return (
     <>
       <SectionPageLayout>
-        <SectionPageLayout.Title>{t('Wallet')}</SectionPageLayout.Title>
+        <SectionPageLayout.Title>{t('Billing Center')}</SectionPageLayout.Title>
+        <SectionPageLayout.Description>
+          {t('Manage account funds and review balance and spending.')}
+        </SectionPageLayout.Description>
         <SectionPageLayout.Content>
-          <div className='mx-auto flex w-full max-w-7xl flex-col gap-4 sm:gap-5'>
+          <div className='lujiyun-wallet-page flex w-full max-w-none flex-col gap-4 sm:gap-5'>
             <WalletStatsCard user={user} loading={userLoading} />
 
             <div

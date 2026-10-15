@@ -142,7 +142,7 @@ function SystemTasksTable(props: SystemTasksTableProps) {
                     <div className='font-medium'>
                       {t(TYPE_LABEL[task.type] ?? task.type)}
                     </div>
-                    <div className='text-muted-foreground font-mono text-[11px]'>
+                    <div className='text-muted-foreground font-mono text-[12px]'>
                       {TYPE_DISPLAY_ID[task.type] ?? task.type}
                     </div>
                   </div>
