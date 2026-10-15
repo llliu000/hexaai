@@ -303,5 +303,8 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	if rt.Status == "" || strings.ToLower(rt.Status) == "unknown" {
 		rt.Status = "queued"
 	}
+	if originTask.PrivateData.EnhanceResolution != "" {
+		rt.Resolution = originTask.PrivateData.EnhanceResolution
+	}
 	return json.Marshal(rt)
 }
