@@ -1,12 +1,14 @@
 package model_setting
 
-import "github.com/QuantumNous/new-api/setting/config"
+import (
+	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/setting/config"
+)
 
 type EnhanceSetting struct {
 	Channel      string `json:"channel"`
 	BaseUrl      string `json:"base_url"`
 	ApiKey       string `json:"api_key"`
-	Enabled      bool   `json:"enabled"`
 	ToolVersion  string `json:"tool_version"`
 	Scene        string `json:"scene"`
 	BitrateLevel string `json:"bitrate_level"`
@@ -15,9 +17,8 @@ type EnhanceSetting struct {
 var defaultEnhanceSetting = EnhanceSetting{
 	BaseUrl:      "https://mediakit.cn-beijing.volces.com",
 	Channel:      "volc",
-	ApiKey:       "AKLTYjM3ZTlhZWQ3Y2NkNGI2Y2IyNWFiY2MxMzMzMTUyY2I",
 	ToolVersion:  "standard",
-	Scene:        "common",
+	Scene:        "aigc",
 	BitrateLevel: "medium",
 }
 
@@ -28,5 +29,8 @@ func init() {
 }
 
 func GetEnhanceSetting() *EnhanceSetting {
-	return &enhanceSetting
+	common.OptionMapRWMutex.RLock()
+	defer common.OptionMapRWMutex.RUnlock()
+	setting := enhanceSetting
+	return &setting
 }

@@ -23,15 +23,19 @@ const (
 )
 
 type Config struct {
-	APIKey      string
-	BaseURL     string
-	ToolVersion string
+	APIKey       string
+	BaseURL      string
+	ToolVersion  string
+	Scene        string
+	BitrateLevel string
 }
 
 type Adapter struct {
-	apiKey      string
-	baseURL     string
-	toolVersion string
+	apiKey       string
+	baseURL      string
+	toolVersion  string
+	scene        string
+	bitrateLevel string
 }
 
 type submitRequest struct {
@@ -71,24 +75,33 @@ type apiError struct {
 }
 
 func New(config Config) (*Adapter, error) {
+	config.BaseURL = strings.TrimRight(strings.TrimSpace(config.BaseURL), "/")
 	if config.BaseURL == "" {
 		config.BaseURL = DefaultBaseURL
 	}
 	if config.ToolVersion == "" {
 		config.ToolVersion = defaultToolVersion
 	}
+	if config.Scene == "" {
+		config.Scene = defaultScene
+	}
+	if config.BitrateLevel == "" {
+		config.BitrateLevel = defaultBitrateLevel
+	}
 	return &Adapter{
-		toolVersion: config.ToolVersion,
-		baseURL:     config.BaseURL,
-		apiKey:      config.APIKey,
+		toolVersion:  config.ToolVersion,
+		baseURL:      config.BaseURL,
+		apiKey:       config.APIKey,
+		scene:        config.Scene,
+		bitrateLevel: config.BitrateLevel,
 	}, nil
 }
 
 func (a *Adapter) Submit(ctx context.Context, request dto.SubmitRequest) (*dto.SubmitResult, error) {
 	payload := submitRequest{
 		Resolution:   request.TargetResolution,
-		BitrateLevel: defaultBitrateLevel,
 		VideoURL:     request.VideoURL,
+		BitrateLevel: a.bitrateLevel,
 	}
 	if request.ClientToken != "" {
 		payload.ClientToken = request.ClientToken
@@ -100,7 +113,9 @@ func (a *Adapter) Submit(ctx context.Context, request dto.SubmitRequest) (*dto.S
 	case "standard", "professional":
 		uri = "/api/v1/tools/enhance-video"
 		payload.ToolVersion = a.toolVersion
-		payload.Scene = defaultScene
+		if a.toolVersion == "standard" {
+			payload.Scene = a.scene
+		}
 	case "generative":
 		uri = "/api/v1/tools/enhance-video-generative"
 	case "fast":

@@ -33,9 +33,11 @@ func GetAdapter() (Adapter, error) {
 	switch setting.Channel {
 	case "volc":
 		return volc.New(volc.Config{
-			APIKey:      setting.ApiKey,
-			BaseURL:     setting.BaseUrl,
-			ToolVersion: setting.ToolVersion,
+			APIKey:       setting.ApiKey,
+			BaseURL:      setting.BaseUrl,
+			ToolVersion:  setting.ToolVersion,
+			Scene:        setting.Scene,
+			BitrateLevel: setting.BitrateLevel,
 		})
 	}
 	return nil, fmt.Errorf("unsupported channel: %s", setting.Channel)
