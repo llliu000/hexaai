@@ -66,21 +66,22 @@ For commercial licensing, please contact support@quantumnous.com
   backdrop-filter: blur(16px);
   box-shadow: 0 2px 12px #18275304;
 }
+/* Align header content with page gutters: 32px from each viewport edge. */
+.wm-header .wm-container {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 32px;
+}
 .wm-header-inner {
-  max-width: 1360px;
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 32px;
   height: 100%;
   display: flex;
   align-items: center;
   gap: 64px;
-  transition:
-    width 280ms ease,
-    max-width 280ms ease;
-}
-@media (min-width: 601px) {
-  .wm-header.is-scrolled .wm-header-inner {
-    width: calc(100% - 96px);
-    max-width: 1280px;
-  }
 }
 .wm-brand {
   display: inline-flex;
@@ -955,10 +956,12 @@ For commercial licensing, please contact support@quantumnous.com
 .wm-footer {
   background: #fff;
 }
+/* Match header / content gutters: 32px from each viewport edge. */
 .wm-footer .site-footer-inner {
-  width: calc(100% - 64px);
-  max-width: 1360px;
-  padding: 56px 0 24px;
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding: 56px 32px 24px;
 }
 .wm-footer .site-footer-main {
   display: grid;
@@ -975,12 +978,17 @@ For commercial licensing, please contact support@quantumnous.com
   line-height: 24px;
   color: var(--wm-muted);
 }
+.wm-footer .site-footer-brand > a {
+  gap: 10px;
+}
 .wm-footer .site-footer-brand .system-logo {
   width: 36px;
   height: 36px;
+  object-fit: contain;
 }
 .wm-footer .site-footer-brand > a > span {
-  font-size: 18px;
+  font-size: 21px;
+  font-weight: 700;
 }
 .wm-footer .site-footer-links {
   display: grid;
@@ -1210,6 +1218,16 @@ For commercial licensing, please contact support@quantumnous.com
     width: 30px;
     height: 30px;
   }
+  .wm-footer .site-footer-brand > a {
+    gap: 8px;
+  }
+  .wm-footer .site-footer-brand .system-logo {
+    width: 30px;
+    height: 30px;
+  }
+  .wm-footer .site-footer-brand > a > span {
+    font-size: 18px;
+  }
   .wm-header-actions {
     gap: 6px;
   }
@@ -1307,7 +1325,7 @@ For commercial licensing, please contact support@quantumnous.com
     display: none;
   }
   .wm-footer .site-footer-inner {
-    width: calc(100% - 40px);
+    width: 100%;
     padding-top: 40px;
   }
   .wm-footer .site-footer-links {
@@ -1323,6 +1341,16 @@ For commercial licensing, please contact support@quantumnous.com
   .wm-brand .system-logo {
     width: 26px;
     height: 26px;
+  }
+  .wm-footer .site-footer-brand > a {
+    gap: 6px;
+  }
+  .wm-footer .site-footer-brand .system-logo {
+    width: 26px;
+    height: 26px;
+  }
+  .wm-footer .site-footer-brand > a > span {
+    font-size: 16px;
   }
   .wm-header-actions {
     gap: 4px;

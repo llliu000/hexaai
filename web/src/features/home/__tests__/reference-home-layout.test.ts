@@ -86,7 +86,7 @@ test('desktop and mobile headers expose the same four primary destinations', () 
   assert.doesNotMatch(headerActions, /wm-console-link/)
 })
 
-test('the floating header gently draws its content inward on wider screens', () => {
+test('header content aligns with the page content gutters at 32px', () => {
   const root = parse(css)
   const properties = (selector: string, media?: string) => {
     const values: Record<string, string> = {}
@@ -109,17 +109,15 @@ test('the floating header gently draws its content inward on wider screens', () 
   const mobileHeader = properties('.wm-header', '(max-width: 600px)')
   assert.equal(mobileHeader.height, '75px')
   const initial = properties('.wm-header-inner')
-  assert.equal(initial['max-width'], '1360px')
-  assert.match(
-    initial.transition ?? '',
-    /width 280ms ease,\s*max-width 280ms ease/
-  )
+  assert.equal(initial.width, '100%')
+  assert.equal(initial['max-width'], 'none')
+  assert.equal(initial['margin-inline'], '0')
+  assert.equal(initial['padding-inline'], '32px')
   const scrolled = properties(
     '.wm-header.is-scrolled .wm-header-inner',
     '(min-width: 601px)'
   )
-  assert.equal(scrolled.width, 'calc(100% - 96px)')
-  assert.equal(scrolled['max-width'], '1280px')
+  assert.equal(Object.keys(scrolled).length, 0)
 })
 
 test('homepage model catalog selects featured by default and exposes its pressed state', () => {
@@ -162,6 +160,70 @@ test('homepage footer adds one WeChat customer service QR code without replacing
     css,
     /\.wm-footer-wechat\s*\{[^}]*align-items:\s*center;[^}]*text-align:\s*center;/s
   )
+})
+
+test('footer inner content aligns with the header gutters at 32px', () => {
+  const root = parse(css)
+  const values: Record<string, string> = {}
+  root.walkRules('.wm-footer .site-footer-inner', (rule) => {
+    if (rule.parent !== root) return
+    rule.walkDecls((declaration) => {
+      values[declaration.prop] = declaration.value
+    })
+  })
+  assert.equal(values.width, '100%')
+  assert.equal(values['max-width'], 'none')
+  assert.equal(values['margin-inline'], '0')
+  assert.equal(values.padding, '56px 32px 24px')
+})
+
+test('footer brand logo and title match the header brand sizes', () => {
+  const root = parse(css)
+  const properties = (selector: string, media?: string) => {
+    const values: Record<string, string> = {}
+    root.walkRules(selector, (rule) => {
+      if (
+        media
+          ? rule.parent?.type !== 'atrule' || rule.parent.params !== media
+          : rule.parent !== root
+      ) {
+        return
+      }
+      rule.walkDecls((declaration) => {
+        values[declaration.prop] = declaration.value
+      })
+    })
+    return values
+  }
+
+  const headerBrand = properties('.wm-brand')
+  const headerLogo = properties('.wm-brand .system-logo')
+  const footerLink = properties('.wm-footer .site-footer-brand > a')
+  const footerLogo = properties('.wm-footer .site-footer-brand .system-logo')
+  const footerTitle = properties('.wm-footer .site-footer-brand > a > span')
+
+  assert.equal(footerLogo.width, headerLogo.width)
+  assert.equal(footerLogo.height, headerLogo.height)
+  assert.equal(footerTitle['font-size'], headerBrand['font-size'])
+  assert.equal(footerTitle['font-weight'], headerBrand['font-weight'])
+  assert.equal(footerLink.gap, headerBrand.gap)
+
+  const mobileHeaderBrand = properties('.wm-brand', '(max-width: 600px)')
+  const mobileHeaderLogo = properties(
+    '.wm-brand .system-logo',
+    '(max-width: 600px)'
+  )
+  const mobileFooterLogo = properties(
+    '.wm-footer .site-footer-brand .system-logo',
+    '(max-width: 600px)'
+  )
+  const mobileFooterTitle = properties(
+    '.wm-footer .site-footer-brand > a > span',
+    '(max-width: 600px)'
+  )
+  assert.equal(mobileFooterLogo.width, mobileHeaderLogo.width)
+  assert.equal(mobileFooterLogo.height, mobileHeaderLogo.height)
+  assert.equal(mobileFooterTitle['font-size'], mobileHeaderBrand['font-size'])
 })
 
 test('hero slides reserve a stable full-width surface and clip transitions', () => {
