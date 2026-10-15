@@ -25,6 +25,8 @@ type videoPriceKey struct {
 var enhanceTable = []string{
 	"doubao-seedance-2-0-e",
 	"doubao-seedance-2-0-p",
+	"dreamina-seedance-2-0-e",
+	"dreamina-seedance-2-0-p",
 }
 
 var videoPriceTable = map[string]*videoPriceConfig{
