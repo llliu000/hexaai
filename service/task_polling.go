@@ -18,6 +18,7 @@ import (
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/relay/channel/task/taskcommon"
 	relaycommon "github.com/QuantumNous/new-api/relay/common"
+	"github.com/QuantumNous/new-api/relay/enhance"
 	"github.com/QuantumNous/new-api/relaykit/dto"
 
 	"github.com/bytedance/gopkg/util/gopool"
@@ -557,6 +558,26 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 			task.PrivateData.ResultURL = taskcommon.BuildProxyURL(task.TaskID)
 		}
 		shouldSettle = true
+		if !task.PrivateData.EnhanceVideo {
+			break
+		}
+		orgUrl := task.GetResultURL()
+		status := enhanceVideo(ctx, task)
+		switch status {
+		case -1: // 跳过返回原有地址
+		case 0: // 提交任务
+			task.PrivateData.ResultURL = snap.ResultURL
+			task.Progress = snap.Progress
+			task.Status = snap.Status
+			taskResult.Progress = ""
+			task.Data = snap.Data
+			shouldSettle = false
+			task.FinishTime = 0
+		case 1: // 任务处理中
+			return nil
+		case 2: // 超分成功
+			task.PrivateData.EnhanceOrgUrl = orgUrl
+		}
 	case model.TaskStatusFailure:
 		logger.LogJson(ctx, fmt.Sprintf("Task %s failed", taskId), task)
 		task.Status = model.TaskStatusFailure
@@ -664,4 +685,45 @@ func settleTaskBillingOnComplete(ctx context.Context, adaptor TaskPollingAdaptor
 		return
 	}
 	// 3. 无调整，保持预扣额度
+}
+
+// -1 跳过返回原有地址
+// 0 提交任务
+// 1 任务处理中
+// 2 超分成功
+func enhanceVideo(ctx context.Context, task *model.Task) int {
+	if !task.PrivateData.EnhanceVideo {
+		return -1
+	}
+	adapter, err := enhance.GetAdapter()
+	if err != nil {
+		return -1
+	}
+	if task.PrivateData.EnhanceTaskID == "" {
+		result, err := adapter.Submit(ctx, taskdto.SubmitRequest{
+			TargetResolution: task.PrivateData.EnhanceResolution,
+			VideoURL:         task.GetResultURL(),
+			ClientToken:      task.TaskID,
+		})
+		if err != nil {
+			return -1
+		}
+		task.PrivateData.EnhanceTaskID = result.TaskID
+		return 0
+	}
+
+	enhanceTaskResult, err := adapter.GetTask(ctx, task.PrivateData.EnhanceTaskID)
+	if err != nil {
+		return -1
+	}
+	switch enhanceTaskResult.Status {
+	case taskdto.TaskStatusProcessing:
+		return 1
+	case taskdto.TaskStatusCompleted:
+		task.PrivateData.ResultURL = enhanceTaskResult.VideoURL
+		return 2
+	case taskdto.TaskStatusFailed:
+		return -1
+	}
+	return 1
 }

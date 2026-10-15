@@ -60,8 +60,6 @@ func (a *TaskAdaptor) BuildRequestURL(_ *relaycommon.RelayInfo) (string, error) 
 		return fmt.Sprintf("%s/v3/contents/generations/tasks", a.baseURL), nil
 	case ThirdTokenMart:
 		return fmt.Sprintf("%s/v2/video/generate", a.baseURL), nil
-	case ThirdVipCode:
-		return fmt.Sprintf("%s/v1/video/generations", a.baseURL), nil
 	default:
 		return fmt.Sprintf("%s/api/v3/contents/generations/tasks", a.baseURL), nil
 	}
@@ -81,12 +79,6 @@ func (a *TaskAdaptor) EstimateBilling(c *gin.Context, info *relaycommon.RelayInf
 	if err != nil {
 		return nil
 	}
-	if a.organization == ThirdVipCode {
-		if req.Duration == 0 {
-			req.Duration = 5
-		}
-		return map[string]float64{"seconds": float64(req.Duration)}
-	}
 	ratio, ok := GetVideoInputRatio(info.OriginModelName, req.Metadata)
 	if !ok || ratio == 1.0 {
 		return nil
@@ -105,6 +97,7 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 	if err != nil {
 		return nil, errors.Wrap(err, "convert request payload failed")
 	}
+	enhanceVideo(info, body) // 超分处理
 	for i := range body.Content {
 		if image := body.Content[i].ImageURL; image != nil {
 			body.Content[i].ImageURL.URL = resolveAssetURL(info.ChannelId, image.URL)
@@ -137,44 +130,7 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 			}
 		}
 		data, err = common.Marshal(params)
-	case ThirdVipCode:
-		params := map[string]any{
-			"model":        info.UpstreamModelName,
-			"resolution":   body.Resolution,
-			"duration":     body.Duration,
-			"aspect_ratio": body.Ratio,
-			"metadata": map[string]any{
-				"referenceType": "asset",
-			},
-		}
-		var images []string
-		for i := range body.Content {
-			if imageURL := body.Content[i].ImageURL; imageURL != nil && imageURL.URL != "" {
-				images = append(images, imageURL.URL)
-			}
-			if body.Content[i].Type == "text" {
-				params["prompt"] = body.Content[i].Text
-			}
-		}
-		params["images"] = images
-		data, err = common.Marshal(params)
 	default:
-		data, err = common.Marshal(body)
-	}
-	if a.organization == ThirdAnyFast { // 转换为openai协议
-		params := map[string]any{
-			"model":    info.UpstreamModelName,
-			"metadata": body,
-			"asset":    true,
-		}
-		for i := range body.Content {
-			if body.Content[i].Type == "text" {
-				params["prompt"] = body.Content[i].Text
-				break
-			}
-		}
-		data, err = common.Marshal(params)
-	} else {
 		data, err = common.Marshal(body)
 	}
 	if err != nil {
@@ -222,8 +178,6 @@ func (a *TaskAdaptor) FetchTask(baseUrl, key string, body map[string]any, proxy 
 		api = fmt.Sprintf("%s/v3/contents/generations/tasks/%s", baseUrl, taskID)
 	case ThirdTokenMart:
 		api = fmt.Sprintf("%s/v2/video/tasks/%s", baseUrl, taskID)
-	case ThirdVipCode:
-		api = fmt.Sprintf("%s/v1/video/generations/%s", baseUrl, taskID)
 	default:
 		api = fmt.Sprintf("%s/api/v3/contents/generations/tasks/%s", baseUrl, taskID)
 	}
@@ -306,7 +260,7 @@ func (a *TaskAdaptor) ConvertToOpenAIVideo(originTask *model.Task) ([]byte, erro
 	openAIVideo.TaskID = originTask.TaskID
 	openAIVideo.Status = originTask.Status.ToVideoStatus()
 	openAIVideo.SetProgressStr(originTask.Progress)
-	openAIVideo.SetMetadata("url", dResp.Content.VideoURL)
+	openAIVideo.SetMetadata("url", originTask.GetResultURL())
 	openAIVideo.CreatedAt = originTask.CreatedAt
 	openAIVideo.CompletedAt = originTask.UpdatedAt
 	openAIVideo.Model = originTask.Properties.OriginModelName
@@ -327,6 +281,7 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	_ = common.Unmarshal(originTask.Data, &sbm)
 	if sbm.Task.Id != "" {
 		sbm.Task.Metadata.Model = originTask.Properties.OriginModelName
+		sbm.Task.Metadata.Content.VideoURL = originTask.GetResultURL()
 		return common.Marshal(sbm.Task.Metadata)
 	}
 
@@ -344,8 +299,12 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	rt.CreatedAt = originTask.CreatedAt
 	rt.UpdatedAt = originTask.UpdatedAt
 	rt.Model = originTask.Properties.OriginModelName
+	rt.Content.VideoURL = originTask.GetResultURL()
 	if rt.Status == "" || strings.ToLower(rt.Status) == "unknown" {
 		rt.Status = "queued"
+	}
+	if originTask.PrivateData.EnhanceResolution != "" {
+		rt.Resolution = originTask.PrivateData.EnhanceResolution
 	}
 	return json.Marshal(rt)
 }
