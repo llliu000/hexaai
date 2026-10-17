@@ -16,6 +16,7 @@ import (
 	"github.com/QuantumNous/new-api/relay/channel"
 	"github.com/QuantumNous/new-api/relay/channel/task/ali"
 	"github.com/QuantumNous/new-api/relay/channel/task/doubao"
+	taskmule "github.com/QuantumNous/new-api/relay/channel/task/mule"
 	"github.com/QuantumNous/new-api/relay/channel/task/taskcommon"
 	relaycommon "github.com/QuantumNous/new-api/relay/common"
 	relayconstant "github.com/QuantumNous/new-api/relay/constant"
@@ -406,6 +407,12 @@ func videoFetchByIDRespBodyBuilder(c *gin.Context) (respBody []byte, taskResp *d
 		if adaptor, ok := GetTaskAdaptor(originTask.Platform).(*ali.TaskAdaptor); ok {
 			if respBody, err = adaptor.ConvertToAliVideo(originTask); nil == err {
 				return // 兼容marshall错误
+			}
+		}
+	} else if strings.HasPrefix(c.Request.RequestURI, "/vendors/carrothub/v1/") {
+		if adaptor, ok := GetTaskAdaptor(originTask.Platform).(*taskmule.TaskAdaptor); ok {
+			if respBody, err = adaptor.ConvertToMuleVideo(originTask); nil == err {
+				return
 			}
 		}
 	}

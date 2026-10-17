@@ -77,4 +77,14 @@ func SetVideoRouter(router *gin.Engine) {
 		wanV1Router.POST("/services/aigc/video-generation/video-synthesis", controller.RelayTask)
 		wanV1Router.GET("/tasks/:task_id", controller.RelayTaskFetch)
 	}
+
+	// mulerouter https://www.mulerouter.ai/docs/api-reference/endpoint/carrothub/w3.0-video/generation
+	// https://api.mulerouter.ai/vendors/carrothub/v1/w3.0-video/generation
+	muleRouter := router.Group("/vendors/carrothub/v1")
+	muleRouter.Use(middleware.RouteTag("relay"))
+	muleRouter.Use(middleware.MuleRequestConvert(), middleware.TokenAuth(), middleware.Distribute())
+	{
+		muleRouter.POST("/:model/generation", controller.RelayTask)
+		muleRouter.GET("/:model/generation/:task_id", controller.RelayTaskFetch)
+	}
 }
