@@ -31,19 +31,19 @@ var muleResolutionPriceRatio = map[string]map[string]float64{
 }
 
 type MuleRequest struct {
-	Prompt          string   `json:"prompt"`
-	FirstFrame      string   `json:"first_frame"`
-	LastFrame       string   `json:"last_frame"`
-	ReferenceImages []string `json:"reference_images"`
-	ReferenceVideos []string `json:"reference_videos"`
-	ReferenceAudios []string `json:"reference_audios"`
-	File            string   `json:"file"`
-	Link            string   `json:"link"`
-	Resolution      string   `json:"resolution"`
-	Ratio           string   `json:"ratio"`
-	Duration        int      `json:"duration"`
+	Prompt          string   `json:"prompt,omitempty"`
+	FirstFrame      string   `json:"first_frame,omitempty"`
+	LastFrame       string   `json:"last_frame,omitempty"`
+	ReferenceImages []string `json:"reference_images,omitempty"`
+	ReferenceVideos []string `json:"reference_videos,omitempty"`
+	ReferenceAudios []string `json:"reference_audios,omitempty"`
+	File            string   `json:"file,omitempty"`
+	Link            string   `json:"link,omitempty"`
+	Resolution      string   `json:"resolution,omitempty"`
+	Ratio           string   `json:"ratio,omitempty"`
+	Duration        int      `json:"duration,omitempty"`
 	Audio           bool     `json:"audio"`
-	Seed            int      `json:"seed"`
+	Seed            int      `json:"seed,omitempty"`
 	PromptExtend    bool     `json:"prompt_extend"`
 
 	durationProvided     bool

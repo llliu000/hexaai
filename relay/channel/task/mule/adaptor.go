@@ -56,15 +56,6 @@ func (a *TaskAdaptor) BuildRequestHeader(c *gin.Context, req *http.Request, info
 }
 
 func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayInfo) (io.Reader, error) {
-	if value, exists := c.Get("mule_request"); exists {
-		if req, ok := value.(MuleRequest); ok {
-			bodyBytes, err := common.Marshal(req)
-			if err != nil {
-				return nil, errors.Wrap(err, "marshal_mule_request_failed")
-			}
-			return bytes.NewReader(bodyBytes), nil
-		}
-	}
 	taskReq, err := relaycommon.GetTaskRequest(c)
 	if err != nil {
 		return nil, err
