@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
@@ -106,7 +107,7 @@ func (a *TaskAdaptor) EstimateBilling(c *gin.Context, info *relaycommon.RelayInf
 		duration = 5
 	}
 
-	resolution := muleReq.Resolution
+	resolution := strings.ToLower(muleReq.Resolution)
 	if resolution == "" {
 		resolution = "1080p"
 	}
