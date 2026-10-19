@@ -14,19 +14,24 @@ const (
 // Prices are from the MuleRouter Wan 3.0 Video model pages.
 var muleResolutionPriceRatio = map[string]map[string]float64{
 	"berry-1.0": {
-		"480p":  0.050 / 0.200,
-		"720p":  0.100 / 0.200,
-		"1080p": 1,
+		"480p":  1,
+		"720p":  0.100 / 0.05,
+		"1080p": 0.2 / 0.05,
 	},
-	"wan3.0-video": {
-		"480p":  0.050 / 0.200,
-		"720p":  0.100 / 0.200,
+	"berry-1.0-pro": {
 		"1080p": 1,
+		"2k":    0.2 / 0.18,
+		"4k":    0.23 / 0.18,
 	},
-	"wan3.0-video-prime": {
-		"480p":  0.068 / 0.280,
-		"720p":  0.140 / 0.280,
+	"berry-1.0-turbe": {
+		"480p":  1,
+		"720p":  0.14 / 0.068,
+		"1080p": 0.28 / 0.068,
+	},
+	"berry-1.0-pro-turbe": {
 		"1080p": 1,
+		"2k":    0.28 / 0.26,
+		"4k":    0.31 / 0.26,
 	},
 }
 
