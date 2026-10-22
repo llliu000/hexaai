@@ -61,7 +61,7 @@
     padding: 21px 20px;
     border: 0;
     border-radius: 18px;
-    background: #fff;
+    background: var(--design-surface, #fff);
     box-shadow: 0 8px 24px rgb(43 84 142 / 3%);
   }
 
@@ -108,9 +108,9 @@
   .lujiyun-usage-common .usage-logs-filter-card [data-slot='select-trigger'],
   .lujiyun-usage-common .usage-logs-filter-card > div:first-child button {
     height: 40px;
-    border-color: #dbe4f2;
+    border-color: var(--design-border, #dbe4f2);
     border-radius: 11px;
-    background: #fff;
+    background: var(--design-surface, #fff);
     box-shadow: none;
   }
 
@@ -177,25 +177,25 @@
     padding-inline: 11px;
     border: 0;
     border-radius: 16px;
-    background: #f7f9fd;
+    background: var(--design-inset, #f7f9fd);
     box-shadow: none;
   }
 
   .lujiyun-usage-page.lujiyun-usage-common .overflow-hidden.rounded-lg.border {
     min-height: 0;
-    border-color: #e5ebf5;
+    border-color: var(--design-border, #e5ebf5);
     border-radius: 18px 18px 0 0;
-    background: #fff;
+    background: var(--design-surface, #fff);
   }
 
   .lujiyun-usage-common [data-slot='table-header'] {
-    background: #f9fbff;
+    background: var(--design-inset, #f9fbff);
   }
 
   .lujiyun-usage-common [data-slot='table-head'] {
     height: 56px;
     padding-inline: 30px;
-    color: #52617b;
+    color: var(--design-muted, #52617b);
     font-size: 12px;
     font-weight: 500;
   }
@@ -241,14 +241,14 @@
   }
 
   .lujiyun-usage-common [data-slot='empty-title'] {
-    color: #142039;
+    color: var(--design-text, #142039);
     font-size: 18px;
     line-height: 26px;
     font-weight: 700;
   }
 
   .lujiyun-usage-common [data-slot='empty-description'] {
-    color: #94a2ba;
+    color: var(--design-muted, #94a2ba);
     font-size: 12px;
     line-height: 20px;
   }
@@ -292,7 +292,7 @@ body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
 .lujiyun-usage-page:is(.lujiyun-usage-common, .lujiyun-usage-task)
   .usage-logs-table-layout
   > .overflow-y-auto {
-  background: #fff;
+  background: var(--design-surface, #fff);
   border-radius: 18px 18px 0 0;
 }
 
@@ -305,7 +305,7 @@ body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
   padding: 0 24px;
   border: 0;
   border-radius: 0 0 20px 20px;
-  background: #f8faff;
+  background: var(--design-inset, #f8faff);
 }
 
 body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
@@ -357,7 +357,7 @@ body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
   padding: 0;
   border: 0;
   border-radius: 10px;
-  background: #fbfcff;
+  background: var(--design-surface, #fbfcff);
   box-shadow: none;
   font-size: 12px;
 }
@@ -382,9 +382,9 @@ body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
   [data-slot='select-trigger'] {
   width: 73px;
   height: 37px;
-  border-color: #dce4f0;
+  border-color: var(--design-border, #dce4f0);
   border-radius: 9px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: none;
   font-size: 12px;
 }

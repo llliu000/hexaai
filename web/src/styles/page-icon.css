@@ -21,30 +21,30 @@
   stroke-linejoin: round;
 }
 .page-icon.page-icon-blue {
-  background: #e7f0ff;
-  color: #246bfe;
+  background: var(--design-blue-surface, #e7f0ff);
+  color: var(--design-link, #246bfe);
 }
 .page-icon.page-icon-green {
-  background: #e2f8ef;
-  color: #16b883;
+  background: var(--design-green-surface, #e2f8ef);
+  color: var(--design-green, #16b883);
 }
 .page-icon.page-icon-purple {
-  background: #f6e7ff;
-  color: #c460ff;
+  background: var(--design-purple-surface, #f6e7ff);
+  color: var(--design-purple, #c460ff);
 }
 .page-icon.page-icon-cyan {
-  background: #e0f8fa;
-  color: #18b9c2;
+  background: var(--design-cyan-surface, #e0f8fa);
+  color: var(--design-cyan, #18b9c2);
 }
 .page-icon.page-icon-amber {
-  background: #fff3d9;
-  color: #f3a21c;
+  background: var(--design-amber-surface, #fff3d9);
+  color: var(--design-amber, #f3a21c);
 }
 .page-icon.page-icon-red {
-  background: #ffebee;
-  color: #e45b72;
+  background: var(--design-inset, #ffebee);
+  color: var(--design-red, #e45b72);
 }
 .page-icon.page-icon-slate {
-  background: #edf2f8;
-  color: #71829d;
+  background: var(--design-inset, #edf2f8);
+  color: var(--design-muted, #71829d);
 }

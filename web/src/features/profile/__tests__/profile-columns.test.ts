@@ -41,7 +41,7 @@ test('profile header shares the content area background', () => {
       backgrounds[rule.selector] = decl.value
     })
   })
-  assert.equal(backgrounds['.profile-design'], '#f4f7fc')
+  assert.equal(backgrounds['.profile-design'], 'var(--design-canvas, #f4f7fc)')
   assert.equal(
     backgrounds['.profile-design-header'],
     backgrounds['.profile-design']

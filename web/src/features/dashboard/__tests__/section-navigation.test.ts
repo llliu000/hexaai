@@ -44,11 +44,11 @@ test('dashboard heading follows the active section tab', () => {
   assert.match(dashboard, /onValueChange=\{handleSectionChange\}/)
   assert.match(
     modelStyles,
-    /\.dashboard-section-tabs[\s\S]*?\[data-slot='tabs-list'\][\s\S]*?border: 1px solid #e2e8f0;[\s\S]*?background: transparent;/
+    /\.dashboard-section-tabs[\s\S]*?\[data-slot='tabs-list'\][\s\S]*?border: 1px solid var\(--design-border, #e2e8f0\);[\s\S]*?background: transparent;/
   )
   assert.match(
     modelStyles,
-    /\.dashboard-section-tabs[\s\S]*?\[data-slot='tabs-trigger'\]\[data-active\][\s\S]*?background: #e6efff;[\s\S]*?color: #216aff;/
+    /\.dashboard-section-tabs[\s\S]*?\[data-slot='tabs-trigger'\]\[data-active\][\s\S]*?background: var\(--design-blue-surface, #e6efff\);[\s\S]*?color: var\(--design-link, #216aff\);/
   )
   assert.match(
     modelStyles,

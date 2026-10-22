@@ -55,7 +55,7 @@
   height: 100%;
 }
 .model-chart-loading {
-  color: #8496b2;
+  color: var(--design-muted, #8496b2);
 }
 .model-empty-message {
   display: flex;
@@ -66,20 +66,20 @@
 .model-empty-message strong {
   font-size: 12px;
   line-height: 20px;
-  color: #17243b;
+  color: var(--design-text, #17243b);
   margin-top: 3px;
 }
 .model-empty-message p {
   font-size: 11px;
   line-height: 15px;
-  color: #a3aec2;
+  color: var(--design-muted, #a3aec2);
 }
 .lujiyun-dashboard-models.lujiyun-dashboard-models {
   width: 100% !important;
   max-width: none !important;
   margin-inline: 0 !important;
   font-family: var(--font-body);
-  color: #142039;
+  color: var(--design-text, #142039);
 }
 .lujiyun-dashboard-models .model-design-stats {
   border: 0;
@@ -100,19 +100,39 @@
   border-radius: 20px;
   padding: 16px 14px 16px 70px;
   position: relative;
-  background: linear-gradient(110deg, #f7faff, #edf3ff);
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #f7faff),
+    var(--design-inset, #edf3ff)
+  );
 }
 .lujiyun-dashboard-models .model-design-stats > div > div:nth-child(2) {
-  background: linear-gradient(110deg, #f8fdfa, #e8f9f3);
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #f8fdfa),
+    var(--design-inset, #e8f9f3)
+  );
 }
 .lujiyun-dashboard-models .model-design-stats > div > div:nth-child(3) {
-  background: linear-gradient(110deg, #fcf9ff, #f7ecff);
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #fcf9ff),
+    var(--design-inset, #f7ecff)
+  );
 }
 .lujiyun-dashboard-models .model-design-stats > div > div:nth-child(4) {
-  background: linear-gradient(110deg, #f6fcfd, #e6f9fb);
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #f6fcfd),
+    var(--design-cyan-surface, #e6f9fb)
+  );
 }
 .lujiyun-dashboard-models .model-design-stats > div > div:nth-child(5) {
-  background: linear-gradient(110deg, #fffdf9, #fef6e4);
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #fffdf9),
+    var(--design-amber-surface, #fef6e4)
+  );
 }
 .lujiyun-dashboard-models
   .model-design-stats
@@ -127,8 +147,8 @@
   height: 36px;
   border: 0;
   border-radius: 50%;
-  background: #e7f0ff;
-  color: #246bfe;
+  background: var(--design-blue-surface, #e7f0ff);
+  color: var(--design-link, #246bfe);
 }
 .lujiyun-dashboard-models
   .model-design-stats
@@ -136,8 +156,8 @@
   > div:nth-child(2)
   > div:first-child
   > span:first-child {
-  background: #e2f8ef;
-  color: #16b883;
+  background: var(--design-green-surface, #e2f8ef);
+  color: var(--design-green, #16b883);
 }
 .lujiyun-dashboard-models
   .model-design-stats
@@ -145,8 +165,8 @@
   > div:nth-child(3)
   > div:first-child
   > span:first-child {
-  background: #f6e7ff;
-  color: #c460ff;
+  background: var(--design-purple-surface, #f6e7ff);
+  color: var(--design-purple, #c460ff);
 }
 .lujiyun-dashboard-models
   .model-design-stats
@@ -154,8 +174,8 @@
   > div:nth-child(4)
   > div:first-child
   > span:first-child {
-  background: #e0f8fa;
-  color: #18b9c2;
+  background: var(--design-cyan-surface, #e0f8fa);
+  color: var(--design-cyan, #18b9c2);
 }
 .lujiyun-dashboard-models
   .model-design-stats
@@ -163,8 +183,8 @@
   > div:nth-child(5)
   > div:first-child
   > span:first-child {
-  background: #fff3d9;
-  color: #f3a21c;
+  background: var(--design-amber-surface, #fff3d9);
+  color: var(--design-amber, #f3a21c);
 }
 .lujiyun-dashboard-models
   .model-design-stats
@@ -196,7 +216,7 @@
   font-size: 12px;
   font-weight: 400;
   letter-spacing: 0;
-  color: #66748e;
+  color: var(--design-muted, #66748e);
 }
 .lujiyun-dashboard-models .model-design-stats [class*='font-mono'] {
   font:
@@ -207,14 +227,14 @@
 }
 .lujiyun-dashboard-models .model-design-stats > div > div > div:last-child {
   font-size: 11px;
-  color: #95a2b8;
+  color: var(--design-muted, #95a2b8);
   margin-top: 2px;
 }
 .lujiyun-dashboard-models .model-design-chart {
   height: 238px;
   border: 0;
   border-radius: 20px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: none;
 }
 .lujiyun-dashboard-models .model-design-chart > div:first-child {
@@ -236,16 +256,16 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #e2f8ef;
-  color: #16b883;
+  background: var(--design-green-surface, #e2f8ef);
+  color: var(--design-green, #16b883);
 }
 .lujiyun-dashboard-models
   .model-trend-chart
   > div:first-child
   > div:first-child
   > span:first-child {
-  background: #e0f8fa;
-  color: #18b9c2;
+  background: var(--design-cyan-surface, #e0f8fa);
+  color: var(--design-cyan, #18b9c2);
 }
 .lujiyun-dashboard-models
   .model-design-chart
@@ -258,7 +278,7 @@
 }
 .lujiyun-dashboard-models .model-design-chart > div:first-child span {
   font-size: 11px;
-  color: #7f8da6;
+  color: var(--design-muted, #7f8da6);
   /* margin-left: 10px; */
 }
 .lujiyun-dashboard-models
@@ -276,16 +296,16 @@
   border-radius: 18px;
   font-size: 12px;
   padding: 0 19px;
-  background: #f5f8fe;
-  color: #61708a;
+  background: var(--design-canvas, #f5f8fe);
+  color: var(--design-muted, #61708a);
   box-shadow: none;
 }
 .lujiyun-dashboard-models .model-design-chart button[aria-pressed='true'],
 .lujiyun-dashboard-models
   .model-design-chart
   [data-slot='tabs-trigger'][data-active] {
-  background: #e6efff;
-  color: #216aff;
+  background: var(--design-blue-surface, #e6efff);
+  color: var(--design-link, #216aff);
   font-weight: 600;
 }
 .lujiyun-dashboard-models .model-design-plot {
@@ -300,7 +320,7 @@
   min-height: 0;
   gap: 0;
   padding: 2px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--design-border, #e2e8f0);
   border-radius: 18px;
   background: transparent;
 }
@@ -314,7 +334,7 @@
   border: 0;
   border-radius: 18px;
   background: transparent;
-  color: #61708a;
+  color: var(--design-muted, #61708a);
   font-size: 12px;
   font-weight: 500;
   box-shadow: none;
@@ -323,8 +343,8 @@
   > .dashboard-section-bar
   .dashboard-section-tabs
   [data-slot='tabs-trigger'][data-active] {
-  background: #e6efff;
-  color: #216aff;
+  background: var(--design-blue-surface, #e6efff);
+  color: var(--design-link, #216aff);
   font-weight: 600;
   box-shadow: none;
 }
@@ -405,19 +425,19 @@ body:has(.lujiyun-dashboard-models) button[aria-label*='devtools'] {
     padding: 0 19px;
     border-radius: 20px;
     font-size: 12px;
-    color: #8291ac;
+    color: var(--design-muted, #8291ac);
   }
   .lujiyun-dashboard-models
     > div:first-child
     [role='tab'][aria-selected='true'] {
-    color: #176aff;
-    background: white;
+    color: var(--design-link, #176aff);
+    background: var(--design-surface, white);
   }
   .lujiyun-dashboard-models > div:first-child > div:last-child button {
     height: 31px;
     border: 0;
     border-radius: 11px;
-    background: white;
+    background: var(--design-surface, white);
     font-size: 12px;
     padding: 0 11px;
     box-shadow: 0 3px 12px #203b6410;

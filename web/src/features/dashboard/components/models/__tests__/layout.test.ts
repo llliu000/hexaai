@@ -72,6 +72,14 @@ test('performance health heading matches the consumption heading scale', () => {
   )
 })
 
+test('performance health reuses the shared chart empty state when there is no data', () => {
+  assert.match(performanceOverview, /import \{ ModelChartEmpty \}/)
+  assert.match(performanceOverview, /const showEmpty = !loading && !hasData/)
+  assert.match(performanceOverview, /showEmpty && \(\s*<div className='model-design-plot/)
+  assert.match(performanceOverview, /<ModelChartEmpty \/>/)
+  assert.doesNotMatch(performanceOverview, /No performance data available/)
+})
+
 test('model analysis panels share the same heading inset and icon gap', () => {
   for (const panel of [performanceOverview, consumptionChart, modelCharts]) {
     assert.match(panel, /px-\[15px\]/)

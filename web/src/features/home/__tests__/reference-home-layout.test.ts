@@ -333,7 +333,10 @@ test('hero color fades vertically into the shared body surface instead of ending
         .map((node) => [node.prop, node.value])
     )
   })
-  assert.equal(declarations['.wm-home']['--wm-surface'], '#fff')
+  assert.equal(
+    declarations['.wm-home']['--wm-surface'],
+    'var(--design-surface, #fff)'
+  )
   assert.equal(declarations['.wm-home'].background, 'var(--wm-surface)')
   assert.match(
     declarations['.wm-hero-slide'].background,

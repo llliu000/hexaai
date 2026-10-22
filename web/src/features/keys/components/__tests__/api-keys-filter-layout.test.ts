@@ -70,7 +70,7 @@ describe('API key status filter', () => {
   test('matches the API key search control dimensions', () => {
     assert.match(
       apiKeysStyles,
-      /\.lujiyun-keys-page \.api-key-status-filter\s*\{[^}]*height:\s*42px;[^}]*border-radius:\s*12px;[^}]*background:\s*#fff;/s
+      /\.lujiyun-keys-page \.api-key-status-filter\s*\{[^}]*height:\s*42px;[^}]*border-radius:\s*12px;[^}]*background:\s*var\(--design-surface, #fff\);/s
     )
   })
 })

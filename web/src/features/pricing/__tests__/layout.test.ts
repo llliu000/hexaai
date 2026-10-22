@@ -87,14 +87,18 @@ describe('pricing page layout', () => {
   test('shows the complete desktop banner at its source aspect ratio', () => {
     assert.match(
       pricingStyles,
-      /\.lujiyun-pricing-page\.lujiyun-pricing-page > header\s*\{[^}]*height: auto;[^}]*aspect-ratio: 1440 \/ 171;[^}]*min-height: 171px;[^}]*background:[^;}]*model-square-banner\.svg[^;}]*\/[^;}]*contain no-repeat;/s
+      /\.lujiyun-pricing-page\.lujiyun-pricing-page > header\s*\{[^}]*height: auto;[^}]*aspect-ratio: 5760 \/ 788;[^}]*min-height: 0;[^}]*background:[^;}]*model-squal\.png[^;}]*\/[^;}]*100% 100% no-repeat;/s
     )
   })
 
-  test('keeps the banner title visible on narrow screens', () => {
+  test('keeps banner lettering readable on narrow screens by cropping the right side', () => {
     assert.match(
       pricingStyles,
-      /@media \(max-width: 640px\)[\s\S]*?\.lujiyun-pricing-page\.lujiyun-pricing-page > header\s*\{[^}]*height: 130px;[^}]*aspect-ratio: auto;[^}]*min-height: 0;[^}]*background-position: left center;[^}]*background-size: auto 100%;/s
+      /@media \(max-width: 900px\)[\s\S]*?\.lujiyun-pricing-page\.lujiyun-pricing-page > header\s*\{[^}]*height: 140px;[^}]*aspect-ratio: auto;[^}]*min-height: 140px;[^}]*background-position: left center;[^}]*background-size: cover;/s
+    )
+    assert.match(
+      pricingStyles,
+      /@media \(max-width: 640px\)[\s\S]*?\.lujiyun-pricing-page\.lujiyun-pricing-page > header\s*\{[^}]*height: 120px;[^}]*min-height: 120px;/s
     )
   })
 
@@ -116,11 +120,11 @@ describe('pricing page layout', () => {
   test('highlights model cards on hover', () => {
     assert.match(
       pricingStyles,
-      /\.lujiyun-pricing-page \.lanhu-model-grid > \.lanhu-model-card\s*\{[^}]*border: 1px solid #e3eaf5;[^}]*transition: border-color 160ms ease;/s
+      /\.lujiyun-pricing-page \.lanhu-model-grid > \.lanhu-model-card\s*\{[^}]*border: 1px solid var\(--design-border, #e3eaf5\);[^}]*transition: border-color 160ms ease;/s
     )
     assert.match(
       pricingStyles,
-      /\.lujiyun-pricing-page \.lanhu-model-grid > \.lanhu-model-card:hover\s*\{[^}]*border-color: #8db2ff;/s
+      /\.lujiyun-pricing-page \.lanhu-model-grid > \.lanhu-model-card:hover\s*\{[^}]*border-color: var\(--design-accent-border, #8db2ff\);/s
     )
   })
 

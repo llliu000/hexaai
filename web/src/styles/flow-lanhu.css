@@ -11,7 +11,7 @@
   max-width: none !important;
   margin-inline: 0 !important;
   font-family: var(--font-body);
-  color: #162641;
+  color: var(--design-text, #162641);
 }
 .lujiyun-dashboard-flow.lujiyun-dashboard-flow > div:last-child {
   margin-top: 0;
@@ -19,7 +19,7 @@
 .lujiyun-dashboard-flow .lujiyun-flow-controls {
   border: 0;
   border-radius: 16px;
-  background: white;
+  background: var(--design-surface, white);
   box-shadow: none;
   padding: 20px;
 }
@@ -27,7 +27,7 @@
   height: 34px;
   min-height: 0;
   padding: 3px;
-  background: #f4f7fc;
+  background: var(--design-canvas, #f4f7fc);
   border: 0;
   border-radius: 18px;
   box-shadow: none;
@@ -42,14 +42,14 @@
   font-size: 12px;
   font-weight: 400;
   box-shadow: none;
-  color: #425574;
+  color: var(--design-text, #425574);
 }
 .lujiyun-dashboard-flow
   .lujiyun-flow-controls
   [data-slot='tabs-trigger'][aria-selected='true'] {
-  color: #176aff;
-  background: #f0f6ff;
-  border-color: #cadeff;
+  color: var(--design-link, #176aff);
+  background: var(--design-inset, #f0f6ff);
+  border-color: var(--design-accent-border, #cadeff);
   font-weight: 600;
 }
 .lujiyun-dashboard-flow .lujiyun-flow-controls [data-slot='tabs-trigger'] svg {
@@ -102,7 +102,7 @@
   > div
   > div:first-child
   > span {
-  color: #3e5272;
+  color: var(--design-text, #3e5272);
   font-size: 12px;
   font-weight: 600;
 }
@@ -110,22 +110,22 @@
   height: 34px;
   border: 0;
   border-radius: 18px;
-  background: #f4f7fc;
-  color: #425574;
+  background: var(--design-canvas, #f4f7fc);
+  color: var(--design-text, #425574);
   font-weight: 400;
   font-size: 12px;
   box-shadow: none;
 }
 .lujiyun-dashboard-flow .lujiyun-flow-controls > div:last-child > button {
   min-width: 85px;
-  background: white;
-  border: 1px solid #e3ebf8;
+  background: var(--design-surface, white);
+  border: 1px solid var(--design-border, #e3ebf8);
 }
 .lujiyun-dashboard-flow .lujiyun-flow-card {
   min-height: 462px;
   border: 0;
   border-radius: 18px;
-  background: white;
+  background: var(--design-surface, white);
   box-shadow: 0 3px 14px #31588708;
 }
 .lujiyun-dashboard-flow .lujiyun-flow-card > div:first-child {
@@ -164,7 +164,7 @@
   gap: 0;
   padding: 3px;
   border-radius: 18px;
-  background: #f4f7fc;
+  background: var(--design-canvas, #f4f7fc);
 }
 .lujiyun-dashboard-flow
   .lujiyun-flow-card
@@ -185,7 +185,7 @@
   padding: 0;
   border: 1px solid transparent;
   border-radius: 16px;
-  color: #425574;
+  color: var(--design-text, #425574);
   font-size: 12px;
   font-weight: 400;
   line-height: 18px;
@@ -197,7 +197,7 @@
 .lujiyun-dashboard-flow
   .lujiyun-flow-card
   .flow-stage-toggle[aria-pressed='true'] {
-  color: #425574;
+  color: var(--design-text, #425574);
   background: transparent;
 }
 .lujiyun-dashboard-flow
@@ -209,9 +209,9 @@
 .lujiyun-dashboard-flow
   .lujiyun-flow-card
   .flow-stage-toggle[data-flow-stage='token'][aria-pressed='true'] {
-  border-color: #cadeff;
-  color: #176aff;
-  background: #f0f6ff;
+  border-color: var(--design-accent-border, #cadeff);
+  color: var(--design-link, #176aff);
+  background: var(--design-inset, #f0f6ff);
 }
 .lujiyun-dashboard-flow .lujiyun-flow-canvas {
   height: 390px !important;
@@ -241,7 +241,7 @@
 .lujiyun-dashboard-flow [data-slot='empty-description'] {
   font-size: 13px;
   line-height: 20px;
-  color: #4b607f;
+  color: var(--design-text, #4b607f);
 }
 body:has(.lujiyun-dashboard-flow) .profile-design-icon:not(.profile-nav-icon),
 body:has(.lujiyun-dashboard-flow) .profile-brand,
@@ -293,7 +293,7 @@ body:has(.lujiyun-dashboard-flow) button[aria-label*='devtools'] {
     > div:first-child
     p {
     margin-top: 0;
-    color: #455979;
+    color: var(--design-text, #455979);
     font-size: 13px;
     line-height: 21px;
   }
@@ -331,7 +331,7 @@ body:has(.lujiyun-dashboard-flow) button[aria-label*='devtools'] {
   .lujiyun-dashboard-flow > div:first-child [data-slot='tabs-trigger'],
   .lujiyun-dashboard-users > div:first-child [data-slot='tabs-trigger'] {
     font-size: 12px;
-    color: #8797b2;
+    color: var(--design-muted, #8797b2);
     border-radius: 19px;
     height: 35px;
     padding: 0 18px;
@@ -343,8 +343,8 @@ body:has(.lujiyun-dashboard-flow) button[aria-label*='devtools'] {
   .lujiyun-dashboard-users
     > div:first-child
     [data-slot='tabs-trigger'][aria-selected='true'] {
-    color: #176aff;
-    background: white;
+    color: var(--design-link, #176aff);
+    background: var(--design-surface, white);
   }
   .lujiyun-dashboard-flow > div:last-child > div {
     gap: 18px;

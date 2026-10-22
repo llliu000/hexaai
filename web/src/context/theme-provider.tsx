@@ -26,6 +26,7 @@ import {
 } from 'react'
 
 import { getCookie, setCookie, removeCookie } from '@/lib/cookies'
+import { applyThemeToDocument } from '@/lib/theme-document'
 
 type Theme = 'dark' | 'light' | 'system'
 type ResolvedTheme = Exclude<Theme, 'system'>
@@ -71,8 +72,12 @@ function resolveTheme(theme: Theme): ResolvedTheme {
 }
 
 function getStoredTheme(storageKey: string, fallback: Theme): Theme {
-  const storedTheme = getCookie(storageKey) as Theme | undefined
-  return storedTheme && THEMES.has(storedTheme) ? storedTheme : fallback
+  try {
+    const storedTheme = getCookie(storageKey) as Theme | undefined
+    return storedTheme && THEMES.has(storedTheme) ? storedTheme : fallback
+  } catch {
+    return fallback
+  }
 }
 
 export function ThemeProvider({
@@ -89,13 +94,11 @@ export function ThemeProvider({
   )
 
   useEffect(() => {
-    const root = window.document.documentElement
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
     const applyTheme = () => {
       const nextResolvedTheme = theme === 'system' ? getSystemTheme() : theme
-      root.classList.remove('light', 'dark')
-      root.classList.add(nextResolvedTheme)
+      applyThemeToDocument(window.document, nextResolvedTheme)
       setResolvedTheme(nextResolvedTheme)
     }
 

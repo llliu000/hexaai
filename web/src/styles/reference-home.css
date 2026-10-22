@@ -17,11 +17,11 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 .wm-home {
-  --wm-text: #0f172a;
-  --wm-muted: #667085;
-  --wm-line: #e9ecf2;
+  --wm-text: var(--design-text, #0f172a);
+  --wm-muted: var(--design-muted, #667085);
+  --wm-line: var(--design-border, #e9ecf2);
   --wm-accent: #7451d6;
-  --wm-surface: #fff;
+  --wm-surface: var(--design-surface, #fff);
   background: var(--wm-surface);
   color: var(--wm-text);
   letter-spacing: 0;
@@ -102,13 +102,13 @@ For commercial licensing, please contact support@quantumnous.com
   gap: 36px;
   font-size: 15px;
   font-weight: 500;
-  color: #4d5564;
+  color: var(--design-text, #4d5564);
 }
 .wm-desktop-nav > a {
   white-space: nowrap;
 }
 .wm-desktop-nav > a:hover {
-  color: #7451d6;
+  color: var(--design-link, #7451d6);
 }
 .wm-header .wm-more-nav {
   padding: 0;
@@ -334,13 +334,13 @@ For commercial licensing, please contact support@quantumnous.com
   background: #30394c;
 }
 .wm-button-secondary {
-  background: #fff;
-  border-color: #f0f1f5;
-  color: #283044;
+  background: var(--design-surface, #fff);
+  border-color: var(--design-border, #f0f1f5);
+  color: var(--design-text, #283044);
   box-shadow: 0 2px 3px #0c173105;
 }
 .wm-button-secondary:hover {
-  background: #f7f5fc;
+  background: var(--design-inset, #f7f5fc);
 }
 .wm-hero-controls {
   position: absolute;
@@ -478,9 +478,9 @@ For commercial licensing, please contact support@quantumnous.com
 .wm-vendor-tabs button {
   flex-shrink: 0;
   padding: 9px 20px;
-  border: 1px solid #ebedf2;
+  border: 1px solid var(--design-border, #ebedf2);
   border-radius: 22px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   font-size: 14px;
   line-height: 20px;
   transition:
@@ -511,9 +511,9 @@ For commercial licensing, please contact support@quantumnous.com
   height: 36px;
   align-items: center;
   justify-content: center;
-  background: #f5f6f8;
+  background: var(--design-inset, #f5f6f8);
   border-radius: 50%;
-  border: 1px solid #eceef3;
+  border: 1px solid var(--design-border, #eceef3);
 }
 .wm-scroll-buttons button:disabled {
   opacity: 0.35;
@@ -546,14 +546,14 @@ For commercial licensing, please contact support@quantumnous.com
   min-width: 250px;
   min-height: 190px;
   padding: 22px;
-  border: 1px solid #e7eaf1;
+  border: 1px solid var(--design-border, #e7eaf1);
   border-radius: 8px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: 0 4px 16px #25325804;
   scroll-snap-align: start;
 }
 .wm-model-card:hover {
-  border-color: #c4b6ec;
+  border-color: var(--design-accent-border, #c4b6ec);
   box-shadow: 0 8px 24px #4838790b;
 }
 .wm-model-card h3 {
@@ -607,7 +607,7 @@ For commercial licensing, please contact support@quantumnous.com
   font-size: 20px;
   line-height: 28px;
   font-weight: 650;
-  color: #19253b;
+  color: var(--design-text, #19253b);
 }
 .wm-model-pricing span {
   font-size: 12px;
@@ -619,11 +619,11 @@ For commercial licensing, please contact support@quantumnous.com
   gap: 8px;
   width: fit-content;
   margin: 30px auto 0;
-  color: #45516a;
+  color: var(--design-text, #45516a);
   font-size: 14px;
 }
 .wm-skeleton {
-  background: #f5f6f9;
+  background: var(--design-inset, #f5f6f9);
 }
 .wm-data-state {
   width: 100%;
@@ -633,14 +633,14 @@ For commercial licensing, please contact support@quantumnous.com
   align-items: center;
   justify-content: center;
   gap: 20px;
-  color: #7c8595;
+  color: var(--design-muted, #7c8595);
   font-size: 14px;
 }
 .wm-data-state button {
   text-decoration: underline;
 }
 .wm-integration {
-  background: #f8fafc;
+  background: var(--design-inset, #f8fafc);
   padding: 80px 0;
 }
 .wm-integration-grid {
@@ -668,8 +668,8 @@ For commercial licensing, please contact support@quantumnous.com
   flex-shrink: 0;
   width: 42px;
   height: 42px;
-  color: #586adb;
-  background: #edf0fb;
+  color: var(--design-link, #586adb);
+  background: var(--design-inset, #edf0fb);
   border-radius: 10px;
 }
 .wm-integration-feature h3 {
@@ -694,13 +694,13 @@ For commercial licensing, please contact support@quantumnous.com
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #636ccc;
+  color: var(--design-link, #636ccc);
   font-size: 14px;
 }
 .wm-code-panel {
   min-width: 0;
-  background: #fff;
-  border: 1px solid #e0e6ef;
+  background: var(--design-surface, #fff);
+  border: 1px solid var(--design-border, #e0e6ef);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 10px 36px #18275306;
@@ -710,8 +710,8 @@ For commercial licensing, please contact support@quantumnous.com
   align-items: center;
   justify-content: space-between;
   padding: 10px 14px;
-  border-bottom: 1px solid #e8ecf3;
-  background: #f5f7fb;
+  border-bottom: 1px solid var(--design-border, #e8ecf3);
+  background: var(--design-inset, #f5f7fb);
 }
 .wm-code-toolbar > div {
   display: flex;
@@ -735,11 +735,11 @@ For commercial licensing, please contact support@quantumnous.com
   border-radius: 6px;
   font-size: 13px;
   line-height: 20px;
-  color: #758095;
+  color: var(--design-muted, #758095);
 }
 .wm-code-toolbar button[aria-selected='true'] {
-  background: #fff;
-  color: #4e5bbb;
+  background: var(--design-surface, #fff);
+  color: var(--design-link, #4e5bbb);
   box-shadow: 0 1px 4px #14223d10;
 }
 .wm-code-panel [role='tabpanel'] > div {
@@ -765,7 +765,7 @@ For commercial licensing, please contact support@quantumnous.com
   min-height: 260px;
   padding: 28px;
   border-radius: 8px;
-  border: 1px solid #edf0f5;
+  border: 1px solid var(--design-border, #edf0f5);
 }
 .wm-feature-icon {
   display: inline-flex;
@@ -773,8 +773,8 @@ For commercial licensing, please contact support@quantumnous.com
   height: 54px;
   align-items: center;
   justify-content: center;
-  color: #5769cf;
-  background: #eff2fc;
+  color: var(--design-link, #5769cf);
+  background: var(--design-inset, #eff2fc);
   border-radius: 12px;
 }
 .wm-four-grid h3 {
@@ -790,19 +790,19 @@ For commercial licensing, please contact support@quantumnous.com
   color: var(--wm-muted);
 }
 .wm-benefit-models .wm-feature-icon {
-  color: #7c53bb;
-  background: #f3edfa;
+  color: var(--design-purple, #7c53bb);
+  background: var(--design-inset, #f3edfa);
 }
 .wm-benefit-security .wm-feature-icon {
-  color: #278c79;
-  background: #edf8f4;
+  color: var(--design-cyan, #278c79);
+  background: var(--design-inset, #edf8f4);
 }
 .wm-benefit-billing .wm-feature-icon {
-  color: #bd8b3f;
-  background: #fff7e8;
+  color: var(--design-amber, #bd8b3f);
+  background: var(--design-amber-surface, #fff7e8);
 }
 .wm-testimonials {
-  background: #f8fafc;
+  background: var(--design-inset, #f8fafc);
   padding: 80px 0;
 }
 .wm-testimonial-grid {
@@ -816,7 +816,7 @@ For commercial licensing, please contact support@quantumnous.com
   flex-direction: column;
   min-width: 0;
   min-height: 236px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   padding: 32px;
   border-radius: 16px;
   box-shadow: 0 3px 12px #0f172a08;
@@ -918,7 +918,7 @@ For commercial licensing, please contact support@quantumnous.com
   background: var(--wm-surface);
   font-size: 24px;
   font-weight: 700;
-  color: #7581b2;
+  color: var(--design-link, #7581b2);
 }
 .wm-steps article > a {
   display: inline-flex;
@@ -927,13 +927,13 @@ For commercial licensing, please contact support@quantumnous.com
   gap: 8px;
   min-height: 32px;
   margin-top: 18px;
-  color: #636ccc;
+  color: var(--design-link, #636ccc);
   font-size: 14px;
 }
 .wm-providers {
   text-align: center;
   padding: 72px 0 80px;
-  background: #f8fafc;
+  background: var(--design-inset, #f8fafc);
 }
 .wm-provider-row {
   display: flex;
@@ -948,13 +948,13 @@ For commercial licensing, please contact support@quantumnous.com
   gap: 10px;
   font-size: 18px;
   font-weight: 650;
-  color: #495469;
+  color: var(--design-text, #495469);
 }
 .wm-provider-row svg {
   flex-shrink: 0;
 }
 .wm-footer {
-  background: #fff;
+  background: var(--design-surface, #fff);
 }
 /* Match header / content gutters: 32px from each viewport edge. */
 .wm-footer .site-footer-inner {
@@ -1016,9 +1016,9 @@ For commercial licensing, please contact support@quantumnous.com
   display: block;
   width: 120px;
   height: 120px;
-  border: 1px solid #e7ebf1;
+  border: 1px solid var(--design-border, #e7ebf1);
   border-radius: 12px;
-  background: #fff;
+  background: var(--design-surface, #fff);
 }
 .wm-footer-records {
   display: flex;
@@ -1036,7 +1036,7 @@ For commercial licensing, please contact support@quantumnous.com
 .dark .wm-home {
   --wm-text: #edf1f8;
   --wm-muted: #a2adbf;
-  --wm-line: #354153;
+  --wm-line: var(--design-border, #354153);
   --wm-surface: #151d2a;
 }
 .dark .wm-header {

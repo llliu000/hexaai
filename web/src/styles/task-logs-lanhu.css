@@ -12,12 +12,13 @@ body:has(.lujiyun-usage-task)
 @media (min-width: 1024px) {
   body:has(.lujiyun-usage-task) [data-slot='sidebar-inset'] {
     font-family: var(--font-body);
-    color: #14213b;
-    background: #f5f8fe;
+    color: var(--design-text, #14213b);
+    background: var(--design-canvas, #f5f8fe);
   }
   body:has(.lujiyun-usage-task) [data-slot='sidebar-inset'] main {
-    background: #f5f8fe url('../../public/lanhu/task-logs-decoration.png') right
-      top / 180px 180px no-repeat;
+    background: var(--design-canvas, #f5f8fe)
+      url('../../public/lanhu/task-logs-decoration.png') right top / 180px 180px
+      no-repeat;
   }
   body:has(.lujiyun-usage-task)
     [data-slot='sidebar-inset']
@@ -38,7 +39,7 @@ body:has(.lujiyun-usage-task)
     > div:first-child
     p {
     margin-top: 10px;
-    color: #8595b0;
+    color: var(--design-muted, #8595b0);
     font-size: 12px;
     line-height: 20px;
   }
@@ -60,7 +61,7 @@ body:has(.lujiyun-usage-task)
     padding: 21px 20px;
     border: 0;
     border-radius: 18px;
-    background: white;
+    background: var(--design-surface, white);
     box-shadow: 0 8px 24px rgb(43 84 142 / 3%);
   }
   .lujiyun-usage-task .task-logs-filter-card > div:first-child {
@@ -94,9 +95,9 @@ body:has(.lujiyun-usage-task)
   .lujiyun-usage-task .task-logs-filter-card [data-slot='select-trigger'],
   .lujiyun-usage-task .task-logs-filter-card > div:first-child button {
     height: 40px;
-    border-color: #dbe4f2;
+    border-color: var(--design-border, #dbe4f2);
     border-radius: 11px;
-    background: #fff;
+    background: var(--design-surface, #fff);
     box-shadow: none;
   }
   .lujiyun-usage-task
@@ -130,16 +131,16 @@ body:has(.lujiyun-usage-task)
   .lujiyun-usage-task .overflow-hidden.rounded-lg.border {
     border: 0;
     border-radius: 17px 17px 0 0;
-    background: white;
+    background: var(--design-surface, white);
   }
   .lujiyun-usage-task [data-slot='table-header'] {
-    background: #f9fbff;
+    background: var(--design-inset, #f9fbff);
   }
   .lujiyun-usage-task [data-slot='table-head'] {
     height: 59px;
     padding: 0 25px;
     font-size: 12px !important;
-    color: #40506c;
+    color: var(--design-text, #40506c);
     font-weight: 400;
   }
   .lujiyun-usage-task [data-slot='table']:has([data-slot='empty']) {
@@ -173,7 +174,7 @@ body:has(.lujiyun-usage-task)
   }
   .lujiyun-usage-task [data-slot='empty-description'] {
     font-size: 12px;
-    color: #8595b0;
+    color: var(--design-muted, #8595b0);
     line-height: 20px;
   }
 }

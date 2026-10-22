@@ -1,6 +1,6 @@
 /* API key page alignment with the supplied LuJiyun desktop design. */
 body:has(.lujiyun-keys-page) {
-  background: #f4f7fc;
+  background: var(--design-canvas, #f4f7fc);
 }
 
 body:has(.lujiyun-keys-page) button[aria-label='Open Tanstack query devtools'],
@@ -37,7 +37,7 @@ body:has(.lujiyun-keys-page)
     font-size: 25px;
     line-height: 32px;
     font-weight: 700;
-    color: #172238;
+    color: var(--design-text, #172238);
   }
 
   body:has(.lujiyun-keys-page)
@@ -48,7 +48,7 @@ body:has(.lujiyun-keys-page)
     margin-top: 1px;
     font-size: 13px;
     line-height: 22px;
-    color: #75839a;
+    color: var(--design-muted, #75839a);
   }
 
   body:has(.lujiyun-keys-page)
@@ -81,7 +81,7 @@ body:has(.lujiyun-keys-page)
   max-width: none !important;
   margin-inline: 0 !important;
   gap: 24px !important;
-  color: #16233a;
+  color: var(--design-text, #16233a);
 }
 
 .lujiyun-keys-page > div:first-child {
@@ -105,7 +105,7 @@ body:has(.lujiyun-keys-page)
   right: 14px;
   width: 16px;
   height: 16px;
-  color: #667995;
+  color: var(--design-muted, #667995);
   pointer-events: none;
   transform: translateY(-50%);
 }
@@ -124,9 +124,9 @@ body:has(.lujiyun-keys-page)
   padding-inline: 15px 12px;
   border: 0;
   border-radius: 12px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: 0 8px 18px #253c6810;
-  color: #52627d;
+  color: var(--design-muted, #52627d);
   font-size: 12px;
   font-weight: 400;
 }
@@ -137,18 +137,20 @@ body:has(.lujiyun-keys-page)
   padding: 0 42px 0 15px;
   border: 0;
   border-radius: 12px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: 0 8px 18px #253c6810;
-  color: #52627d;
+  color: var(--design-muted, #52627d);
   font-size: 12px;
 }
 
 .lujiyun-keys-page .api-key-filter-field [data-slot='input']::placeholder {
-  color: #98a8bd;
+  color: var(--design-muted, #98a8bd);
   opacity: 1;
 }
 
-.lujiyun-keys-page > div:first-child [data-slot='button']:not([data-view-options-trigger]) {
+.lujiyun-keys-page
+  > div:first-child
+  [data-slot='button']:not([data-view-options-trigger]) {
   border-color: transparent;
   box-shadow: 0 8px 18px #253c6810;
 }
@@ -159,8 +161,8 @@ body:has(.lujiyun-keys-page)
   padding: 0 15px;
   border: 0;
   border-radius: 12px;
-  background: #fff;
-  color: #71819a;
+  background: var(--design-surface, #fff);
+  color: var(--design-muted, #71819a);
   font-size: 12px;
   font-weight: 400;
   justify-content: space-between;
@@ -170,16 +172,19 @@ body:has(.lujiyun-keys-page)
   width: 15px;
   height: 15px;
   margin-left: auto;
-  color: #65758e;
+  color: var(--design-muted, #65758e);
 }
 
-.lujiyun-keys-page > div:first-child > div:last-child [data-slot='button']:not([data-view-options-trigger]) {
+.lujiyun-keys-page
+  > div:first-child
+  > div:last-child
+  [data-slot='button']:not([data-view-options-trigger]) {
   width: 106px;
   height: 42px;
   border: 0;
   border-radius: 12px;
-  background: #fff;
-  color: #1a263c;
+  background: var(--design-surface, #fff);
+  color: var(--design-text, #1a263c);
   font-size: 12px;
   font-weight: 600;
 }
@@ -194,36 +199,36 @@ body:has(.lujiyun-keys-page)
   overflow: hidden;
   border: 0 !important;
   border-radius: 20px 20px 0 0 !important;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: 0 10px 25px #263c6710;
 }
 
 .lujiyun-keys-page [data-slot='table-header'] {
-  background: #f8faff !important;
+  background: var(--design-inset, #f8faff) !important;
 }
 
 .lujiyun-keys-page [data-slot='table-header'] tr {
   height: 64px;
-  border-color: #eff3f9;
+  border-color: var(--design-border, #eff3f9);
 }
 
 .lujiyun-keys-page [data-slot='table-head'] {
   height: 64px;
   padding: 0 14px;
-  color: #68758a;
+  color: var(--design-muted, #68758a);
   font-size: 12px;
   font-weight: 600;
 }
 
 .lujiyun-keys-page [data-slot='table-body'] > tr {
   height: 76px;
-  border-color: #edf1f7;
-  background: #fff;
+  border-color: var(--design-border, #edf1f7);
+  background: var(--design-surface, #fff);
 }
 
 .lujiyun-keys-page [data-slot='table-cell'] {
   padding: 0 14px;
-  color: #60708a;
+  color: var(--design-muted, #60708a);
   font-size: 12px;
 }
 
@@ -241,14 +246,14 @@ body:has(.lujiyun-keys-page)
 }
 
 .lujiyun-keys-page [data-slot='table-cell'] .font-medium {
-  color: #1f2a3d;
+  color: var(--design-text, #1f2a3d);
   font-weight: 600;
 }
 
 .lujiyun-keys-page [data-slot='checkbox'] {
   width: 16px;
   height: 16px;
-  border-color: #d6dfec;
+  border-color: var(--design-border, #d6dfec);
   border-radius: 4px;
 }
 
@@ -256,8 +261,8 @@ body:has(.lujiyun-keys-page)
   min-height: 25px;
   padding: 0 13px;
   border-radius: 16px;
-  background: #e6faf3;
-  color: #00a979;
+  background: var(--design-inset, #e6faf3);
+  color: var(--design-green, #00a979);
   font-size: 12px;
 }
 
@@ -276,7 +281,7 @@ body:has(.lujiyun-keys-page)
   padding: 0;
   border-radius: 0;
   background: transparent;
-  color: #60708a;
+  color: var(--design-muted, #60708a);
 }
 
 .lujiyun-keys-page [data-slot='status-badge'].text-muted-foreground::before {
@@ -308,11 +313,11 @@ body:has(.lujiyun-keys-page)
 }
 
 .lujiyun-keys-page [data-slot='table-cell'] [data-slot='button'] {
-  color: #60708a;
+  color: var(--design-muted, #60708a);
 }
 
 .lujiyun-keys-page [data-slot='table-cell'] [data-slot='button']:hover {
-  background: #f2f6ff;
+  background: var(--design-inset, #f2f6ff);
 }
 
 body:has(.lujiyun-keys-page) [data-slot='sidebar-inset'] main > div:last-child {
@@ -321,7 +326,7 @@ body:has(.lujiyun-keys-page) [data-slot='sidebar-inset'] main > div:last-child {
   padding: 0 24px;
   border: 0;
   border-radius: 0 0 20px 20px;
-  background: #f8faff;
+  background: var(--design-inset, #f8faff);
 }
 
 body:has(.lujiyun-keys-page)
@@ -388,7 +393,7 @@ body:has(.lujiyun-keys-page)
   padding: 0;
   border: 0;
   border-radius: 10px;
-  background: #fbfcff;
+  background: var(--design-surface, #fbfcff);
   box-shadow: none;
   font-size: 12px;
 }
@@ -419,9 +424,9 @@ body:has(.lujiyun-keys-page)
   [data-slot='select-trigger'] {
   width: 73px;
   height: 37px;
-  border-color: #dce4f0;
+  border-color: var(--design-border, #dce4f0);
   border-radius: 9px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: none;
   font-size: 12px;
 }

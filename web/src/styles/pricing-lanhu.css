@@ -1,5 +1,5 @@
 .lujiyun-pricing-page.lujiyun-pricing-page {
-  background: #f5f8fe;
+  background: var(--design-canvas, #f5f8fe);
   width: 100%;
   max-width: none;
   min-height: 100svh;
@@ -12,7 +12,7 @@
 }
 .relative:has(> .lujiyun-pricing-page) {
   min-height: 100svh;
-  background: #f5f8fe;
+  background: var(--design-canvas, #f5f8fe);
 }
 .relative:has(> .lujiyun-pricing-page) > [aria-hidden] {
   display: none;
@@ -38,7 +38,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   > nav {
   height: 100%;
   border-radius: 0;
-  background: #ffffff;
+  background: var(--design-surface, #ffffff);
   box-shadow: none;
   padding-inline: 0;
 }
@@ -70,11 +70,11 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   font-size: 20px;
   line-height: 28px;
   font-weight: 700;
-  color: #17233b;
+  color: var(--design-text, #17233b);
 }
 .lanhu-model-results-heading > span {
   font-size: 13px;
-  color: #8795ac;
+  color: var(--design-muted, #8795ac);
 }
 .lujiyun-pricing-page .lanhu-model-results .lanhu-model-grid {
   margin-top: 0;
@@ -83,12 +83,13 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   width: 100%;
   max-width: none;
   height: auto;
-  aspect-ratio: 1440 / 171;
-  min-height: 171px;
+  aspect-ratio: 5760 / 788;
+  min-height: 0;
   padding: 0;
   margin: 0;
-  background: #f5f8fd url('../assets/lanhu/model-square-banner.svg') center /
-    contain no-repeat;
+  overflow: hidden;
+  background: #f5f8fd url('../assets/model-squal.png') center /
+    100% 100% no-repeat;
 }
 .lujiyun-pricing-page > header > * {
   visibility: hidden;
@@ -106,15 +107,15 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   top: 80px;
   max-height: calc(100vh - 96px);
   padding: 18px;
-  border: 1px solid #e7edf7;
+  border: 1px solid var(--design-border, #e7edf7);
   border-radius: 18px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: none;
 }
 .lujiyun-pricing-page aside > div:first-child p {
   font-size: 13px;
   line-height: 20px;
-  color: #8291ab;
+  color: var(--design-muted, #8291ab);
 }
 .lujiyun-pricing-page aside > div:first-child h2,
 .lujiyun-pricing-page
@@ -126,7 +127,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
 }
 .lujiyun-pricing-page aside [data-slot='collapsible'] {
   padding: 10px 0 14px;
-  border-color: #edf1f8;
+  border-color: var(--design-border, #edf1f8);
 }
 .lujiyun-pricing-page aside [data-slot='collapsible-content'] > div {
   display: flex;
@@ -141,7 +142,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   border-radius: 8px;
   background: transparent;
   box-shadow: none;
-  color: #566580;
+  color: var(--design-muted, #566580);
   font-size: 14px;
   font-weight: 400;
   text-align: left;
@@ -151,12 +152,12 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   width: 14px;
   height: 14px;
   flex: none;
-  border: 1px solid #e0e8f7;
+  border: 1px solid var(--design-border, #e0e8f7);
   border-radius: 4px;
 }
 .lujiyun-pricing-page .lanhu-filter-option[aria-pressed='true'] {
-  background: #edf4ff;
-  color: #1763ff;
+  background: var(--design-inset, #edf4ff);
+  color: var(--design-text, #1763ff);
   font-weight: 600;
 }
 .lanhu-filter-option[aria-pressed='true']::before {
@@ -171,14 +172,14 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   margin-left: auto;
   background: transparent;
   font-size: 12px;
-  color: #8997b0;
+  color: var(--design-muted, #8997b0);
 }
 .lanhu-filter-more {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   margin-top: 8px;
-  color: #1763ff;
+  color: var(--design-text, #1763ff);
   font-size: 13px;
 }
 .lanhu-filter-summary {
@@ -188,25 +189,25 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   margin: 10px 0 16px;
   padding: 12px;
   border-radius: 12px;
-  background: #f1f5ff;
+  background: var(--design-inset, #f1f5ff);
 }
 .lanhu-filter-summary > span {
-  color: #8795ac;
+  color: var(--design-muted, #8795ac);
   font-size: 12px;
 }
 .lanhu-filter-summary > strong {
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
-  color: #1763ff;
+  color: var(--design-text, #1763ff);
   overflow-wrap: anywhere;
 }
 .lanhu-filter-note {
   margin-top: 32px;
   padding: 12px;
   border-radius: 12px;
-  background: #f6f8fc;
-  color: #75839b;
+  background: var(--design-inset, #f6f8fc);
+  color: var(--design-muted, #75839b);
   font-size: 13px;
   line-height: 21px;
 }
@@ -214,13 +215,13 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   border: 0;
   border-radius: 18px;
   padding: 14px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: none;
 }
 .lujiyun-pricing-page main > div:first-child input {
   border: 0;
   border-radius: 18px;
-  background: #f5f7fb;
+  background: var(--design-inset, #f5f7fb);
   height: 36px;
   font-size: 14px;
 }
@@ -240,14 +241,14 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   min-height: 264px;
   padding: 20px;
   border-radius: 16px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   box-shadow: 0 2px 4px #243b6503;
   overflow: hidden;
-  border: 1px solid #e3eaf5;
+  border: 1px solid var(--design-border, #e3eaf5);
   transition: border-color 160ms ease;
 }
 .lujiyun-pricing-page .lanhu-model-grid > .lanhu-model-card:hover {
-  border-color: #8db2ff;
+  border-color: var(--design-accent-border, #8db2ff);
   box-shadow: 0 6px 20px rgb(42 81 142 / 7%);
 }
 .lanhu-model-card h3 {
@@ -270,12 +271,12 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   border-radius: 14px;
   font-size: 12px;
   line-height: 18px;
-  background: #f4f6fa;
-  color: #728099;
+  background: var(--design-inset, #f4f6fa);
+  color: var(--design-muted, #728099);
 }
 .lanhu-model-tags span:first-child {
-  background: #eaf2ff;
-  color: #1763ff;
+  background: var(--design-blue-surface, #eaf2ff);
+  color: var(--design-text, #1763ff);
   min-width: 72px;
   text-align: center;
 }
@@ -284,9 +285,9 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   padding: 12px;
-  border: 1px solid #eef2f8;
+  border: 1px solid var(--design-border, #eef2f8);
   border-radius: 12px;
-  background: #f7f9fc;
+  background: var(--design-inset, #f7f9fc);
 }
 .lanhu-model-prices > span {
   display: flex;
@@ -294,13 +295,13 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   gap: 3px;
   white-space: normal;
   font-size: 12px;
-  color: #8997ae;
+  color: var(--design-muted, #8997ae);
 }
 .lanhu-model-prices > span > span {
   font-size: 15px;
   line-height: 22px;
   font-family: inherit;
-  color: #263854;
+  color: var(--design-text, #263854);
   overflow-wrap: anywhere;
 }
 .lanhu-model-prices[data-unit] > span > span::after {
@@ -309,7 +310,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   line-height: 16px;
   font-size: 11px;
   font-weight: 400;
-  color: #8a98b0;
+  color: var(--design-muted, #8a98b0);
 }
 .lanhu-model-prices[data-unit='/1M'] > span > span::after {
   content: '/1M';
@@ -322,7 +323,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   min-height: 20px;
   font-size: 13px;
   line-height: 20px;
-  color: #7a879e;
+  color: var(--design-muted, #7a879e);
 }
 .lanhu-model-card > div:last-child {
   margin-top: auto;
@@ -338,14 +339,14 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   font-size: 13px;
 }
 .lanhu-model-results button[aria-current='page'] {
-  background: #eaf2ff;
-  color: #1763ff;
+  background: var(--design-blue-surface, #eaf2ff);
+  color: var(--design-text, #1763ff);
   border-radius: 50%;
 }
 .lujiyun-pricing-page main > .lanhu-pricing-toolbar {
   padding: 18px;
   min-height: 0;
-  border: 1px solid #e7edf7;
+  border: 1px solid var(--design-border, #e7edf7);
   border-radius: 18px;
 }
 .lanhu-pricing-toolbar-controls {
@@ -366,14 +367,14 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   min-width: 36px;
   padding: 0 15px;
   border-radius: 18px;
-  background: #f5f7fb;
-  color: #67758f;
+  background: var(--design-inset, #f5f7fb);
+  color: var(--design-muted, #67758f);
   box-shadow: none;
   font-size: 13px;
 }
 .lanhu-pricing-toolbar-controls [role='group'] button[aria-pressed='true'] {
-  background: #eaf2ff;
-  color: #1763ff;
+  background: var(--design-blue-surface, #eaf2ff);
+  color: var(--design-text, #1763ff);
 }
 .lanhu-pricing-toolbar-controls [role='group']:last-child button:has(svg) {
   padding: 0;
@@ -401,7 +402,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   min-height: 20px;
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid #eef2f8;
+  border-top: 1px solid var(--design-border, #eef2f8);
   gap: 10px 16px;
 }
 .lanhu-pricing-toolbar-summary > button {
@@ -421,11 +422,11 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   gap: 8px;
 }
 .lanhu-pricing-filter-values dt {
-  color: #7b88a1;
+  color: var(--design-muted, #7b88a1);
 }
 .lanhu-pricing-filter-values dd {
   margin: 0;
-  color: #1763ff;
+  color: var(--design-text, #1763ff);
   max-width: 160px;
   overflow-wrap: anywhere;
 }
@@ -472,13 +473,13 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
 .lanhu-model-heading-copy p {
   font-size: 14px;
   line-height: 22px;
-  color: #8895ac;
+  color: var(--design-muted, #8895ac);
 }
 .lujiyun-pricing-page .lanhu-model-results-heading > span {
   flex-shrink: 0;
   padding: 5px 12px;
   border-radius: 12px;
-  background: #f4f7fb;
+  background: var(--design-inset, #f4f7fb);
 }
 .lujiyun-pricing-page .lanhu-model-card .lanhu-model-footer {
   display: flex;
@@ -487,7 +488,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   gap: 8px 18px;
   min-height: 20px;
   margin-top: auto;
-  color: #8898b3;
+  color: var(--design-muted, #8898b3);
 }
 .lanhu-model-footer > button {
   display: inline-flex;
@@ -495,7 +496,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   gap: 3px;
   margin-left: auto;
   padding: 0;
-  color: #1763ff;
+  color: var(--design-text, #1763ff);
   font-size: 12px;
 }
 .lujiyun-pricing-page .lanhu-model-card > p {
@@ -509,13 +510,20 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
     padding: 20px 24px 0;
   }
 }
+/* Keep banner lettering readable: crop from the right instead of shrinking. */
+@media (max-width: 900px) {
+  .lujiyun-pricing-page.lujiyun-pricing-page > header {
+    height: 140px;
+    aspect-ratio: auto;
+    min-height: 140px;
+    background-position: left center;
+    background-size: cover;
+  }
+}
 @media (max-width: 640px) {
   .lujiyun-pricing-page.lujiyun-pricing-page > header {
-    height: 130px;
-    aspect-ratio: auto;
-    min-height: 0;
-    background-position: left center;
-    background-size: auto 100%;
+    height: 120px;
+    min-height: 120px;
   }
   .lujiyun-pricing-page.lujiyun-pricing-page > .grid {
     padding: 14px 12px 0;
@@ -578,7 +586,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   max-width: 100%;
 }
 .lujiyun-pricing-page .lanhu-filter-option:hover {
-  background: #f4f7fc;
+  background: var(--design-canvas, #f4f7fc);
 }
 .lujiyun-pricing-page .lanhu-filter-option:focus-visible,
 .lujiyun-pricing-page .lanhu-model-card:focus-visible {
@@ -596,9 +604,9 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
 .lujiyun-pricing-page .lanhu-model-card-identity > .lanhu-model-card-logo {
   width: 36px;
   height: 36px;
-  border: 1px solid #e8eef7;
+  border: 1px solid var(--design-border, #e8eef7);
   border-radius: 12px;
-  background: #f8faff;
+  background: var(--design-inset, #f8faff);
 }
 .lujiyun-pricing-page .lanhu-model-card-header .lanhu-model-card-copy {
   display: inline-flex;
@@ -607,10 +615,10 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   width: 30px;
   height: 30px;
   padding: 0;
-  border: 1px solid #e8eef7;
+  border: 1px solid var(--design-border, #e8eef7);
   border-radius: 9px;
-  color: #8190a8;
-  background: #fff;
+  color: var(--design-muted, #8190a8);
+  background: var(--design-surface, #fff);
 }
 .lanhu-model-card-name {
   min-height: 48px;
@@ -620,8 +628,8 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
   overflow-wrap: anywhere;
 }
 .lanhu-model-tags .lanhu-model-billing-tag {
-  background: #f1f7fd;
-  color: #527299;
+  background: var(--design-inset, #f1f7fd);
+  color: var(--design-link, #527299);
 }
 .lanhu-model-prices:has(> span:only-child) {
   grid-template-columns: minmax(0, 1fr);
@@ -634,7 +642,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
 }
 .lujiyun-pricing-page .lanhu-model-card .lanhu-model-footer {
   padding-top: 12px;
-  border-top: 1px solid #edf2f8;
+  border-top: 1px solid var(--design-border, #edf2f8);
 }
 .model-details-drawer {
   font-family: var(--font-body);
@@ -699,14 +707,14 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
 }
 .lujiyun-pricing-page .lanhu-model-results > .lanhu-model-pagination {
   padding: 18px 0 0;
-  border-top: 1px solid #e5ecf7;
+  border-top: 1px solid var(--design-border, #e5ecf7);
 }
 .lujiyun-pricing-page.lujiyun-pricing-page main > .lanhu-pricing-table {
   min-width: 0;
   padding: 0;
-  border: 1px solid #e7edf7;
+  border: 1px solid var(--design-border, #e7edf7);
   border-radius: 18px;
-  background: #fff;
+  background: var(--design-surface, #fff);
   overflow: hidden;
 }
 .lujiyun-pricing-page.lujiyun-pricing-page
@@ -728,7 +736,7 @@ body:has(.lujiyun-pricing-page, .lujiyun-pricing-loading)
 .lujiyun-pricing-page .lanhu-pricing-table > div:last-child:not(:first-child) {
   margin-top: 0;
   padding: 16px;
-  border-top: 1px solid #e7edf7;
+  border-top: 1px solid var(--design-border, #e7edf7);
 }
 @media (max-width: 640px) {
   .lujiyun-pricing-loading {

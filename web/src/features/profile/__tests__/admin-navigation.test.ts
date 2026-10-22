@@ -110,7 +110,7 @@ test('system settings keep their nested navigation inside the unified sidebar', 
   )
   assert.match(
     styles,
-    /\.profile-system-settings-subnav a\.is-current\s*\{[^}]*color:\s*#1966ff;[^}]*background:\s*#eaf1ff;/s
+    /\.profile-system-settings-subnav a\.is-current\s*\{[^}]*color:\s*var\(--design-link, #1966ff\);[^}]*background:\s*var\(--design-blue-surface, #eaf1ff\);/s
   )
 })
 

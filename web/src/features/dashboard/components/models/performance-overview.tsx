@@ -34,6 +34,8 @@ import {
 import type { PerfModelSummary } from '@/features/performance-metrics/types'
 import { cn } from '@/lib/utils'
 
+import { ModelChartEmpty } from './model-chart-empty'
+
 const PERFORMANCE_WINDOW_HOURS = 24
 const TOP_MODEL_LIMIT = 6
 
@@ -100,18 +102,16 @@ export function PerformanceOverview() {
   const topModels = useMemo(() => models.slice(0, TOP_MODEL_LIMIT), [models])
   const loading = metricsQuery.isLoading
   const hasData = models.length > 0
-
-  if (!loading && !hasData) {
-    return (
-      <div className='text-muted-foreground overflow-hidden rounded-lg border px-4 py-3 text-center text-xs'>
-        {t('No performance data available')}
-      </div>
-    )
-  }
+  const showEmpty = !loading && !hasData
 
   return (
     <div className='overflow-hidden rounded-lg border'>
-      <div className='flex flex-wrap items-center gap-x-5 gap-y-2.5 px-[15px] py-2.5 sm:py-3'>
+      <div
+        className={cn(
+          'flex flex-wrap items-center gap-x-5 gap-y-2.5 px-[15px] py-2.5 sm:py-3',
+          showEmpty && 'border-b'
+        )}
+      >
         {/* Title */}
         <div className='flex items-center gap-[11px]'>
           <IconBadge
@@ -126,55 +126,65 @@ export function PerformanceOverview() {
           </span>
         </div>
 
-        {/* Separator */}
-        <div className='bg-border hidden h-4 w-px sm:block' />
+        {!showEmpty && (
+          <>
+            {/* Separator */}
+            <div className='bg-border hidden h-4 w-px sm:block' />
 
-        {/* 3 KPI inline metrics */}
-        {loading ? (
-          <div className='flex flex-wrap items-center gap-x-5 gap-y-2'>
-            {['success', 'latency', 'throughput'].map((key) => (
-              <div key={key} className='flex items-center gap-1.5'>
-                <Skeleton className='h-3 w-14' />
-                <Skeleton className='h-4 w-16' />
+            {/* 3 KPI inline metrics */}
+            {loading ? (
+              <div className='flex flex-wrap items-center gap-x-5 gap-y-2'>
+                {['success', 'latency', 'throughput'].map((key) => (
+                  <div key={key} className='flex items-center gap-1.5'>
+                    <Skeleton className='h-3 w-14' />
+                    <Skeleton className='h-4 w-16' />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className='flex flex-wrap items-center gap-x-5 gap-y-2'>
-            <InlineMetric
-              icon={HeartPulse}
-              label={t('Success rate')}
-              value={formatUptimePct(summary.successRate)}
-              valueClassName={getSuccessRateTextClass(summary.successRate)}
-              tone='success'
-            />
-            <InlineMetric
-              icon={Timer}
-              label={t('Average latency')}
-              value={formatLatency(summary.avgLatencyMs)}
-              tone='warning'
-            />
-            <InlineMetric
-              icon={Gauge}
-              label={t('Throughput')}
-              value={formatThroughput(summary.avgTps)}
-              tone='info'
-            />
-          </div>
-        )}
+            ) : (
+              <div className='flex flex-wrap items-center gap-x-5 gap-y-2'>
+                <InlineMetric
+                  icon={HeartPulse}
+                  label={t('Success rate')}
+                  value={formatUptimePct(summary.successRate)}
+                  valueClassName={getSuccessRateTextClass(summary.successRate)}
+                  tone='success'
+                />
+                <InlineMetric
+                  icon={Timer}
+                  label={t('Average latency')}
+                  value={formatLatency(summary.avgLatencyMs)}
+                  tone='warning'
+                />
+                <InlineMetric
+                  icon={Gauge}
+                  label={t('Throughput')}
+                  value={formatThroughput(summary.avgTps)}
+                  tone='info'
+                />
+              </div>
+            )}
 
-        {/* Separator */}
-        <div className='bg-border hidden h-4 w-px lg:block' />
+            {/* Separator */}
+            <div className='bg-border hidden h-4 w-px lg:block' />
 
-        {/* Top models inline badges */}
-        {!loading && hasData && (
-          <div className='flex flex-wrap items-center gap-1.5'>
-            {topModels.map((model) => (
-              <ModelBadge key={model.model_name} model={model} />
-            ))}
-          </div>
+            {/* Top models inline badges */}
+            {!loading && hasData && (
+              <div className='flex flex-wrap items-center gap-1.5'>
+                {topModels.map((model) => (
+                  <ModelBadge key={model.model_name} model={model} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
+
+      {showEmpty && (
+        <div className='model-design-plot min-h-[180px] p-4'>
+          <ModelChartEmpty />
+        </div>
+      )}
     </div>
   )
 }

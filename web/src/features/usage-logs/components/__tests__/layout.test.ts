@@ -132,7 +132,7 @@ describe('usage logs layout', () => {
     assert.match(sectionPageLayout, /data-slot='page-footer'/)
     assert.match(
       usageLogsStyles,
-      /body:has\(:is\(\.lujiyun-usage-common, \.lujiyun-usage-task\)\)\s*\[data-slot='page-footer'\]\s*\{[^}]*min-height:\s*87px;[^}]*padding:\s*0 24px;[^}]*border:\s*0;[^}]*border-radius:\s*0 0 20px 20px;[^}]*background:\s*#f8faff;/s
+      /body:has\(:is\(\.lujiyun-usage-common, \.lujiyun-usage-task\)\)\s*\[data-slot='page-footer'\]\s*\{[^}]*min-height:\s*87px;[^}]*padding:\s*0 24px;[^}]*border:\s*0;[^}]*border-radius:\s*0 0 20px 20px;[^}]*background:\s*var\(--design-inset, #f8faff\);/s
     )
     assert.doesNotMatch(taskLogsStyles, /main\s*> div:last-child/)
   })
@@ -154,7 +154,7 @@ describe('usage logs layout', () => {
   test('log pagination uses the API keys rectangular buttons and blue current page', () => {
     assert.match(
       usageLogsStyles,
-      /\[data-slot='page-footer'\]\s*\[data-slot='button'\]\s*\{[^}]*width:\s*42px;[^}]*min-width:\s*42px;[^}]*height:\s*35px;[^}]*border-radius:\s*10px;[^}]*background:\s*#fbfcff;/s
+      /\[data-slot='page-footer'\]\s*\[data-slot='button'\]\s*\{[^}]*width:\s*42px;[^}]*min-width:\s*42px;[^}]*height:\s*35px;[^}]*border-radius:\s*10px;[^}]*background:\s*var\(--design-surface, #fbfcff\);/s
     )
     assert.match(
       usageLogsStyles,
@@ -165,7 +165,7 @@ describe('usage logs layout', () => {
   test('log pagination uses the API keys page-size selector dimensions', () => {
     assert.match(
       usageLogsStyles,
-      /\[data-slot='page-footer'\]\s*\[data-slot='select-trigger'\]\s*\{[^}]*width:\s*73px;[^}]*height:\s*37px;[^}]*border-color:\s*#dce4f0;[^}]*border-radius:\s*9px;/s
+      /\[data-slot='page-footer'\]\s*\[data-slot='select-trigger'\]\s*\{[^}]*width:\s*73px;[^}]*height:\s*37px;[^}]*border-color:\s*var\(--design-border, #dce4f0\);[^}]*border-radius:\s*9px;/s
     )
   })
 
