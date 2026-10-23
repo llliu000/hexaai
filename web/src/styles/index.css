@@ -738,24 +738,24 @@ html:not(.dark) body {
 html.dark body {
   --radius: 0.75rem;
   --app-header-height: 3.375rem;
-  --background: oklch(0.19 0.022 258);
+  --background: var(--design-canvas);
   --foreground: oklch(0.95 0.012 255);
-  --card: oklch(0.235 0.025 258);
+  --card: var(--design-surface);
   --card-foreground: oklch(0.95 0.012 255);
-  --popover: oklch(0.25 0.026 258);
+  --popover: var(--design-surface);
   --popover-foreground: oklch(0.95 0.012 255);
   --primary: oklch(0.68 0.19 257);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.29 0.025 258);
+  --secondary: var(--design-inset);
   --secondary-foreground: oklch(0.94 0.015 255);
-  --muted: oklch(0.275 0.02 258);
+  --muted: var(--design-inset);
   --muted-foreground: oklch(0.72 0.025 255);
   --accent: oklch(0.32 0.06 257);
   --accent-foreground: oklch(0.88 0.075 255);
   --border: oklch(1 0 0 / 11%);
   --input: oklch(1 0 0 / 16%);
   --ring: oklch(0.68 0.19 257);
-  --sidebar: oklch(0.215 0.023 258);
+  --sidebar: var(--design-inset);
   --sidebar-foreground: oklch(0.93 0.014 255);
   --sidebar-primary: oklch(0.68 0.19 257);
   --sidebar-primary-foreground: oklch(1 0 0);
@@ -763,6 +763,13 @@ html.dark body {
   --sidebar-accent-foreground: oklch(0.9 0.055 255);
   --sidebar-border: oklch(1 0 0 / 11%);
   --sidebar-ring: oklch(0.68 0.19 257);
+  --table-row: var(--design-surface);
+  --table-header: var(--design-inset);
+  --table-header-hover: color-mix(
+    in oklch,
+    var(--foreground) 9%,
+    var(--design-inset)
+  );
 }
 
 body {
@@ -2238,6 +2245,22 @@ body:has(
   background: oklch(0.97 0.035 85);
 }
 
+.dark .lujiyun-dashboard-models > div:first-child > div > div:nth-child(1) {
+  background: var(--design-blue-surface);
+}
+.dark .lujiyun-dashboard-models > div:first-child > div > div:nth-child(2) {
+  background: var(--design-green-surface);
+}
+.dark .lujiyun-dashboard-models > div:first-child > div > div:nth-child(3) {
+  background: var(--design-purple-surface);
+}
+.dark .lujiyun-dashboard-models > div:first-child > div > div:nth-child(4) {
+  background: var(--design-cyan-surface);
+}
+.dark .lujiyun-dashboard-models > div:first-child > div > div:nth-child(5) {
+  background: var(--design-amber-surface);
+}
+
 .lujiyun-dashboard-models
   > div:not(:first-child)
   > .overflow-hidden.rounded-lg.border,
@@ -2419,6 +2442,15 @@ body:has(.lujiyun-keys-page)
     var(--card);
 }
 
+.dark .lujiyun-profile-page > div > div:first-child [data-slot='card'],
+.dark .lujiyun-profile-page > div > div:first-child > div {
+  background: linear-gradient(
+    160deg,
+    color-mix(in oklch, var(--design-link) 7%, var(--design-surface)),
+    var(--design-surface) 70%
+  );
+}
+
 .lujiyun-profile-page
   [class*='xl:grid-cols-[minmax(0,1fr)_minmax(360px,0.46fr)]'] {
   grid-template-columns: minmax(0, 1fr) 22rem;
@@ -2426,7 +2458,7 @@ body:has(.lujiyun-keys-page)
 
 /* Model square */
 body:has(.lujiyun-pricing-page) {
-  background: oklch(0.975 0.012 255);
+  background: var(--design-canvas, oklch(0.975 0.012 255));
 }
 
 .lujiyun-pricing-page {
@@ -2495,7 +2527,7 @@ body:has(.lujiyun-pricing-page) {
 
 /* Public home */
 body:has(.lujiyun-home-hero) {
-  background: oklch(0.98 0.012 255);
+  background: var(--design-canvas, oklch(0.98 0.012 255));
 }
 
 .lujiyun-home-hero {

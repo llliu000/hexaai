@@ -1,0 +1,511 @@
+/* API key page alignment with the supplied LuJiyun desktop design. */
+body:has(.lujiyun-keys-page) {
+  background: var(--design-canvas, #f4f7fc);
+}
+
+body:has(.lujiyun-keys-page) button[aria-label='Open Tanstack query devtools'],
+body:has(.lujiyun-keys-page)
+  button[aria-label='Open TanStack Router Devtools'] {
+  display: none;
+}
+
+.lujiyun-keys-page,
+.lujiyun-keys-page * {
+  font-family: var(--font-body);
+  letter-spacing: 0;
+}
+
+@media (min-width: 1024px) {
+  body:has(.lujiyun-keys-page) [data-slot='sidebar-inset'] main {
+    height: calc(100svh - 124px);
+    flex: none;
+  }
+
+  body:has(.lujiyun-keys-page)
+    [data-slot='sidebar-inset']
+    main
+    > div:first-child {
+    height: 82px !important;
+    padding: 0 0 0 0 !important;
+  }
+
+  body:has(.lujiyun-keys-page)
+    [data-slot='sidebar-inset']
+    main
+    > div:first-child
+    h2 {
+    font-size: 25px;
+    line-height: 32px;
+    font-weight: 700;
+    color: var(--design-text, #172238);
+  }
+
+  body:has(.lujiyun-keys-page)
+    [data-slot='sidebar-inset']
+    main
+    > div:first-child
+    p {
+    margin-top: 1px;
+    font-size: 13px;
+    line-height: 22px;
+    color: var(--design-muted, #75839a);
+  }
+
+  body:has(.lujiyun-keys-page)
+    [data-slot='sidebar-inset']
+    main
+    > div:first-child
+    [data-slot='button'] {
+    width: 163px;
+    height: 42px;
+    margin-top: -1px;
+    border: 0;
+    border-radius: 12px;
+    background: #2869f6;
+    box-shadow: 0 8px 16px #246cf52b;
+    font-size: 12px;
+    font-weight: 500;
+    transform: translateY(-3px);
+  }
+
+  body:has(.lujiyun-keys-page)
+    [data-slot='sidebar-inset']
+    main
+    > div:nth-child(2) {
+    padding: 0px 4px 0 0px !important;
+  }
+}
+
+.lujiyun-keys-page {
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: 0 !important;
+  gap: 24px !important;
+  color: var(--design-text, #16233a);
+}
+
+.lujiyun-keys-page > div:first-child {
+  height: 42px;
+  min-height: 42px;
+  max-height: 42px;
+  /* margin-right: 26px;
+  margin-left: 32px; */
+  padding: 0 !important;
+  gap: 14px !important;
+}
+
+.api-key-filter-field {
+  position: relative;
+  flex: none;
+}
+
+.api-key-filter-field > svg {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  width: 16px;
+  height: 16px;
+  color: var(--design-muted, #667995);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.api-key-name-filter {
+  width: 253px;
+}
+
+.api-key-token-filter {
+  width: 284px;
+}
+
+.lujiyun-keys-page .api-key-status-filter {
+  width: 150px;
+  height: 42px;
+  padding-inline: 15px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--design-surface, #fff);
+  box-shadow: 0 8px 18px #253c6810;
+  color: var(--design-muted, #52627d);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.lujiyun-keys-page .api-key-filter-field [data-slot='input'] {
+  width: 100% !important;
+  height: 42px;
+  padding: 0 42px 0 15px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--design-surface, #fff);
+  box-shadow: 0 8px 18px #253c6810;
+  color: var(--design-muted, #52627d);
+  font-size: 12px;
+}
+
+.lujiyun-keys-page .api-key-filter-field [data-slot='input']::placeholder {
+  color: var(--design-muted, #98a8bd);
+  opacity: 1;
+}
+
+.lujiyun-keys-page
+  > div:first-child
+  [data-slot='button']:not([data-view-options-trigger]) {
+  border-color: transparent;
+  box-shadow: 0 8px 18px #253c6810;
+}
+
+.lujiyun-keys-page > div:first-child > [data-slot='button'] {
+  width: 117px;
+  height: 42px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--design-surface, #fff);
+  color: var(--design-muted, #71819a);
+  font-size: 12px;
+  font-weight: 400;
+  justify-content: space-between;
+}
+
+.lujiyun-keys-page > div:first-child > [data-slot='button'] > svg {
+  width: 15px;
+  height: 15px;
+  margin-left: auto;
+  color: var(--design-muted, #65758e);
+}
+
+.lujiyun-keys-page
+  > div:first-child
+  > div:last-child
+  [data-slot='button']:not([data-view-options-trigger]) {
+  width: 106px;
+  height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--design-surface, #fff);
+  color: var(--design-text, #1a263c);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.lujiyun-keys-page [data-slot='table-container'] {
+  height: 100%;
+}
+
+.lujiyun-keys-page > div:nth-child(2) {
+  /* margin-right: 26px;
+  margin-left: 32px; */
+  overflow: hidden;
+  border: 0 !important;
+  border-radius: 20px 20px 0 0 !important;
+  background: var(--design-surface, #fff);
+  box-shadow: 0 10px 25px #263c6710;
+}
+
+.lujiyun-keys-page [data-slot='table-header'] {
+  background: var(--design-inset, #f8faff) !important;
+}
+
+.lujiyun-keys-page [data-slot='table-header'] tr {
+  height: 64px;
+  border-color: var(--design-border, #eff3f9);
+}
+
+.lujiyun-keys-page [data-slot='table-head'] {
+  height: 64px;
+  padding: 0 14px;
+  color: var(--design-muted, #68758a);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.lujiyun-keys-page [data-slot='table-body'] > tr {
+  height: 76px;
+  border-color: var(--design-border, #edf1f7);
+  background: var(--design-surface, #fff);
+}
+
+.lujiyun-keys-page [data-slot='table-cell'] {
+  padding: 0 14px;
+  color: var(--design-muted, #60708a);
+  font-size: 12px;
+}
+
+.lujiyun-keys-page [data-slot='table-head']:first-child,
+.lujiyun-keys-page [data-slot='table-cell']:first-child {
+  padding-right: 9px;
+  padding-left: 30px;
+}
+
+.lujiyun-keys-page
+  [data-slot='table-cell']:nth-child(3)
+  [data-slot='status-badge'] {
+  position: relative;
+  left: -5px;
+}
+
+.lujiyun-keys-page [data-slot='table-cell'] .font-medium {
+  color: var(--design-text, #1f2a3d);
+  font-weight: 600;
+}
+
+.lujiyun-keys-page [data-slot='checkbox'] {
+  width: 16px;
+  height: 16px;
+  border-color: var(--design-border, #d6dfec);
+  border-radius: 4px;
+}
+
+.lujiyun-keys-page [data-slot='status-badge'] {
+  min-height: 25px;
+  padding: 0 13px;
+  border-radius: 16px;
+  background: var(--design-inset, #e6faf3);
+  color: var(--design-green, #00a979);
+  font-size: 12px;
+}
+
+.lujiyun-keys-page [data-slot='status-badge']::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #00ba89;
+}
+
+.lujiyun-keys-page [data-slot='status-badge'].text-muted-foreground {
+  min-height: 0;
+  margin-left: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--design-muted, #60708a);
+}
+
+.lujiyun-keys-page [data-slot='status-badge'].text-muted-foreground::before {
+  display: none;
+}
+
+.lujiyun-keys-page [data-slot='table-cell']:nth-child(5) > button {
+  margin-left: 0;
+}
+
+.lujiyun-keys-page [data-slot='table-cell']:nth-child(10) > div {
+  margin-left: -24px;
+  gap: 12px;
+}
+
+.lujiyun-keys-page [data-slot='table-head']:nth-child(10),
+.lujiyun-keys-page [data-slot='table-cell']:nth-child(10) {
+  position: static;
+  background: transparent;
+  box-shadow: none;
+}
+
+.lujiyun-keys-page .api-key-status-action svg,
+.lujiyun-keys-page .api-key-edit-action svg,
+.lujiyun-keys-page [data-slot='table-cell']:nth-child(10) [aria-label] svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.7;
+}
+
+.lujiyun-keys-page [data-slot='table-cell'] [data-slot='button'] {
+  color: var(--design-muted, #60708a);
+}
+
+.lujiyun-keys-page [data-slot='table-cell'] [data-slot='button']:hover {
+  background: var(--design-inset, #f2f6ff);
+}
+
+body:has(.lujiyun-keys-page) [data-slot='sidebar-inset'] main > div:last-child {
+  min-height: 87px;
+  /* margin: 0 30px 0 0; */
+  padding: 0 24px;
+  border: 0;
+  border-radius: 0 0 20px 20px;
+  background: var(--design-inset, #f8faff);
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  > div {
+  height: 87px;
+  width: 100%;
+  justify-content: stretch;
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  > div
+  > div {
+  width: 100%;
+  gap: 24px;
+  justify-content: flex-start;
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  > div
+  > div
+  > div:first-child {
+  gap: 20px;
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  > div
+  > div
+  > div:nth-child(2) {
+  gap: 20px;
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  > div
+  > div
+  > div:nth-child(3) {
+  margin-right: 15px;
+  margin-left: auto;
+  gap: 12px;
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  [data-slot='button'] {
+  width: 42px;
+  min-width: 42px;
+  height: 35px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: var(--design-surface, #fbfcff);
+  box-shadow: none;
+  font-size: 12px;
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  [data-slot='button']
+  svg {
+  width: 14px;
+  height: 14px;
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  [data-slot='button'][class~='bg-primary'] {
+  background: #246cf4;
+  color: #fff;
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  [data-slot='select-trigger'] {
+  width: 73px;
+  height: 37px;
+  border-color: var(--design-border, #dce4f0);
+  border-radius: 9px;
+  background: var(--design-surface, #fff);
+  box-shadow: none;
+  font-size: 12px;
+}
+
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  p,
+body:has(.lujiyun-keys-page)
+  [data-slot='sidebar-inset']
+  main
+  > div:last-child
+  span {
+  font-size: 12px;
+}
+
+.profile-footer-brand {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .lujiyun-keys-page {
+    gap: 10px !important;
+  }
+
+  .lujiyun-keys-page > div:first-child,
+  .lujiyun-keys-page > div:nth-child(2) {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  .api-key-name-filter,
+  .api-key-token-filter,
+  .lujiyun-keys-page .api-key-status-filter {
+    width: min(100%, 284px);
+  }
+}
+
+/* Use the API-key artwork itself for pixel-identical navigation artwork. */
+body:has(.lujiyun-keys-page) .profile-design-icon:not(.profile-nav-icon),
+body:has(.lujiyun-keys-page) .profile-brand,
+body:has(.lujiyun-keys-page) .profile-gift {
+  background-image: url('../features/keys/assets/api-keys-reference.png');
+  background-size: 1440px 960px;
+}
+
+body:has(.lujiyun-keys-page) .profile-gift {
+  background-position: -108px -693px;
+}
+
+body:has(.lujiyun-keys-page) .profile-help .icon-help {
+  background-position: -1254px -19px;
+}
+
+body:has(.lujiyun-keys-page) .profile-header-search > svg {
+  opacity: 0;
+}
+
+body:has(.lujiyun-keys-page) .profile-header-search::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  width: 14px;
+  height: 14px;
+  flex: none;
+  transform: translateY(-50%);
+  background: url('../features/keys/assets/api-keys-reference.png') -971px -20px
+    / 1440px 960px no-repeat;
+}
+
+/* Match the usage-log toolbar's column view trigger. */
+.lujiyun-keys-page [data-view-options-trigger] {
+  min-width: 56px;
+  height: 38px;
+  min-height: 38px;
+  padding-inline: 16px;
+  border-radius: 11px;
+  box-shadow: none;
+  font-size: 12px;
+}

@@ -178,3 +178,10 @@ body:has(.lujiyun-usage-task)
     line-height: 20px;
   }
 }
+
+/* The light decoration has a solid white canvas baked into the bitmap. */
+@media (min-width: 1024px) {
+  .dark body:has(.lujiyun-usage-task) [data-slot='sidebar-inset'] main {
+    background-image: none;
+  }
+}

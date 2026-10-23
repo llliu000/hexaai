@@ -696,6 +696,33 @@ body:has(.lujiyun-overview-page)
   text-align: center;
 }
 
+/* Keep the compact overview artwork and sparse data rows legible on dark cards. */
+html.dark .overview-route-segment {
+  filter: drop-shadow(0 7px 12px rgba(32, 92, 170, 0.28));
+}
+html.dark .overview-route-face.is-top {
+  background: linear-gradient(135deg, #5d8fce 0%, #4774ad 52%, #385f91 100%);
+}
+html.dark .overview-route-face.is-left {
+  background: linear-gradient(145deg, #426c9d 0%, #315477 100%);
+}
+html.dark .overview-route-face.is-right {
+  background: linear-gradient(155deg, #355e8e 0%, #27496f 100%);
+}
+html.dark .overview-service-card li {
+  color: #c8d0dc;
+}
+html.dark .overview-service-card li strong {
+  color: #78dfb5;
+  text-shadow: 0 0 12px rgba(105, 214, 168, 0.18);
+}
+html.dark .overview-announcements-card li {
+  color: #dce3ed;
+}
+html.dark .overview-announcements-card time {
+  color: #b8c1cf;
+}
+
 .overview-table-title {
   display: flex;
   height: 45px;

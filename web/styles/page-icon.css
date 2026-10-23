@@ -1,0 +1,50 @@
+.page-icon {
+  display: inline-flex;
+  flex: 0 0 36px;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.page-icon > svg {
+  display: block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.page-icon.page-icon-blue {
+  background: var(--design-blue-surface, #e7f0ff);
+  color: var(--design-link, #246bfe);
+}
+.page-icon.page-icon-green {
+  background: var(--design-green-surface, #e2f8ef);
+  color: var(--design-green, #16b883);
+}
+.page-icon.page-icon-purple {
+  background: var(--design-purple-surface, #f6e7ff);
+  color: var(--design-purple, #c460ff);
+}
+.page-icon.page-icon-cyan {
+  background: var(--design-cyan-surface, #e0f8fa);
+  color: var(--design-cyan, #18b9c2);
+}
+.page-icon.page-icon-amber {
+  background: var(--design-amber-surface, #fff3d9);
+  color: var(--design-amber, #f3a21c);
+}
+.page-icon.page-icon-red {
+  background: var(--design-inset, #ffebee);
+  color: var(--design-red, #e45b72);
+}
+.page-icon.page-icon-slate {
+  background: var(--design-inset, #edf2f8);
+  color: var(--design-muted, #71829d);
+}

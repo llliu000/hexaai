@@ -1037,7 +1037,8 @@ For commercial licensing, please contact support@quantumnous.com
   --wm-text: #edf1f8;
   --wm-muted: #a2adbf;
   --wm-line: var(--design-border, #354153);
-  --wm-surface: #151d2a;
+  --wm-surface: var(--design-surface);
+  background: var(--design-canvas);
 }
 .dark .wm-header {
   color: var(--wm-text);
@@ -1061,14 +1062,14 @@ For commercial licensing, please contact support@quantumnous.com
 .dark .wm-integration,
 .dark .wm-testimonials,
 .dark .wm-providers {
-  background: #1c2533;
+  background: var(--design-canvas);
 }
 .dark .wm-model-card,
 .dark .wm-benefit,
 .dark .wm-testimonial,
 .dark .wm-footer {
-  background: #202b3a;
-  border-color: #354153;
+  background: var(--design-surface);
+  border-color: var(--design-border);
 }
 .dark .wm-model-pricing strong,
 .dark .wm-provider-row > div {
@@ -1078,8 +1079,8 @@ For commercial licensing, please contact support@quantumnous.com
   border-color: #354153;
 }
 .dark .wm-code-toolbar {
-  background: #293244;
-  border-color: #354153;
+  background: var(--design-inset);
+  border-color: var(--design-border);
 }
 .dark .wm-code-toolbar button[aria-selected='true'] {
   background: #354153;

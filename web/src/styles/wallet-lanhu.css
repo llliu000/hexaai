@@ -131,6 +131,22 @@
   background-position: -1205px -222px;
   right: 14px;
 }
+/* The light-mode sprite includes white image backgrounds. Use transparent art on dark cards. */
+.dark .lujiyun-wallet-page .wallet-stat-art-0 {
+  background-image: url('../../public/lanhu/wallet-balance-dark.svg');
+  background-size: 100px 87px;
+  background-position: center;
+}
+.dark .lujiyun-wallet-page .wallet-stat-art-1 {
+  background-image: url('../../public/lanhu/wallet-usage-dark.svg');
+  background-size: 113px 85px;
+  background-position: center;
+}
+.dark .lujiyun-wallet-page .wallet-stat-art-2 {
+  background-image: url('../../public/lanhu/wallet-requests-dark.svg');
+  background-size: 177px 86px;
+  background-position: center;
+}
 .wallet-referral-stat-icon {
   margin-bottom: 12px;
 }

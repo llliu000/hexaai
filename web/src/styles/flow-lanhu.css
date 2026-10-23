@@ -6,6 +6,11 @@
   background: url('../../public/lanhu/flow-reference.png') -741px -468px /
     1440px 780px no-repeat;
 }
+html.dark .flow-empty-art {
+  background-image: url('../../public/lanhu/flow-empty-dark.svg');
+  background-size: 148px 96px;
+  background-position: center;
+}
 .lujiyun-dashboard-flow.lujiyun-dashboard-flow {
   width: 100% !important;
   max-width: none !important;

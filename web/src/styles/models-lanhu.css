@@ -47,6 +47,11 @@
   background-size: 1800px 1012.5px;
   background-position: -953.75px -457.5px;
 }
+html.dark .model-empty-art {
+  background-image: url('../../public/lanhu/model-chart-empty-dark.svg');
+  background-size: 130px 110px;
+  background-position: center;
+}
 .model-chart-empty,
 .model-chart-loading {
   display: grid;

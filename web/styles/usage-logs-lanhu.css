@@ -1,0 +1,448 @@
+.lujiyun-usage-common .usage-logs-empty-image {
+  display: block;
+  width: 150px;
+  height: 125px;
+  max-width: none;
+  object-fit: contain;
+}
+
+@media (min-width: 1024px) {
+  body:has(.lujiyun-usage-common) [data-slot='sidebar-inset'] h2 {
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: 0;
+  }
+
+  body:has(.lujiyun-usage-common)
+    [data-slot='sidebar-inset']
+    > main
+    > div:first-child
+    p {
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+  body:has(.lujiyun-usage-common)
+    [data-slot='sidebar-inset']
+    > main
+    > div:first-child {
+    height: 136px;
+    padding-bottom: 16px;
+  }
+
+  body:has(.lujiyun-usage-common)
+    [data-slot='sidebar-inset']
+    > main
+    > div:nth-child(2) {
+    padding: 0;
+  }
+
+  body:has(.lujiyun-usage-common) [data-slot='page-footer'],
+  body:has(.lujiyun-usage-task) [data-slot='page-footer'] {
+    width: 100%;
+    margin: 0;
+  }
+
+  .lujiyun-usage-common {
+    max-width: none;
+    gap: 20px;
+  }
+
+  .lujiyun-usage-common > div:last-child > div:first-child {
+    gap: 20px;
+  }
+
+  .lujiyun-usage-common
+    > div:last-child
+    > div:first-child
+    > .usage-logs-filter-card:not(.min-h-0) {
+    flex-shrink: 0;
+    min-height: 140px;
+    padding: 21px 20px;
+    border: 0;
+    border-radius: 18px;
+    background: var(--design-surface, #fff);
+    box-shadow: 0 8px 24px rgb(43 84 142 / 3%);
+  }
+
+  .lujiyun-usage-common .usage-logs-filter-card > div:first-child {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .lujiyun-usage-common
+    .usage-logs-filter-card
+    > div:first-child
+    > div:first-child {
+    grid-template-columns:
+      minmax(0, 1.72fr)
+      minmax(0, 1.02fr)
+      minmax(0, 1fr)
+      minmax(0, 0.95fr);
+    gap: 14px;
+  }
+
+  .lujiyun-usage-common
+    .usage-logs-filter-card
+    > div:first-child
+    > div:last-child {
+    width: 70px;
+  }
+
+  .lujiyun-usage-common
+    .usage-logs-filter-card
+    > div:first-child
+    > div:last-child
+    > button {
+    width: 70px;
+    justify-content: center;
+    padding-inline: 10px;
+  }
+
+  .lujiyun-usage-common .usage-logs-filter-card > div:last-child {
+    margin-top: 18px;
+  }
+
+  .lujiyun-usage-common .usage-logs-filter-card [data-slot='input'],
+  .lujiyun-usage-common .usage-logs-filter-card [data-slot='select-trigger'],
+  .lujiyun-usage-common .usage-logs-filter-card > div:first-child button {
+    height: 40px;
+    border-color: var(--design-border, #dbe4f2);
+    border-radius: 11px;
+    background: var(--design-surface, #fff);
+    box-shadow: none;
+  }
+
+  .lujiyun-usage-common .usage-logs-filter-card [class*='sm:col-span-2'] {
+    grid-column: auto;
+  }
+
+  .lujiyun-usage-common
+    .usage-logs-filter-card
+    > div:last-child
+    > div:last-child {
+    gap: 14px;
+  }
+
+  .lujiyun-usage-common
+    .usage-logs-filter-card
+    > div:last-child
+    > div:last-child
+    > button {
+    height: 38px;
+    min-width: 56px;
+    padding-inline: 16px;
+    border-radius: 11px;
+    box-shadow: none;
+  }
+
+  .lujiyun-usage-common
+    .usage-logs-filter-card
+    > div:last-child
+    > div:last-child
+    > button:last-child {
+    min-width: 64px;
+  }
+
+  .lujiyun-usage-common
+    .usage-logs-filter-card
+    > div:last-child
+    > div:last-child
+    > button[aria-label]:not([aria-haspopup]) {
+    width: 32px;
+    min-width: 32px;
+    padding: 0;
+  }
+
+  .lujiyun-usage-common .usage-logs-filter-card [data-slot='input'],
+  .lujiyun-usage-common .usage-logs-filter-card button {
+    font-size: 12px;
+  }
+
+  .lujiyun-usage-common .usage-logs-filter-card button svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 1.5;
+  }
+
+  .lujiyun-usage-common .usage-logs-filter-card [data-slot='empty'] {
+    min-height: 0;
+  }
+
+  .lujiyun-usage-common
+    .usage-logs-filter-card
+    span[class*='rounded-md'][class*='border'] {
+    height: 32px;
+    padding-inline: 11px;
+    border: 0;
+    border-radius: 16px;
+    background: var(--design-inset, #f7f9fd);
+    box-shadow: none;
+  }
+
+  .lujiyun-usage-page.lujiyun-usage-common .overflow-hidden.rounded-lg.border {
+    min-height: 0;
+    border-color: var(--design-border, #e5ebf5);
+    border-radius: 18px 18px 0 0;
+    background: var(--design-surface, #fff);
+  }
+
+  .lujiyun-usage-common [data-slot='table-header'] {
+    background: var(--design-inset, #f9fbff);
+  }
+
+  .lujiyun-usage-common [data-slot='table-head'] {
+    height: 56px;
+    padding-inline: 30px;
+    color: var(--design-muted, #52617b);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .lujiyun-usage-common [data-slot='table']:has([data-slot='empty']) {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .lujiyun-usage-common
+    [data-slot='table-body']
+    > tr
+    > td:has([data-slot='empty']) {
+    height: 274px;
+    padding: 0;
+  }
+
+  .lujiyun-usage-common [data-slot='empty'] {
+    gap: 12px;
+    padding: 42px 18px 32px;
+  }
+
+  .lujiyun-usage-common [data-slot='empty-header'] {
+    gap: 12px;
+  }
+
+  .lujiyun-usage-common [data-slot='empty-icon'] {
+    width: 150px;
+    height: 125px;
+    margin-bottom: 6px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .lujiyun-usage-common .usage-logs-empty-image {
+    display: block;
+    width: 150px;
+    height: 125px;
+    max-width: none;
+    object-fit: contain;
+  }
+
+  .lujiyun-usage-common [data-slot='empty-title'] {
+    color: var(--design-text, #142039);
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 700;
+  }
+
+  .lujiyun-usage-common [data-slot='empty-description'] {
+    color: var(--design-muted, #94a2ba);
+    font-size: 12px;
+    line-height: 20px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .lujiyun-usage-common
+    .usage-logs-filter-card
+    > div:first-child
+    > div:first-child {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1023px) {
+  .lujiyun-usage-common [data-slot='empty-icon']:has(.usage-logs-empty-image) {
+    width: 150px;
+    height: 125px;
+    background: transparent;
+  }
+}
+
+/* Keep the table and portal footer in the same full-width, gap-free column. */
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  .profile-design-layout
+  [data-slot='sidebar-inset']
+  main
+  > .usage-logs-content {
+  flex: 1 1 0%;
+  min-height: 0;
+  padding: 0;
+}
+.lujiyun-usage-page:is(.lujiyun-usage-common, .lujiyun-usage-task)
+  .usage-logs-table-layout
+  > .overflow-hidden.rounded-lg.border {
+  min-height: 0;
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.lujiyun-usage-page:is(.lujiyun-usage-common, .lujiyun-usage-task)
+  .usage-logs-table-layout
+  > .overflow-y-auto {
+  background: var(--design-surface, #fff);
+  border-radius: 18px 18px 0 0;
+}
+
+/* Match the API key pagination surface and controls. */
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer'] {
+  width: 100%;
+  margin: 0;
+  min-height: 87px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 0 0 20px 20px;
+  background: var(--design-inset, #f8faff);
+}
+
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  > div {
+  height: 87px;
+  width: 100%;
+  justify-content: stretch;
+}
+
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  > div
+  > div {
+  width: 100%;
+  gap: 24px;
+  justify-content: flex-start;
+}
+
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  > div
+  > div
+  > div:first-child,
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  > div
+  > div
+  > div:nth-child(2) {
+  gap: 20px;
+}
+
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  > div
+  > div
+  > div:nth-child(3) {
+  margin-right: 15px;
+  margin-left: auto;
+  gap: 12px;
+}
+
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  [data-slot='button'] {
+  width: 42px;
+  min-width: 42px;
+  height: 35px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: var(--design-surface, #fbfcff);
+  box-shadow: none;
+  font-size: 12px;
+}
+
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  [data-slot='button']
+  svg {
+  width: 14px;
+  height: 14px;
+}
+
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  [data-slot='button'][class~='bg-primary'] {
+  background: #246cf4;
+  color: #fff;
+}
+
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  [data-slot='select-trigger'] {
+  width: 73px;
+  height: 37px;
+  border-color: var(--design-border, #dce4f0);
+  border-radius: 9px;
+  background: var(--design-surface, #fff);
+  box-shadow: none;
+  font-size: 12px;
+}
+
+body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+  [data-slot='page-footer']
+  :is(p, span) {
+  font-size: 12px;
+}
+
+@media (max-width: 767px) {
+  body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+    [data-slot='page-footer'] {
+    padding: 12px;
+  }
+
+  body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+    [data-slot='page-footer']
+    > div {
+    height: auto;
+  }
+
+  body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+    [data-slot='page-footer']
+    > div
+    > div {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+    [data-slot='page-footer']
+    > div
+    > div
+    > div:first-child,
+  body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+    [data-slot='page-footer']
+    > div
+    > div
+    > div:nth-child(2) {
+    gap: 8px;
+  }
+
+  body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+    [data-slot='page-footer']
+    > div
+    > div
+    > div:nth-child(3) {
+    width: 100%;
+    margin: 0;
+    gap: 4px;
+    justify-content: flex-end;
+  }
+
+  body:has(:is(.lujiyun-usage-common, .lujiyun-usage-task))
+    [data-slot='page-footer']
+    [data-slot='button'] {
+    width: 32px;
+    min-width: 32px;
+  }
+}

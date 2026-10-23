@@ -1,0 +1,485 @@
+.models-art {
+  display: inline-block;
+  background-image: url('../../public/lanhu/models-reference.png');
+  background-repeat: no-repeat;
+  background-size: 1440px 810px;
+}
+.lujiyun-dashboard-models.lujiyun-dashboard-models
+  > div:first-child
+  > div
+  > div {
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+}
+.lujiyun-dashboard-models.lujiyun-dashboard-models
+  > div:not(:first-child)
+  > .model-design-stats {
+  min-height: 0 !important;
+  height: 110px !important;
+  padding: 0;
+  border: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.lujiyun-dashboard-models.lujiyun-dashboard-models
+  > div:nth-child(2)
+  > .model-design-stats
+  > div {
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+}
+.lujiyun-dashboard-models.lujiyun-dashboard-models
+  > div:not(:first-child)
+  > .model-design-chart {
+  min-height: 238px;
+  border-radius: 20px;
+}
+.lujiyun-dashboard-models.lujiyun-dashboard-models .model-design-plot {
+  height: 165px !important;
+  min-height: 0;
+}
+.model-empty-art {
+  width: 130px;
+  height: 110px;
+  flex-shrink: 0;
+  background-size: 1800px 1012.5px;
+  background-position: -953.75px -457.5px;
+}
+html.dark .model-empty-art {
+  background-image: url('../../public/lanhu/model-chart-empty-dark.svg');
+  background-size: 130px 110px;
+  background-position: center;
+}
+.model-chart-empty,
+.model-chart-loading {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+.model-chart-loading {
+  color: var(--design-muted, #8496b2);
+}
+.model-empty-message {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+.model-empty-message strong {
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--design-text, #17243b);
+  margin-top: 3px;
+}
+.model-empty-message p {
+  font-size: 11px;
+  line-height: 15px;
+  color: var(--design-muted, #a3aec2);
+}
+.lujiyun-dashboard-models.lujiyun-dashboard-models {
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: 0 !important;
+  font-family: var(--font-body);
+  color: var(--design-text, #142039);
+}
+.lujiyun-dashboard-models .model-design-stats {
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+}
+.lujiyun-dashboard-models .model-design-stats > div {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 15px;
+  border: 0;
+}
+.lujiyun-dashboard-models .model-design-stats > div > div {
+  height: 110px;
+  min-height: 0;
+  border: 0;
+  border-radius: 20px;
+  padding: 16px 14px 16px 70px;
+  position: relative;
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #f7faff),
+    var(--design-inset, #edf3ff)
+  );
+}
+.lujiyun-dashboard-models .model-design-stats > div > div:nth-child(2) {
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #f8fdfa),
+    var(--design-inset, #e8f9f3)
+  );
+}
+.lujiyun-dashboard-models .model-design-stats > div > div:nth-child(3) {
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #fcf9ff),
+    var(--design-inset, #f7ecff)
+  );
+}
+.lujiyun-dashboard-models .model-design-stats > div > div:nth-child(4) {
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #f6fcfd),
+    var(--design-cyan-surface, #e6f9fb)
+  );
+}
+.lujiyun-dashboard-models .model-design-stats > div > div:nth-child(5) {
+  background: linear-gradient(
+    110deg,
+    var(--design-inset, #fffdf9),
+    var(--design-amber-surface, #fef6e4)
+  );
+}
+.lujiyun-dashboard-models
+  .model-design-stats
+  > div
+  > div
+  > div:first-child
+  > span:first-child {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--design-blue-surface, #e7f0ff);
+  color: var(--design-link, #246bfe);
+}
+.lujiyun-dashboard-models
+  .model-design-stats
+  > div
+  > div:nth-child(2)
+  > div:first-child
+  > span:first-child {
+  background: var(--design-green-surface, #e2f8ef);
+  color: var(--design-green, #16b883);
+}
+.lujiyun-dashboard-models
+  .model-design-stats
+  > div
+  > div:nth-child(3)
+  > div:first-child
+  > span:first-child {
+  background: var(--design-purple-surface, #f6e7ff);
+  color: var(--design-purple, #c460ff);
+}
+.lujiyun-dashboard-models
+  .model-design-stats
+  > div
+  > div:nth-child(4)
+  > div:first-child
+  > span:first-child {
+  background: var(--design-cyan-surface, #e0f8fa);
+  color: var(--design-cyan, #18b9c2);
+}
+.lujiyun-dashboard-models
+  .model-design-stats
+  > div
+  > div:nth-child(5)
+  > div:first-child
+  > span:first-child {
+  background: var(--design-amber-surface, #fff3d9);
+  color: var(--design-amber, #f3a21c);
+}
+.lujiyun-dashboard-models
+  .model-design-stats
+  svg:not(.model-analysis-icon-svg) {
+  visibility: hidden;
+}
+/* Shared line treatment with the overview API route icon; no raster scaling. */
+.lujiyun-dashboard-models .model-analysis-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+.lujiyun-dashboard-models .model-analysis-icon > .model-analysis-icon-svg {
+  display: block;
+  visibility: visible;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.lujiyun-dashboard-models .model-design-stats [class*='uppercase'] {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--design-muted, #66748e);
+}
+.lujiyun-dashboard-models .model-design-stats [class*='font-mono'] {
+  font:
+    700 25px/30px Arial,
+    sans-serif;
+  letter-spacing: 0;
+  margin-top: 10px;
+}
+.lujiyun-dashboard-models .model-design-stats > div > div > div:last-child {
+  font-size: 11px;
+  color: var(--design-muted, #95a2b8);
+  margin-top: 2px;
+}
+.lujiyun-dashboard-models .model-design-chart {
+  height: 238px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--design-surface, #fff);
+  box-shadow: none;
+}
+.lujiyun-dashboard-models .model-design-chart > div:first-child {
+  height: 55px;
+  padding: 12px 15px;
+  border: 0;
+}
+.lujiyun-dashboard-models
+  .model-design-chart
+  > div:first-child
+  > div:first-child {
+  gap: 11px;
+}
+.lujiyun-dashboard-models
+  .model-design-chart
+  > div:first-child
+  > div:first-child
+  > span:first-child {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--design-green-surface, #e2f8ef);
+  color: var(--design-green, #16b883);
+}
+.lujiyun-dashboard-models
+  .model-trend-chart
+  > div:first-child
+  > div:first-child
+  > span:first-child {
+  background: var(--design-cyan-surface, #e0f8fa);
+  color: var(--design-cyan, #18b9c2);
+}
+.lujiyun-dashboard-models
+  .model-design-chart
+  > div:first-child
+  svg:not(.model-analysis-icon-svg) {
+  display: none;
+}
+.lujiyun-dashboard-models .model-design-chart > div:first-child .text-sm {
+  font-size: 13px;
+}
+.lujiyun-dashboard-models .model-design-chart > div:first-child span {
+  font-size: 11px;
+  color: var(--design-muted, #7f8da6);
+  /* margin-left: 10px; */
+}
+.lujiyun-dashboard-models
+  .model-design-chart
+  > div:first-child
+  > div:last-child {
+  border: 0;
+  background: none;
+  padding: 0;
+  gap: 4px;
+  height: 33px;
+}
+.lujiyun-dashboard-models .model-design-chart button {
+  min-width: 79px;
+  border-radius: 18px;
+  font-size: 12px;
+  padding: 0 19px;
+  background: var(--design-canvas, #f5f8fe);
+  color: var(--design-muted, #61708a);
+  box-shadow: none;
+}
+.lujiyun-dashboard-models .model-design-chart button[aria-pressed='true'],
+.lujiyun-dashboard-models
+  .model-design-chart
+  [data-slot='tabs-trigger'][data-active] {
+  background: var(--design-blue-surface, #e6efff);
+  color: var(--design-link, #216aff);
+  font-weight: 600;
+}
+.lujiyun-dashboard-models .model-design-plot {
+  height: 165px;
+  padding: 5px 25px 0 24px;
+}
+.lujiyun-dashboard-page.lujiyun-dashboard-page
+  > .dashboard-section-bar
+  .dashboard-section-tabs
+  [data-slot='tabs-list'] {
+  height: 32px;
+  min-height: 0;
+  gap: 0;
+  padding: 2px;
+  border: 1px solid var(--design-border, #e2e8f0);
+  border-radius: 18px;
+  background: transparent;
+}
+.lujiyun-dashboard-page.lujiyun-dashboard-page
+  > .dashboard-section-bar
+  .dashboard-section-tabs
+  [data-slot='tabs-trigger'] {
+  min-height: 0;
+  height: 26px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
+  color: var(--design-muted, #61708a);
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: none;
+}
+.lujiyun-dashboard-page.lujiyun-dashboard-page
+  > .dashboard-section-bar
+  .dashboard-section-tabs
+  [data-slot='tabs-trigger'][data-active] {
+  background: var(--design-blue-surface, #e6efff);
+  color: var(--design-link, #216aff);
+  font-weight: 600;
+  box-shadow: none;
+}
+body:has(.lujiyun-dashboard-models) button[aria-label*='Devtools'],
+body:has(.lujiyun-dashboard-models) button[aria-label*='devtools'] {
+  display: none;
+}
+@media (min-width: 1024px) {
+  body:has(.lujiyun-dashboard-models)
+    [data-slot='sidebar-inset']
+    main
+    > div:first-child {
+    height: 32px;
+    padding: 0px 0px 0;
+  }
+  body:has(.lujiyun-dashboard-models) [data-slot='sidebar-inset'] main h2 {
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: 0;
+  }
+  body:has(.lujiyun-dashboard-models)
+    [data-slot='sidebar-inset']
+    main
+    > div:nth-child(2) {
+    padding: 0 0 29px 0;
+  }
+  .lujiyun-dashboard-models > div {
+    margin-block: 0 !important;
+  }
+  .lujiyun-dashboard-models.lujiyun-dashboard-models {
+    display: flex;
+    flex-direction: column;
+    gap: 15px !important;
+  }
+  .lujiyun-dashboard-models .model-stretch-row {
+    flex: 1 1 238px;
+    min-height: 238px;
+  }
+  .lujiyun-dashboard-models.lujiyun-dashboard-models
+    > .model-stretch-row
+    > .model-design-chart {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .lujiyun-dashboard-models.lujiyun-dashboard-models
+    .model-stretch-row
+    .model-design-plot {
+    flex: 1 1 auto;
+    height: auto !important;
+    min-height: 165px;
+  }
+  .lujiyun-dashboard-models
+    .model-stretch-row
+    .model-design-chart
+    > div:first-child {
+    flex-shrink: 0;
+  }
+  .lujiyun-dashboard-models.lujiyun-dashboard-models > div:first-child {
+    min-height: 47px;
+    /* padding-right: 24px; */
+  }
+  .lujiyun-dashboard-models.lujiyun-dashboard-models
+    > div:first-child
+    [data-slot='tabs-list'] {
+    height: 35px;
+    background: transparent;
+    padding: 0;
+  }
+  .lujiyun-dashboard-models > div:first-child [role='tablist'] {
+    background: transparent;
+    border: 0;
+    gap: 14px;
+    box-shadow: none;
+  }
+  .lujiyun-dashboard-models > div:first-child [role='tab'] {
+    height: 35px;
+    padding: 0 19px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--design-muted, #8291ac);
+  }
+  .lujiyun-dashboard-models
+    > div:first-child
+    [role='tab'][aria-selected='true'] {
+    color: var(--design-link, #176aff);
+    background: var(--design-surface, white);
+  }
+  .lujiyun-dashboard-models > div:first-child > div:last-child button {
+    height: 31px;
+    border: 0;
+    border-radius: 11px;
+    background: var(--design-surface, white);
+    font-size: 12px;
+    padding: 0 11px;
+    box-shadow: 0 3px 12px #203b6410;
+  }
+  .lujiyun-dashboard-models > div:first-child > div:last-child button svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+@media (max-width: 1023px) {
+  .lujiyun-dashboard-models.lujiyun-dashboard-models
+    > div:not(:first-child)
+    > .model-design-stats {
+    height: auto !important;
+  }
+  .lujiyun-dashboard-models .model-design-stats > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lujiyun-dashboard-models.lujiyun-dashboard-models
+    > div:not(:first-child)
+    > .model-design-chart {
+    height: 275px;
+  }
+  .lujiyun-dashboard-models .model-design-chart > div:first-child {
+    height: 92px;
+    align-items: stretch;
+  }
+  .lujiyun-dashboard-models
+    .model-design-chart
+    > div:first-child
+    > div:last-child {
+    width: auto;
+  }
+  .lujiyun-dashboard-models .model-design-chart button {
+    padding: 0 10px;
+  }
+  .model-empty-message p {
+    text-align: center;
+  }
+}

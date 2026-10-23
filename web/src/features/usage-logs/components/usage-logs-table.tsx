@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { useQuery } from '@tanstack/react-query'
 import { getRouteApi } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
@@ -177,6 +178,42 @@ export function UsageLogsTable({ logCategory }: UsageLogsTableProps) {
   })
 
   const isCommon = logCategory === 'common'
+  let emptyIcon: ReactNode
+  if (isCommon) {
+    emptyIcon = (
+      <>
+        <img
+          src='/lanhu/usage-logs-empty.png'
+          alt=''
+          aria-hidden
+          className='usage-logs-empty-image dark:hidden'
+        />
+        <img
+          src='/lanhu/usage-logs-empty-dark.svg'
+          alt=''
+          aria-hidden
+          className='usage-logs-empty-image hidden dark:block'
+        />
+      </>
+    )
+  } else if (logCategory === 'task') {
+    emptyIcon = (
+      <>
+        <img
+          src='/lanhu/task-logs-empty.png'
+          alt=''
+          aria-hidden
+          className='usage-logs-empty-image dark:hidden'
+        />
+        <img
+          src='/lanhu/task-logs-empty-dark.svg'
+          alt=''
+          aria-hidden
+          className='usage-logs-empty-image hidden dark:block'
+        />
+      </>
+    )
+  }
 
   return (
     <DataTablePage
@@ -189,20 +226,7 @@ export function UsageLogsTable({ logCategory }: UsageLogsTableProps) {
       emptyDescription={t(
         'No usage logs available. Logs will appear here once API calls are made.'
       )}
-      emptyIcon={
-        isCommon || logCategory === 'task' ? (
-          <img
-            src={
-              isCommon
-                ? '/lanhu/usage-logs-empty.png'
-                : '/lanhu/task-logs-empty.png'
-            }
-            alt=''
-            aria-hidden
-            className='usage-logs-empty-image'
-          />
-        ) : undefined
-      }
+      emptyIcon={emptyIcon}
       skeletonKeyPrefix='usage-log-skeleton'
       applyHeaderSize
       tableClassName={cn(

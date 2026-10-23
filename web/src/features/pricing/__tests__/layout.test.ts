@@ -28,6 +28,10 @@ const pricingStyles = readFileSync(
   new URL('../../../styles/pricing-lanhu.css', import.meta.url),
   'utf8'
 )
+const darkPalette = readFileSync(
+  new URL('../../../styles/dark-palette.css', import.meta.url),
+  'utf8'
+)
 const pricingPageSource = readFileSync(
   new URL('../index.tsx', import.meta.url),
   'utf8'
@@ -89,6 +93,35 @@ describe('pricing page layout', () => {
       pricingStyles,
       /\.lujiyun-pricing-page\.lujiyun-pricing-page > header\s*\{[^}]*height: auto;[^}]*aspect-ratio: 5760 \/ 788;[^}]*min-height: 0;[^}]*background:[^;}]*model-squal\.png[^;}]*\/[^;}]*100% 100% no-repeat;/s
     )
+  })
+
+  test('keeps the model-square banner image and its baked-in lettering in dark mode', () => {
+    assert.match(pricingStyles, /background:[^;}]*model-squal\.png/)
+    assert.match(
+      pricingStyles,
+      /\.lujiyun-pricing-page > header > \*\s*\{[^}]*visibility: hidden;/s
+    )
+    assert.match(
+      darkPalette,
+      /html\.dark \.lujiyun-pricing-page\.lujiyun-pricing-page > header\s*\{[^}]*background-image: url\('\.\.\/assets\/model-squal-dark\.png'\);/s
+    )
+    assert.doesNotMatch(
+      darkPalette,
+      /\.dark \.lujiyun-pricing-page > header > \*\s*\{[^}]*visibility: visible;/s
+    )
+    assert.doesNotMatch(
+      darkPalette,
+      /html\.dark \.lujiyun-pricing-page\.lujiyun-pricing-page > header\s*\{[^}]*filter:/s
+    )
+  })
+
+  test('dark banner asset is a sharp two-times desktop image with the original aspect ratio', () => {
+    const darkBanner = readFileSync(
+      new URL('../../../assets/model-squal-dark.png', import.meta.url)
+    )
+    assert.equal(darkBanner.subarray(0, 8).toString('hex'), '89504e470d0a1a0a')
+    assert.equal(darkBanner.readUInt32BE(16), 2880)
+    assert.equal(darkBanner.readUInt32BE(20), 394)
   })
 
   test('keeps banner lettering readable on narrow screens by cropping the right side', () => {

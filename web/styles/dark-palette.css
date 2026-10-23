@@ -1,0 +1,55 @@
+/* Custom page colors keep their original light fallbacks and share these dark tokens. */
+html.dark {
+  color-scheme: dark;
+  --design-canvas: #1e1e1e;
+  --design-surface: #292929;
+  --design-inset: #242424;
+  --design-text: #edf0f5;
+  --design-muted: #adb5c3;
+  --design-border: #44474e;
+  --design-accent-border: #4d6590;
+  --design-link: #8bbaff;
+  --design-green: #69d6a8;
+  --design-cyan: #73d8e5;
+  --design-purple: #c0a5f5;
+  --design-amber: #efc46e;
+  --design-red: #ff9ca9;
+  --design-blue-surface: #233248;
+  --design-green-surface: #213a32;
+  --design-cyan-surface: #21383e;
+  --design-purple-surface: #332d45;
+  --design-amber-surface: #3c3324;
+  --design-red-surface: #422c33;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+.dark :is(.auth-page, .auth-page-dialog) {
+  color-scheme: dark;
+}
+
+/* The inherited body face and native inputs should agree with the active palette. */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+/* Use a pre-rendered dark banner so the baked-in lettering stays crisp. */
+html.dark .lujiyun-pricing-page.lujiyun-pricing-page > header {
+  background-color: var(--design-canvas);
+  background-image: url('../assets/model-squal-dark.png');
+}
+
+.dark .profile-design .profile-summary > [data-slot='card'] {
+  background-blend-mode: multiply;
+}
+
+.dark .profile-nav-item img.profile-nav-icon {
+  filter: brightness(0) invert(0.8);
+}
+
+.dark .profile-nav-item.is-current img.profile-nav-icon {
+  filter: brightness(0) invert(1);
+}

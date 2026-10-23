@@ -1,0 +1,187 @@
+.lujiyun-usage-task .usage-logs-empty-image {
+  width: 142px;
+  height: 116px;
+  max-width: none;
+  object-fit: contain;
+}
+body:has(.lujiyun-usage-task) button[aria-label='Open Tanstack query devtools'],
+body:has(.lujiyun-usage-task)
+  button[aria-label='Open TanStack Router Devtools'] {
+  display: none;
+}
+@media (min-width: 1024px) {
+  body:has(.lujiyun-usage-task) [data-slot='sidebar-inset'] {
+    font-family: var(--font-body);
+    color: var(--design-text, #14213b);
+    background: var(--design-canvas, #f5f8fe);
+  }
+  body:has(.lujiyun-usage-task) [data-slot='sidebar-inset'] main {
+    background: var(--design-canvas, #f5f8fe)
+      url('../../public/lanhu/task-logs-decoration.png') right top / 180px 180px
+      no-repeat;
+  }
+  body:has(.lujiyun-usage-task)
+    [data-slot='sidebar-inset']
+    main
+    > div:first-child {
+    height: 68px;
+    flex-shrink: 0;
+    /* padding: 37px 48px 0; */
+  }
+  body:has(.lujiyun-usage-task) [data-slot='sidebar-inset'] h2 {
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: 0;
+  }
+  body:has(.lujiyun-usage-task)
+    [data-slot='sidebar-inset']
+    main
+    > div:first-child
+    p {
+    margin-top: 10px;
+    color: var(--design-muted, #8595b0);
+    font-size: 12px;
+    line-height: 20px;
+  }
+  body:has(.lujiyun-usage-task)
+    [data-slot='sidebar-inset']
+    main
+    > div:nth-child(2) {
+    padding-inline: 0;
+    padding-bottom: 0;
+    flex: 1 1 0%;
+    min-height: 0;
+  }
+  .lujiyun-usage-task > div:last-child > div:first-child {
+    gap: 23px;
+  }
+  .lujiyun-usage-task .task-logs-filter-card {
+    flex-shrink: 0;
+    min-height: 140px;
+    padding: 21px 20px;
+    border: 0;
+    border-radius: 18px;
+    background: var(--design-surface, white);
+    box-shadow: 0 8px 24px rgb(43 84 142 / 3%);
+  }
+  .lujiyun-usage-task .task-logs-filter-card > div:first-child {
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 14px;
+  }
+  .lujiyun-usage-task
+    .task-logs-filter-card
+    > div:first-child
+    > div:first-child {
+    grid-template-columns: minmax(0, 1.72fr) minmax(0, 1fr);
+    gap: 14px;
+  }
+  .lujiyun-usage-task
+    .task-logs-filter-card
+    > div:first-child
+    > div:first-child:has(> :nth-child(3)) {
+    grid-template-columns: minmax(0, 1.72fr) repeat(2, minmax(0, 1fr));
+  }
+  .lujiyun-usage-task .task-logs-filter-card .sm\:col-span-2 {
+    grid-column: auto;
+  }
+  .lujiyun-usage-task .task-logs-filter-card > div:last-child {
+    margin-top: 18px;
+  }
+  .lujiyun-usage-task .task-logs-filter-card > div:last-child > div:last-child {
+    gap: 14px;
+  }
+  .lujiyun-usage-task .task-logs-filter-card [data-slot='input'],
+  .lujiyun-usage-task .task-logs-filter-card [data-slot='select-trigger'],
+  .lujiyun-usage-task .task-logs-filter-card > div:first-child button {
+    height: 40px;
+    border-color: var(--design-border, #dbe4f2);
+    border-radius: 11px;
+    background: var(--design-surface, #fff);
+    box-shadow: none;
+  }
+  .lujiyun-usage-task
+    .task-logs-filter-card
+    > div:last-child
+    > div:last-child
+    > button {
+    height: 38px;
+    min-width: 56px;
+    justify-content: center;
+    padding-inline: 16px;
+    border-radius: 11px;
+    box-shadow: none;
+  }
+  .lujiyun-usage-task
+    .task-logs-filter-card
+    > div:last-child
+    > div:last-child
+    > button:last-child {
+    min-width: 64px;
+  }
+  .lujiyun-usage-task .task-logs-filter-card [data-slot='input'],
+  .lujiyun-usage-task .task-logs-filter-card button {
+    font-size: 12px;
+  }
+  .lujiyun-usage-task .task-logs-filter-card button svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 1.5;
+  }
+  .lujiyun-usage-task .overflow-hidden.rounded-lg.border {
+    border: 0;
+    border-radius: 17px 17px 0 0;
+    background: var(--design-surface, white);
+  }
+  .lujiyun-usage-task [data-slot='table-header'] {
+    background: var(--design-inset, #f9fbff);
+  }
+  .lujiyun-usage-task [data-slot='table-head'] {
+    height: 59px;
+    padding: 0 25px;
+    font-size: 12px !important;
+    color: var(--design-text, #40506c);
+    font-weight: 400;
+  }
+  .lujiyun-usage-task [data-slot='table']:has([data-slot='empty']) {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+  .lujiyun-usage-task td:has([data-slot='empty']) {
+    height: 316px;
+    padding: 0;
+  }
+  .lujiyun-usage-task [data-slot='empty'] {
+    padding: 0;
+    gap: 12px;
+    height: 316px;
+  }
+  .lujiyun-usage-task [data-slot='empty-header'] {
+    gap: 12px;
+  }
+  .lujiyun-usage-task [data-slot='empty-icon'] {
+    width: 142px;
+    height: 116px;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+  }
+  .lujiyun-usage-task [data-slot='empty-title'] {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 25px;
+  }
+  .lujiyun-usage-task [data-slot='empty-description'] {
+    font-size: 12px;
+    color: var(--design-muted, #8595b0);
+    line-height: 20px;
+  }
+}
+
+/* The light decoration has a solid white canvas baked into the bitmap. */
+@media (min-width: 1024px) {
+  .dark body:has(.lujiyun-usage-task) [data-slot='sidebar-inset'] main {
+    background-image: none;
+  }
+}
