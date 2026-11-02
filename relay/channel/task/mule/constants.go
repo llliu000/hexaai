@@ -47,16 +47,9 @@ type MuleRequest struct {
 	Resolution      string   `json:"resolution,omitempty"`
 	Ratio           string   `json:"ratio,omitempty"`
 	Duration        int      `json:"duration,omitempty"`
-	Audio           bool     `json:"audio"`
-	Seed            int      `json:"seed,omitempty"`
-	PromptExtend    bool     `json:"prompt_extend"`
-
-	durationProvided     bool
-	resolutionProvided   bool
-	ratioProvided        bool
-	audioProvided        bool
-	promptExtendProvided bool
-	seedProvided         bool
+	Audio           *bool    `json:"audio,omitempty"`
+	Seed            int      `json:"seed,omitempty,omitempty"`
+	PromptExtend    *bool    `json:"prompt_extend,omitempty"`
 }
 
 type MuleResponse struct {
@@ -74,7 +67,37 @@ type MuleResponse struct {
 			Code   int    `json:"code,omitempty"`
 			Title  string `json:"title,omitempty"`
 			Detail string `json:"detail,omitempty"`
-		} `json:"error,omitempty"`
+		} `json:"error"`
 	} `json:"task_info"`
 	Videos []string `json:"videos,omitempty"`
+}
+
+type FansRequest struct {
+	Provider        string   `json:"provider"`
+	VideoCapability string   `json:"videoCapability"`
+	MediaMode       string   `json:"mediaMode"`
+	Prompt          string   `json:"prompt"`
+	ReferenceImages []string `json:"referenceImages,omitempty"`
+	ReferenceVideos []string `json:"referenceVideos,omitempty"`
+	ReferenceAudios []string `json:"referenceAudios,omitempty"`
+	FirstFrameUrl   string   `json:"firstFrameUrl,omitempty"`
+	LastFrameURL    string   `json:"lastFrameUrl,omitempty"`
+	Ratio           string   `json:"ratio,omitempty"`
+	Resolution      string   `json:"resolution,omitempty"`
+	Duration        int      `json:"duration,omitempty"`
+	GenerateAudio   *bool    `json:"generateAudio,omitempty"`
+	PromptExtend    *bool    `json:"prompt_extend,omitempty"`
+	Seed            int      `json:"seed,omitempty"`
+}
+type FansResponse struct {
+	Ok     *bool `json:"ok"`
+	Record struct {
+		TaskId         string    `json:"taskId"`
+		Status         string    `json:"status"`
+		CreatedAt      time.Time `json:"createdAt"`
+		UpdatedAt      time.Time `json:"updatedAt"`
+		VideoUrl       string    `json:"videoUrl"`
+		UpstreamTaskId string    `json:"upstreamTaskId"`
+		Error          string    `json:"error"`
+	} `json:"record"`
 }
