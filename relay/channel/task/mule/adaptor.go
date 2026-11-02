@@ -33,9 +33,12 @@ type TaskAdaptor struct {
 	ChannelType int
 	apiKey      string
 	baseURL     string
+	// 暂时用于同类型模型的不同渠道选择
+	organization string
 }
 
 func (a *TaskAdaptor) Init(info *relaycommon.RelayInfo) {
+	a.organization = info.Organization
 	a.ChannelType = info.ChannelType
 	a.baseURL = info.ChannelBaseUrl
 	a.apiKey = info.ApiKey
@@ -46,6 +49,9 @@ func (a *TaskAdaptor) ValidateRequestAndSetAction(c *gin.Context, info *relaycom
 }
 
 func (a *TaskAdaptor) BuildRequestURL(info *relaycommon.RelayInfo) (string, error) {
+	if a.organization == "fans" {
+		return fmt.Sprintf("%s/api/advanced/generate", a.baseURL), nil
+	}
 	return fmt.Sprintf("%s/vendors/carrothub/v1/%s/generation", a.baseURL, info.OriginModelName), nil
 }
 
@@ -66,6 +72,34 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 		return nil, err
 	}
 	logger.LogJson(c, "ali video request body", req)
+
+	if a.organization == "fans" { // 转换为对应的请求
+		fansReq := FansRequest{
+			VideoCapability: info.UpstreamModelName,
+			ReferenceImages: req.ReferenceImages,
+			ReferenceVideos: req.ReferenceVideos,
+			PromptExtend:    req.PromptExtend,
+			Resolution:      req.Resolution,
+			FirstFrameUrl:   req.FirstFrame,
+			LastFrameURL:    req.LastFrame,
+			Duration:        req.Duration,
+			Prompt:          req.Prompt,
+			Ratio:           req.Ratio,
+			GenerateAudio:   req.Audio,
+			Seed:            req.Seed,
+			MediaMode:       "multimodal",
+			Provider:        "wan30",
+		}
+		if fansReq.FirstFrameUrl != "" || fansReq.LastFrameURL != "" {
+			fansReq.MediaMode = "first_last_frame"
+		}
+
+		bodyBytes, err := common.Marshal(fansReq)
+		if err != nil {
+			return nil, err
+		}
+		return bytes.NewReader(bodyBytes), nil
+	}
 
 	bodyBytes, err := common.Marshal(req)
 	if err != nil {
@@ -124,10 +158,6 @@ func (a *TaskAdaptor) EstimateBilling(c *gin.Context, info *relaycommon.RelayInf
 	return otherRatios
 }
 
-func muleValidationError(code, message string) *taskdto.TaskError {
-	return service.TaskErrorWrapperLocal(errors.New(message), code, http.StatusBadRequest)
-}
-
 // DoRequest delegates to common helper
 func (a *TaskAdaptor) DoRequest(c *gin.Context, info *relaycommon.RelayInfo, requestBody io.Reader) (*http.Response, error) {
 	return channel.DoTaskApiRequest(a, c, info, requestBody)
@@ -142,8 +172,8 @@ func (a *TaskAdaptor) DoResponse(c *gin.Context, resp *http.Response, info *rela
 	}
 	_ = resp.Body.Close()
 	// 解析阿里响应
-	var aliResp MuleResponse
-	if err = common.Unmarshal(responseBody, &aliResp); err != nil {
+	aliResp, err := a.toMuleResponse(responseBody)
+	if err != nil {
 		taskErr = service.TaskErrorWrapper(errors.Wrapf(err, "body: %s", responseBody), "unmarshal_response_body_failed", http.StatusInternalServerError)
 		return
 	}
@@ -170,6 +200,9 @@ func (a *TaskAdaptor) FetchTask(baseUrl, key string, body map[string]any, proxy 
 		return nil, fmt.Errorf("invalid model")
 	}
 	uri := fmt.Sprintf("%s/vendors/carrothub/v1/%s/generation/%s", baseUrl, m, taskID)
+	if a.organization == "fans" {
+		uri = fmt.Sprintf("%s/api/generation-records/%s", baseUrl, taskID)
+	}
 
 	req, err := http.NewRequest(http.MethodGet, uri, nil)
 	if err != nil {
@@ -195,8 +228,8 @@ func (a *TaskAdaptor) GetChannelName() string {
 
 // ParseTaskResult 解析任务结果
 func (a *TaskAdaptor) ParseTaskResult(respBody []byte) (*relaycommon.TaskInfo, error) {
-	var resp MuleResponse
-	if err := common.Unmarshal(respBody, &resp); err != nil {
+	resp, err := a.toMuleResponse(respBody)
+	if err != nil {
 		return nil, err
 	}
 	if resp.Status != 0 {
@@ -233,6 +266,14 @@ func (a *TaskAdaptor) ConvertToOpenAIVideo(task *model.Task) ([]byte, error) {
 	if err := common.Unmarshal(task.Data, &aliResp); err != nil {
 		return nil, errors.Wrap(err, "unmarshal ali response failed")
 	}
+	if aliResp.TaskInfo.Id == "" {
+		a.organization = "fans"
+		resp, err := a.toMuleResponse(task.Data)
+		if err != nil {
+			return nil, err
+		}
+		aliResp = resp
+	}
 
 	openAIResp := dto.NewOpenAIVideo()
 	openAIResp.ID = task.TaskID
@@ -266,6 +307,14 @@ func (a *TaskAdaptor) ConvertToMuleVideo(originTask *model.Task) ([]byte, error)
 	if err := json.Unmarshal(originTask.Data, &mr); err != nil {
 		return nil, err
 	}
+	if mr.TaskInfo.Id == "" {
+		a.organization = "fans"
+		resp, err := a.toMuleResponse(originTask.Data)
+		if err != nil {
+			return nil, err
+		}
+		mr = resp
+	}
 	mr.TaskInfo.Id = originTask.TaskID
 	if mr.TaskInfo.Status == "" {
 		mr.TaskInfo.Status = "pending"
@@ -275,4 +324,32 @@ func (a *TaskAdaptor) ConvertToMuleVideo(originTask *model.Task) ([]byte, error)
 		mr.TaskInfo.UpdatedAt = mr.TaskInfo.CreatedAt
 	}
 	return json.Marshal(mr)
+}
+
+func (a *TaskAdaptor) toMuleResponse(responseBody []byte) (MuleResponse, error) {
+	var aliResp MuleResponse
+	if a.organization != "fans" {
+		err := common.Unmarshal(responseBody, &aliResp)
+		return aliResp, err
+	}
+	var fansResp FansResponse
+	if err := common.Unmarshal(responseBody, &fansResp); err != nil {
+		return MuleResponse{}, err
+	}
+	aliResp.TaskInfo.Id = fansResp.Record.TaskId
+	aliResp.TaskInfo.Status = fansResp.Record.Status
+	aliResp.TaskInfo.CreatedAt = fansResp.Record.CreatedAt
+	aliResp.TaskInfo.UpdatedAt = fansResp.Record.UpdatedAt
+	if tErr := fansResp.Record.Error; tErr != "" {
+		aliResp.TaskInfo.Error.Title = "External service execution failed"
+		aliResp.TaskInfo.Error.Detail = tErr
+		aliResp.TaskInfo.Error.Code = 3005
+	}
+	if videoUrl := fansResp.Record.VideoUrl; videoUrl != "" {
+		aliResp.Videos = []string{videoUrl}
+	}
+	if aliResp.TaskInfo.Status == "preparing" {
+		aliResp.TaskInfo.Status = "pending"
+	}
+	return aliResp, nil
 }
