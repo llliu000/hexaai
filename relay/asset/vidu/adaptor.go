@@ -66,6 +66,7 @@ func (a *Adaptor) CreateAssets(req *dto.CreateAssetRequest) (*dto.CreateAssetRes
 }
 
 func (a *Adaptor) GetAsset(req *dto.GetAssetRequest) (*dto.GetAssetResponse, error) {
+	req.ProjectName = nil
 	var result AssetBaseResult[dto.GetAssetResponse]
 	err := a.doCall("GetAsset", req, &result)
 	return &result.Result, err
