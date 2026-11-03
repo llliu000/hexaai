@@ -1,6 +1,7 @@
 package doubao
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -74,6 +75,7 @@ var fetchResultMapping = map[string]func(responseBody []byte) (*relaycommon.Task
 	ThirdAnyFast:   newApiFetch,
 	ThirdKWJM:      officialFetch,
 	ThirdTokenMart: tokenMartFetch,
+	"vidu":         viduFetch,
 }
 
 // seedance-1.x获取任务详情响应结果处理
@@ -134,6 +136,31 @@ func tokenMartFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 		taskResult.Progress = "30%"
 	}
 	return &taskResult, nil
+}
+
+func viduFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
+	mm := make(map[string]any)
+	if err := common.Unmarshal(responseBody, &mm); err != nil {
+		return nil, errors.Wrap(err, "unmarshal task result failed")
+	}
+	if mm["content"] == nil {
+		mm["content"] = make(map[string]any)
+	}
+	if mm["usage"] == nil {
+		mm["usage"] = make(map[string]any)
+	}
+	if mm["tools"] == nil {
+		mm["tools"] = make(map[string]any)
+	}
+	marshal, err := json.Marshal(mm)
+	if err != nil {
+		return nil, errors.Wrap(err, "marshal task result failed")
+	}
+	resTask := responseTask{}
+	if err = common.Unmarshal(marshal, &resTask); err != nil {
+		return nil, errors.Wrap(err, "unmarshal task result failed")
+	}
+	return taskInfo(resTask)
 }
 
 func taskInfo(resTask responseTask) (*relaycommon.TaskInfo, error) {
