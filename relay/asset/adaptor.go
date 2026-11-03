@@ -1,6 +1,8 @@
 package asset
 
 import (
+	"fmt"
+
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/model"
@@ -8,6 +10,7 @@ import (
 	"github.com/QuantumNous/new-api/relay/asset/kw"
 	"github.com/QuantumNous/new-api/relay/asset/realm_drama"
 	"github.com/QuantumNous/new-api/relay/asset/token_mart"
+	"github.com/QuantumNous/new-api/relay/asset/vidu"
 	"github.com/QuantumNous/new-api/relay/asset/volc"
 )
 
@@ -45,6 +48,8 @@ func GetAdaptor(ch *model.Channel) Adaptor {
 		a = &token_mart.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
 	case "realm_drama":
 		a = &realm_drama.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
+	case "vidu":
+		a = &vidu.Adaptor{ApiKey: ch.Key, BaseURL: fmt.Sprintf("%s/asset", baseUrl)}
 	case "volc":
 		a = &volc.Adaptor{}
 	}

@@ -130,6 +130,17 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 			}
 		}
 		data, err = common.Marshal(params)
+	case "vidu":
+		data, err = common.Marshal(body)
+		if err != nil {
+			return nil, err
+		}
+		mm := make(map[string]any)
+		if err = json.Unmarshal(data, &mm); err != nil {
+			return nil, err
+		}
+		mm["moderation"] = "disabled"
+		data, err = common.Marshal(mm)
 	default:
 		data, err = common.Marshal(body)
 	}
