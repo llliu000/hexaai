@@ -170,6 +170,7 @@ func viduFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 	if err = common.Unmarshal(marshal, &resTask); err != nil {
 		return nil, errors.Wrap(err, "unmarshal task result failed")
 	}
+	copy(responseBody, marshal)
 	return taskInfo(resTask)
 }
 
