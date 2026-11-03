@@ -140,41 +140,37 @@ func tokenMartFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 }
 
 func viduFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
-	mm := make(map[string]any)
-	if err := common.Unmarshal(responseBody, &mm); err != nil {
+	var resp viduResponse
+	if err := common.Unmarshal(responseBody, &resp); err != nil {
 		return nil, errors.Wrap(err, "unmarshal task result failed")
 	}
-	if mm["content"] == nil {
-		mm["content"] = make(map[string]any)
+	resTask := responseTask{
+		ID:          resp.Id,
+		Model:       resp.Model,
+		Status:      resp.Status,
+		Resolution:  resp.Resolution,
+		Ratio:       resp.Ratio,
+		ServiceTier: resp.ServiceTier,
 	}
-	if mm["usage"] == nil {
-		mm["usage"] = make(map[string]any)
+	if resp.Usage != nil {
+		resTask.Usage.CompletionTokens, _ = strconv.Atoi(resp.Usage.CompletionTokens)
+		resTask.Usage.TotalTokens, _ = strconv.Atoi(resp.Usage.CompletionTokens)
 	}
-	if s, ok := mm["created_at"].(string); ok {
-		mm["created_at"], _ = strconv.ParseInt(s, 10, 64)
+	if resp.Content != nil {
+		resTask.Content.VideoURL = resp.Content.VideoUrl
 	}
-	if s, ok := mm["updated_at"].(string); ok {
-		mm["updated_at"], _ = strconv.ParseInt(s, 10, 64)
-	}
-	if s, ok := mm["seed"].(string); ok {
-		mm["seed"], _ = strconv.Atoi(s)
-	}
-	if s, ok := mm["duration"].(string); ok {
-		mm["duration"], _ = strconv.Atoi(s)
-	}
-	marshal, err := json.Marshal(mm)
-	if err != nil {
-		return nil, errors.Wrap(err, "marshal task result failed")
-	}
-	resTask := responseTask{}
-	if err = common.Unmarshal(marshal, &resTask); err != nil {
-		return nil, errors.Wrap(err, "unmarshal task result failed")
-	}
+	resTask.CreatedAt, _ = strconv.ParseInt(resp.CreatedAt, 10, 64)
+	resTask.UpdatedAt, _ = strconv.ParseInt(resp.UpdatedAt, 10, 64)
+	resTask.FramesPerSecond, _ = strconv.Atoi(resp.FramesPerSecond)
+	resTask.Duration, _ = strconv.Atoi(resp.Duration)
+	resTask.Seed, _ = strconv.Atoi(resp.Seed)
+	resTask.Error = resp.Error
+
 	info, err := taskInfo(resTask)
 	if err != nil {
 		return nil, err
 	}
-	info.ResponseBody = marshal
+	info.ResponseBody, _ = json.Marshal(resTask)
 	return info, err
 }
 
