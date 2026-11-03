@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/QuantumNous/new-api/common"
 	taskdto "github.com/QuantumNous/new-api/dto"
@@ -149,8 +150,17 @@ func viduFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 	if mm["usage"] == nil {
 		mm["usage"] = make(map[string]any)
 	}
-	if mm["tools"] == nil {
-		mm["tools"] = make(map[string]any)
+	if s, ok := mm["created_at"].(string); ok {
+		mm["created_at"], _ = strconv.ParseInt(s, 10, 64)
+	}
+	if s, ok := mm["updated_at"].(string); ok {
+		mm["updated_at"], _ = strconv.ParseInt(s, 10, 64)
+	}
+	if s, ok := mm["seed"].(string); ok {
+		mm["seed"], _ = strconv.Atoi(s)
+	}
+	if s, ok := mm["duration"].(string); ok {
+		mm["duration"], _ = strconv.Atoi(s)
 	}
 	marshal, err := json.Marshal(mm)
 	if err != nil {
