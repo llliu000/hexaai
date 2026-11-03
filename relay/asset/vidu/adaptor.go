@@ -50,8 +50,18 @@ func (a *Adaptor) ListAssetGroups(req *dto.ListAssetGroupsRequest) (*dto.ListAss
 }
 
 func (a *Adaptor) CreateAssets(req *dto.CreateAssetRequest) (*dto.CreateAssetResponse, error) {
+	marshal, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
+	}
+	mm := make(map[string]string)
+	if err = json.Unmarshal(marshal, &mm); err != nil {
+		return nil, err
+	}
+	delete(mm, "Moderation")
+	mm["moderation"] = "disabled"
 	var result AssetBaseResult[dto.CreateAssetResponse]
-	err := a.doCall("CreateAsset", req, &result)
+	err = a.doCall("CreateAsset", mm, &result)
 	return &result.Result, err
 }
 
@@ -88,14 +98,6 @@ func (a *Adaptor) GetVisualValidateResult(req *dto.GetVisualValidateResultReques
 func (a *Adaptor) doCall(action string, request, response any) error {
 	body, err := json.Marshal(request)
 	if err != nil {
-		return err
-	}
-	mm := make(map[string]any)
-	if err = json.Unmarshal(body, &mm); err != nil {
-		return err
-	}
-	mm["moderation"] = "disabled"
-	if body, err = json.Marshal(mm); err != nil {
 		return err
 	}
 	reader := bytes.NewReader(body)
