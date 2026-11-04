@@ -960,6 +960,8 @@ type TaskInfo struct {
 	Progress         string `json:"progress,omitempty"`
 	CompletionTokens int    `json:"completion_tokens,omitempty"` // 用于按倍率计费
 	TotalTokens      int    `json:"total_tokens,omitempty"`      // 用于按倍率计费
+
+	ResponseBody []byte // 无赖增加，修改vidu字段问题
 }
 
 func FailTaskInfo(reason string) *TaskInfo {

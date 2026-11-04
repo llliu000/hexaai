@@ -501,6 +501,10 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 		task.Data = responseItems.Data.Data
 	}
 
+	if len(taskResult.ResponseBody) > 0 {
+		responseBody = taskResult.ResponseBody
+	}
+
 	task.Data = redactVideoResponseBody(responseBody)
 
 	logger.LogDebug(ctx, "updateVideoSingleTask taskResult: %+v", taskResult)
