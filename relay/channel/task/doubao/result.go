@@ -111,7 +111,7 @@ func tokenMartFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 	}
 	s, ok := v2.Task.Metadata["error"].(string)
 	delete(v2.Task.Metadata, "error")
-	if ok {
+	if ok && s != "" {
 		v2.Task.Metadata["error"] = map[string]string{
 			"message": s,
 			"code":    "",
