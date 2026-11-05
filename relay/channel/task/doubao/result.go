@@ -105,6 +105,23 @@ func newApiFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
 }
 
 func tokenMartFetch(responseBody []byte) (*relaycommon.TaskInfo, error) {
+	var v2 tokenMartResponse2
+	if err := common.Unmarshal(responseBody, &v2); err != nil {
+		return nil, errors.Wrap(err, "unmarshal task result failed")
+	}
+	s, ok := v2.Task.Metadata["error"].(string)
+	delete(v2.Task.Metadata, "error")
+	if ok && s != "" {
+		v2.Task.Metadata["error"] = map[string]string{
+			"message": s,
+			"code":    "",
+		}
+	}
+	responseBody, err := json.Marshal(v2)
+	if nil != err {
+		return nil, errors.Wrap(err, "marshal task result failed")
+	}
+
 	var sor tokenMartResponse
 	if err := common.Unmarshal(responseBody, &sor); err != nil {
 		return nil, errors.Wrap(err, "unmarshal task result failed")
