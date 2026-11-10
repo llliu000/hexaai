@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/service"
 	"github.com/samber/lo"
 
 	"github.com/QuantumNous/new-api/constant"
@@ -19,7 +21,6 @@ import (
 	"github.com/QuantumNous/new-api/relay/channel/task/taskcommon"
 	relaycommon "github.com/QuantumNous/new-api/relay/common"
 	"github.com/QuantumNous/new-api/relaykit/dto"
-	"github.com/QuantumNous/new-api/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
@@ -293,6 +294,7 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	if sbm.Task.Id != "" {
 		sbm.Task.Metadata.Model = originTask.Properties.OriginModelName
 		sbm.Task.Metadata.Content.VideoURL = originTask.GetResultURL()
+		a.DoubaoResponse(originTask, &sbm.Task.Metadata)
 		return common.Marshal(sbm.Task.Metadata)
 	}
 
@@ -317,5 +319,38 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	if originTask.PrivateData.EnhanceResolution != "" {
 		rt.Resolution = originTask.PrivateData.EnhanceResolution
 	}
+	a.DoubaoResponse(originTask, &rt)
 	return json.Marshal(rt)
+}
+
+func (a *TaskAdaptor) TaskInfoResponse(task *model.Task, info *relaycommon.TaskInfo) {
+	modelName := task.Properties.OriginModelName
+	if !slices.Contains(enhanceTable, modelName) {
+		return
+	}
+
+	ratio := 2.5
+	if strings.Contains(modelName, "-p") {
+		ratio = 5.5
+	}
+	if info != nil {
+		info.CompletionTokens = int(float64(info.CompletionTokens) * ratio)
+		info.TotalTokens = int(float64(info.TotalTokens) * ratio)
+	}
+}
+
+func (a *TaskAdaptor) DoubaoResponse(task *model.Task, rt *responseTask) {
+	modelName := task.Properties.OriginModelName
+	if !slices.Contains(enhanceTable, modelName) {
+		return
+	}
+
+	ratio := 2.5
+	if strings.Contains(modelName, "-p") {
+		ratio = 5.5
+	}
+	if rt != nil {
+		rt.Usage.CompletionTokens = int(float64(rt.Usage.CompletionTokens) * ratio)
+		rt.Usage.TotalTokens = int(float64(rt.Usage.TotalTokens) * ratio)
+	}
 }
