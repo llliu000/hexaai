@@ -30,6 +30,66 @@ var enhanceTable = []string{
 }
 
 var videoPriceTable = map[string]*videoPriceConfig{
+	// 超分
+	"doubao-seedance-2-0-e": {
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "720p", HasVideo: false}: 46,
+			{Resolution: "720p", HasVideo: true}:  28,
+		},
+		BasePrice: 16,
+	},
+	"doubao-seedance-2-0-p": {
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "1080p", HasVideo: false}: 51,
+			{Resolution: "1080p", HasVideo: true}:  31,
+		},
+		BasePrice: 16,
+	},
+	"doubao-seedance-2-5-e": {
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "720p", HasVideo: false}: 70,
+			{Resolution: "720p", HasVideo: true}:  42,
+		},
+		BasePrice: 42,
+	},
+	"doubao-seedance-2-5-p": {
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "1080p", HasVideo: false}: 77,
+			{Resolution: "1080p", HasVideo: true}:  46,
+		},
+		BasePrice: 42,
+	},
+
+	"dreamina-seedance-2-0-e": {
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "720p", HasVideo: false}: 7.0,
+			{Resolution: "720p", HasVideo: true}:  4.3,
+		},
+		BasePrice: 2.4,
+	},
+	"dreamina-seedance-2-0-p": {
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "1080p", HasVideo: false}: 7.7,
+			{Resolution: "1080p", HasVideo: true}:  4.7,
+		},
+		BasePrice: 2.4,
+	},
+	"dreamina-seedance-2-5-e": {
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "720p", HasVideo: false}: 10.7,
+			{Resolution: "720p", HasVideo: true}:  6.4,
+		},
+		BasePrice: 6.4,
+	},
+	"dreamina-seedance-2-5-p": {
+		Prices: map[videoPriceKey]float64{
+			{Resolution: "1080p", HasVideo: false}: 11.7,
+			{Resolution: "1080p", HasVideo: true}:  7,
+		},
+		BasePrice: 6.4,
+	},
+
+	// 普通
 	"doubao-seedance-2-0-mini": {
 		Prices: map[videoPriceKey]float64{
 			{Resolution: "480p", HasVideo: false}: 23,
@@ -73,6 +133,9 @@ var videoPriceTable = map[string]*videoPriceConfig{
 
 			{Resolution: "720p", HasVideo: false}: 70,
 			{Resolution: "720p", HasVideo: true}:  42,
+
+			{Resolution: "1080p", HasVideo: false}: 77,
+			{Resolution: "720p", HasVideo: true}:   46,
 		},
 		BasePrice: 42,
 	},
@@ -119,6 +182,9 @@ var videoPriceTable = map[string]*videoPriceConfig{
 
 			{Resolution: "720p", HasVideo: false}: 10.7,
 			{Resolution: "720p", HasVideo: true}:  6.4,
+
+			{Resolution: "1080p", HasVideo: false}: 11.7,
+			{Resolution: "1080p", HasVideo: true}:  7,
 		},
 		BasePrice: 6.4,
 	},
@@ -147,6 +213,14 @@ var videoPriceTable = map[string]*videoPriceConfig{
 
 func GetVideoInputRatio(model string, metadata map[string]interface{}) (float64, bool) {
 	hasVideo, hasAudio, resolution := hasInfo(metadata)
+	if containsEnhanceModel(model) { // 超分
+		switch {
+		case strings.Contains(model, "-e"):
+			resolution = "720p"
+		case strings.Contains(model, "-p"):
+			resolution = "1080p"
+		}
+	}
 	cfg, ok := videoPriceTable[model]
 	if !ok {
 		return 0, false

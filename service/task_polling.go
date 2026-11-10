@@ -35,6 +35,10 @@ type TaskPollingAdaptor interface {
 	AdjustBillingOnComplete(task *model.Task, taskResult *relaycommon.TaskInfo) int
 }
 
+type taskResultPostProcessor interface {
+	TaskInfoResponse(*model.Task, *relaycommon.TaskInfo)
+}
+
 // GetTaskAdaptorFunc 由 main 包注入，用于获取指定平台的任务适配器。
 // 打破 service -> relay -> relay/channel -> service 的循环依赖。
 var GetTaskAdaptorFunc func(platform constant.TaskPlatform) TaskPollingAdaptor
@@ -499,6 +503,10 @@ func updateVideoSingleTask(ctx context.Context, adaptor TaskPollingAdaptor, ch *
 			TaskID:   responseItems.Data.TaskID,
 		}
 		task.Data = responseItems.Data.Data
+	}
+
+	if taskAdaptor, ok := adaptor.(taskResultPostProcessor); ok {
+		taskAdaptor.TaskInfoResponse(task, taskResult)
 	}
 
 	if len(taskResult.ResponseBody) > 0 {
