@@ -25,14 +25,6 @@ import { handleServerError } from '@/lib/handle-server-error'
 import { syncChannelAssets } from '../api'
 import type { Channel } from '../types'
 
-const assetOrganizations = new Set([
-  'kwjm',
-  'token_mart',
-  'realm_drama',
-  'vidu',
-  'volc',
-])
-
 export const channelAssetSyncKeys = {
   task: (channelId: number) => ['channel-asset-sync-task', channelId] as const,
   progress: (channelId: number, taskId?: string) =>
@@ -40,12 +32,9 @@ export const channelAssetSyncKeys = {
 }
 
 export function supportsAssetSync(
-  channel: Pick<Channel, 'type' | 'openai_organization'>
+  channel: Pick<Channel, 'type'>
 ): boolean {
-  return (
-    channel.type === 54 &&
-    assetOrganizations.has(channel.openai_organization ?? '')
-  )
+  return channel.type === 54
 }
 
 export function useChannelAssetSync(channelId: number) {
