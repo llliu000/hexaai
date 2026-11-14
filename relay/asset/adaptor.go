@@ -51,7 +51,7 @@ func GetAdaptor(ch *model.Channel) (Adaptor, error) {
 		a = &vidu.Adaptor{ApiKey: ch.Key, BaseURL: fmt.Sprintf("%s/asset", baseUrl)}
 	case "volc":
 		a = &volc.Adaptor{}
-	case "mock":
+	case "anyfast":
 		a = &mock.Adaptor{}
 	default:
 		return nil, fmt.Errorf("unknown channel: %s", *ch.OpenAIOrganization)
