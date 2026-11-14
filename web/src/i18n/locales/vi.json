@@ -1,5 +1,18 @@
 {
   "translation": {
+    "Sync Assets": "Đồng bộ tài nguyên",
+    "Asset Sync Details": "Chi tiết đồng bộ tài nguyên",
+    "Failed to start asset sync": "Không thể bắt đầu đồng bộ tài nguyên",
+    "Asset sync task submitted": "Đã gửi tác vụ đồng bộ tài nguyên",
+    "Failed to load asset sync details": "Không thể tải chi tiết đồng bộ tài nguyên",
+    "Manual asset sync results for {{name}}": "Kết quả đồng bộ tài nguyên thủ công cho {{name}}",
+    "Preparing assets for sync...": "Đang chuẩn bị tài nguyên để đồng bộ…",
+    "Asset sync preparation failed": "Chuẩn bị đồng bộ tài nguyên thất bại",
+    "Queued for upload": "Chờ tải lên",
+    "Synced": "Đã đồng bộ",
+    "Processing": "Đang xử lý",
+    "Asset sync progress": "Tiến trình đồng bộ tài nguyên",
+    "No assets queued for sync.": "Không có tài nguyên chờ đồng bộ.",
     "Video Enhancement": "Nâng cao chất lượng video",
     "Volcengine": "Volcengine",
     "Enhancement version": "Phiên bản nâng cao",

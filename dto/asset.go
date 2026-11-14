@@ -2,6 +2,23 @@ package dto
 
 import "encoding/json"
 
+type AssetSyncProgress struct {
+	ChannelID   int                   `json:"channel_id"`
+	Preparing   bool                  `json:"preparing"`
+	PrepareTask *AssetSyncPreparation `json:"prepare_task"`
+	Total       int64                 `json:"total"`
+	Pending     int64                 `json:"pending"`
+	Processing  int64                 `json:"processing"`
+	Active      int64                 `json:"active"`
+	Failed      int64                 `json:"failed"`
+}
+
+type AssetSyncPreparation struct {
+	TaskID string `json:"task_id"`
+	Status string `json:"status"`
+	Error  string `json:"error"`
+}
+
 type BaseAssetRequest struct {
 	ProjectName *string `json:"ProjectName" binding:"omitempty,oneof=default"`
 }
@@ -29,7 +46,7 @@ type AssetModeration struct {
 type ListAssetGroupsFilter struct {
 	GroupIds  []string `json:"GroupIds"`
 	Name      *string  `json:"Name"`
-	GroupType *string  `json:"GroupType" binding:"omitempty,oneof=AIGC"`
+	GroupType *string  `json:"GroupType" binding:"omitempty,oneof=AIGC LivenessFace"`
 }
 
 type ListAssetGroupsRequest struct {
@@ -43,7 +60,7 @@ type ListAssetGroupsRequest struct {
 
 type ListAssetsFilter struct {
 	GroupIds  []string `json:"GroupIds"`
-	GroupType *string  `json:"GroupType" binding:"omitempty,oneof=AIGC"`
+	GroupType *string  `json:"GroupType" binding:"omitempty,oneof=AIGC LivenessFace"`
 	Statuses  []string `json:"Statuses"`
 	Name      *string  `json:"Name"`
 }

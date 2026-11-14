@@ -1,5 +1,18 @@
 {
   "translation": {
+    "Sync Assets": "同步素材",
+    "Asset Sync Details": "素材同步详情",
+    "Failed to start asset sync": "发起素材同步失败",
+    "Asset sync task submitted": "素材同步任务已提交",
+    "Failed to load asset sync details": "加载素材同步详情失败",
+    "Manual asset sync results for {{name}}": "{{name}} 的手动素材同步结果",
+    "Preparing assets for sync...": "正在准备同步素材…",
+    "Asset sync preparation failed": "素材同步准备失败",
+    "Queued for upload": "待上传",
+    "Synced": "已同步",
+    "Processing": "处理中",
+    "Asset sync progress": "素材同步进度",
+    "No assets queued for sync.": "暂无待同步素材。",
     "Video Enhancement": "视频增强",
     "Volcengine": "火山引擎",
     "Enhancement version": "增强版本",

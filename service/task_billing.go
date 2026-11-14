@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/QuantumNous/new-api/common"
@@ -186,6 +187,10 @@ func RefundTaskQuota(ctx context.Context, task *model.Task, reason string) bool 
 	other := taskBillingOther(task)
 	other["task_id"] = task.TaskID
 	other["reason"] = reason
+
+	discount := ratio_setting.GetUserModelDiscount(task.UserId, taskModelName(task))
+	quota = int(math.Ceil(float64(quota) / discount))
+
 	model.RecordTaskBillingLog(model.RecordTaskBillingLogParams{
 		UserId:    task.UserId,
 		LogType:   model.LogTypeRefund,
@@ -216,11 +221,12 @@ func RecalculateTaskQuota(ctx context.Context, task *model.Task, actualQuota int
 		return
 	}
 	preConsumedQuota := task.Quota
-	originQuotaDelta := actualQuota - preConsumedQuota
 	// 查询用户模型折扣
 	modelName := taskModelName(task)
 	discount := ratio_setting.GetUserModelDiscount(task.UserId, modelName)
-	quotaDelta := int(float64(originQuotaDelta) * discount)
+	originQuotaDelta := actualQuota - int(float64(preConsumedQuota)/discount)
+	quotaDelta := int(float64(actualQuota)*discount) - preConsumedQuota
+	actualQuota = int(float64(actualQuota) * discount)
 
 	if quotaDelta == 0 {
 		logger.LogInfo(ctx, fmt.Sprintf("任务 %s 预扣费准确（%s，%s）",

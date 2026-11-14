@@ -1,5 +1,18 @@
 {
   "translation": {
+    "Sync Assets": "Sync Assets",
+    "Asset Sync Details": "Asset Sync Details",
+    "Failed to start asset sync": "Failed to start asset sync",
+    "Asset sync task submitted": "Asset sync task submitted",
+    "Failed to load asset sync details": "Failed to load asset sync details",
+    "Manual asset sync results for {{name}}": "Manual asset sync results for {{name}}",
+    "Preparing assets for sync...": "Preparing assets for sync...",
+    "Asset sync preparation failed": "Asset sync preparation failed",
+    "Queued for upload": "Queued for upload",
+    "Synced": "Synced",
+    "Processing": "Processing",
+    "Asset sync progress": "Asset sync progress",
+    "No assets queued for sync.": "No assets queued for sync.",
     "Video Enhancement": "Video Enhancement",
     "Volcengine": "Volcengine",
     "Enhancement version": "Enhancement version",

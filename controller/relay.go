@@ -25,6 +25,7 @@ import (
 	"github.com/QuantumNous/new-api/service"
 	"github.com/QuantumNous/new-api/setting"
 	"github.com/QuantumNous/new-api/setting/operation_setting"
+	"github.com/QuantumNous/new-api/setting/ratio_setting"
 
 	"github.com/bytedance/gopkg/util/gopool"
 	"github.com/samber/lo"
@@ -582,6 +583,8 @@ func RelayTask(c *gin.Context) {
 		if settleErr := service.SettleBilling(c, relayInfo, result.Quota); settleErr != nil {
 			common.SysError("settle task billing error: " + settleErr.Error())
 		}
+		discount := ratio_setting.GetUserModelDiscount(relayInfo.UserId, relayInfo.OriginModelName)
+		actualQuota := int(float64(result.Quota) * discount)
 		service.LogTaskConsumption(c, relayInfo)
 
 		task := model.InitTask(result.Platform, relayInfo)
@@ -600,7 +603,7 @@ func RelayTask(c *gin.Context) {
 			OriginModelName: relayInfo.OriginModelName,
 			PerCallBilling:  common.StringsContains(constant.TaskPricePatches, relayInfo.OriginModelName) || relayInfo.PriceData.UsePrice,
 		}
-		task.Quota = result.Quota
+		task.Quota = actualQuota
 		task.Data = result.TaskData
 		task.Action = relayInfo.Action
 		if insertErr := task.Insert(); insertErr != nil {

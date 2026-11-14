@@ -33,6 +33,8 @@ import {
   Trash2,
   RefreshCw,
   Loader2,
+  CloudUpload,
+  ClipboardList,
 } from 'lucide-react'
 import { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -61,6 +63,10 @@ import { useAuthStore } from '@/stores/auth-store'
 
 import { MODEL_FETCHABLE_TYPES } from '../constants'
 import {
+  supportsAssetSync,
+  useChannelAssetSync,
+} from '../hooks/use-channel-asset-sync'
+import {
   channelsQueryKeys,
   handleDeleteChannel,
   handleTestChannel,
@@ -87,6 +93,18 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [isTesting, setIsTesting] = useState(false)
   const [isTogglingStatus, setIsTogglingStatus] = useState(false)
+  const assetSync = useChannelAssetSync(channel.id)
+
+  const canSyncAssets = hasPermission(
+    currentUser,
+    ADMIN_PERMISSION_RESOURCES.CHANNEL,
+    ADMIN_PERMISSION_ACTIONS.OPERATE
+  )
+  const canReadAssets = hasPermission(
+    currentUser,
+    ADMIN_PERMISSION_RESOURCES.CHANNEL,
+    ADMIN_PERMISSION_ACTIONS.READ
+  )
 
   const isEnabled = isChannelEnabled(channel)
   const isMultiKey = isMultiKeyChannel(channel)
@@ -296,6 +314,39 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               <Download size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
+
+          {supportsAssetSync(channel) && (
+            <>
+              <DropdownMenuItem
+                disabled={!canSyncAssets || assetSync.isPending}
+                onClick={() => {
+                  if (canSyncAssets && !assetSync.isPending) assetSync.mutate()
+                }}
+              >
+                {t('Sync Assets')}
+                <DropdownMenuShortcut>
+                  {assetSync.isPending ? (
+                    <Loader2 size={16} className='animate-spin' />
+                  ) : (
+                    <CloudUpload size={16} />
+                  )}
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={!canReadAssets}
+                onClick={() => {
+                  if (!canReadAssets) return
+                  setCurrentRow(channel)
+                  setOpen('asset-sync-details')
+                }}
+              >
+                {t('Asset Sync Details')}
+                <DropdownMenuShortcut>
+                  <ClipboardList size={16} />
+                </DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </>
+          )}
 
           {/* Detect Upstream Updates (only for fetchable channel types) */}
           {MODEL_FETCHABLE_TYPES.has(channel.type) && (

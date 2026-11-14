@@ -1,5 +1,18 @@
 {
   "translation": {
+    "Sync Assets": "Synchroniser les ressources",
+    "Asset Sync Details": "Détails de la synchronisation des ressources",
+    "Failed to start asset sync": "Échec du démarrage de la synchronisation des ressources",
+    "Asset sync task submitted": "Tâche de synchronisation des ressources envoyée",
+    "Failed to load asset sync details": "Impossible de charger les détails de la synchronisation",
+    "Manual asset sync results for {{name}}": "Résultats de la synchronisation manuelle des ressources pour {{name}}",
+    "Preparing assets for sync...": "Préparation des ressources à synchroniser…",
+    "Asset sync preparation failed": "Échec de la préparation de la synchronisation",
+    "Queued for upload": "En attente de téléversement",
+    "Synced": "Synchronisé",
+    "Processing": "En cours de traitement",
+    "Asset sync progress": "Progression de la synchronisation des ressources",
+    "No assets queued for sync.": "Aucune ressource en attente de synchronisation.",
     "Video Enhancement": "Amélioration vidéo",
     "Volcengine": "Volcengine",
     "Enhancement version": "Version d’amélioration",

@@ -1,13 +1,14 @@
 package asset
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/model"
-	"github.com/QuantumNous/new-api/relay/asset/anyfast"
 	"github.com/QuantumNous/new-api/relay/asset/kw"
+	"github.com/QuantumNous/new-api/relay/asset/mock"
 	"github.com/QuantumNous/new-api/relay/asset/realm_drama"
 	"github.com/QuantumNous/new-api/relay/asset/token_mart"
 	"github.com/QuantumNous/new-api/relay/asset/vidu"
@@ -30,9 +31,9 @@ type Adaptor interface {
 	ReviewSkip() bool
 }
 
-func GetAdaptor(ch *model.Channel) Adaptor {
+func GetAdaptor(ch *model.Channel) (Adaptor, error) {
 	if ch == nil || ch.OpenAIOrganization == nil {
-		return nil
+		return nil, errors.New("channel not exists")
 	}
 	var baseUrl string
 	if ch.BaseURL != nil {
@@ -42,8 +43,6 @@ func GetAdaptor(ch *model.Channel) Adaptor {
 	switch *ch.OpenAIOrganization {
 	case "kwjm":
 		a = &kw.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
-	case "anyfast":
-		a = &anyfast.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
 	case "token_mart":
 		a = &token_mart.Adaptor{ApiKey: ch.Key, BaseURL: baseUrl}
 	case "realm_drama":
@@ -52,9 +51,13 @@ func GetAdaptor(ch *model.Channel) Adaptor {
 		a = &vidu.Adaptor{ApiKey: ch.Key, BaseURL: fmt.Sprintf("%s/asset", baseUrl)}
 	case "volc":
 		a = &volc.Adaptor{}
+	case "mock":
+		a = &mock.Adaptor{}
+	default:
+		return nil, fmt.Errorf("unknown channel: %s", *ch.OpenAIOrganization)
 	}
 	if remark := ch.Remark; remark != nil {
 		_ = common.Unmarshal([]byte(*remark), a)
 	}
-	return a
+	return a, nil
 }

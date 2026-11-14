@@ -21,9 +21,12 @@ import { api, type ApiRequestConfig } from '@/lib/api'
 
 import type {
   AddChannelRequest,
+  AssetSyncResponse,
+  AssetSyncTask,
   BatchDeleteParams,
   BatchSetTagParams,
   Channel,
+  ChannelAssetSyncProgress,
   ChannelBalanceResponse,
   ChannelOpsResponse,
   ChannelTestResponse,
@@ -110,6 +113,29 @@ export async function getChannel(id: number): Promise<GetChannelResponse> {
  */
 export async function getChannelOps(): Promise<ChannelOpsResponse> {
   const res = await api.get('/api/channel/ops', channelActionConfig())
+  return res.data
+}
+
+export async function syncChannelAssets(
+  id: number
+): Promise<AssetSyncResponse<AssetSyncTask>> {
+  const res = await api.post<AssetSyncResponse<AssetSyncTask>>(
+    `/api/channel/${id}/asset/sync`,
+    undefined,
+    channelActionConfig()
+  )
+  return res.data
+}
+
+export async function getChannelAssetSyncProgress(
+  id: number,
+  taskId?: string,
+  signal?: AbortSignal
+): Promise<AssetSyncResponse<ChannelAssetSyncProgress>> {
+  const res = await api.get<AssetSyncResponse<ChannelAssetSyncProgress>>(
+    `/api/channel/${id}/asset/sync/progress`,
+    channelActionConfig({ params: { task_id: taskId }, signal })
+  )
   return res.data
 }
 

@@ -427,6 +427,9 @@ func RecordTaskBillingLog(params RecordTaskBillingLogParams) {
 	if params.LogType == LogTypeConsume && !common.LogConsumeEnabled {
 		return
 	}
+	if params.Other == nil {
+		params.Other = make(map[string]any)
+	}
 	// 记录用户折扣信息
 	if discount := ratio_setting.GetUserModelDiscount(params.UserId, params.ModelName); discount != 1 {
 		params.Other["discount"] = discount

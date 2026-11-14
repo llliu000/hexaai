@@ -6,6 +6,7 @@ import (
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/dto"
+	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/service"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -16,23 +17,18 @@ const assetAPIVersion = "2024-01-01"
 type AssetController struct{}
 
 func (a *AssetController) Action(c *gin.Context) {
-	userId := c.GetInt("id")
 	action := c.Query("Action")
 	version := c.Query("Version")
 	if action == "" || version != assetAPIVersion {
 		c.String(http.StatusNotFound, "Not Found")
 		return
 	}
-	// 判断是否绑定渠道
-	if err := service.UserAssetBindChannel(userId); err != nil {
-		common.ApiError(c, err)
-		return
-	}
 	var err error
 	var result dto.AssetBaseResult
 	result.ResponseMetadata.RequestId = c.GetString(common.RequestIdKey)
-	result.ResponseMetadata.Region = "cn-beijing"
+	region := model.NormalizeAssetRegion(c.Query("Region"))
 	result.ResponseMetadata.Version = version
+	result.ResponseMetadata.Region = region
 	result.ResponseMetadata.Action = action
 	result.ResponseMetadata.Service = "ark"
 
@@ -79,8 +75,7 @@ func (a *AssetController) CreateAssetGroup(c *gin.Context) (*dto.CreateAssetGrou
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.CreateAssetGroup(userId, &req)
+	return service.CreateAssetGroup(c, &req)
 }
 
 func (a *AssetController) CreateAsset(c *gin.Context) (*dto.CreateAssetResponse, error) {
@@ -88,8 +83,7 @@ func (a *AssetController) CreateAsset(c *gin.Context) (*dto.CreateAssetResponse,
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.CreateAsset(userId, &req)
+	return service.CreateAsset(c, &req)
 }
 
 func (a *AssetController) ListAssetGroups(c *gin.Context) (*dto.ListAssetGroupsResponse, error) {
@@ -97,8 +91,7 @@ func (a *AssetController) ListAssetGroups(c *gin.Context) (*dto.ListAssetGroupsR
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.ListAssetGroups(userId, &req)
+	return service.ListAssetGroups(c, &req)
 }
 
 func (a *AssetController) ListAssets(c *gin.Context) (*dto.ListAssetsResponse, error) {
@@ -106,8 +99,7 @@ func (a *AssetController) ListAssets(c *gin.Context) (*dto.ListAssetsResponse, e
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.ListAssets(userId, &req)
+	return service.ListAssets(c, &req)
 }
 
 func (a *AssetController) GetAsset(c *gin.Context) (*dto.GetAssetResponse, error) {
@@ -115,8 +107,7 @@ func (a *AssetController) GetAsset(c *gin.Context) (*dto.GetAssetResponse, error
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.GetAsset(userId, &req)
+	return service.GetAsset(c, &req)
 }
 
 func (a *AssetController) GetAssetGroup(c *gin.Context) (*dto.GetAssetGroupResponse, error) {
@@ -124,8 +115,7 @@ func (a *AssetController) GetAssetGroup(c *gin.Context) (*dto.GetAssetGroupRespo
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.GetAssetGroup(userId, &req)
+	return service.GetAssetGroup(c, &req)
 }
 
 func (a *AssetController) UpdateAssetGroup(c *gin.Context) (*dto.UpdateAssetGroupResponse, error) {
@@ -133,8 +123,7 @@ func (a *AssetController) UpdateAssetGroup(c *gin.Context) (*dto.UpdateAssetGrou
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.UpdateAssetGroup(userId, &req)
+	return service.UpdateAssetGroup(c, &req)
 }
 
 func (a *AssetController) UpdateAsset(c *gin.Context) (*dto.UpdateAssetResponse, error) {
@@ -142,8 +131,7 @@ func (a *AssetController) UpdateAsset(c *gin.Context) (*dto.UpdateAssetResponse,
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.UpdateAsset(userId, &req)
+	return service.UpdateAsset(c, &req)
 }
 
 func (a *AssetController) DeleteAsset(c *gin.Context) (*dto.DeleteAssetResponse, error) {
@@ -151,8 +139,7 @@ func (a *AssetController) DeleteAsset(c *gin.Context) (*dto.DeleteAssetResponse,
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.DeleteAsset(userId, &req)
+	return service.DeleteAsset(c, &req)
 }
 
 func (a *AssetController) DeleteAssetGroup(c *gin.Context) (*dto.DeleteAssetGroupResponse, error) {
@@ -160,8 +147,7 @@ func (a *AssetController) DeleteAssetGroup(c *gin.Context) (*dto.DeleteAssetGrou
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.DeleteAssetGroup(userId, &req)
+	return service.DeleteAssetGroup(c, &req)
 }
 
 func (a *AssetController) CreateVisualValidateSession(c *gin.Context) (*dto.CreateVisualValidateSessionResponse, error) {
@@ -169,8 +155,7 @@ func (a *AssetController) CreateVisualValidateSession(c *gin.Context) (*dto.Crea
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.CreateVisualValidateSession(userId, &req)
+	return service.CreateVisualValidateSession(c, &req)
 }
 
 func (a *AssetController) GetVisualValidateResult(c *gin.Context) (*dto.GetVisualValidateResultResponse, error) {
@@ -178,10 +163,5 @@ func (a *AssetController) GetVisualValidateResult(c *gin.Context) (*dto.GetVisua
 	if err := c.BindJSON(&req); nil != err {
 		return nil, err
 	}
-	userId := c.GetInt("id")
-	return service.GetVisualValidateResult(userId, &req)
-}
-
-func (a *AssetController) ManualAsset(c *gin.Context) {
-	service.ManualAsset(c)
+	return service.GetVisualValidateResult(c, &req)
 }
