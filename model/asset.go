@@ -67,10 +67,10 @@ type AssertChannel struct {
 	Region           string    `json:"region" gorm:"type:varchar(32);not null;default:cn-beijing;index"`
 	UserId           int       `json:"user_id" gorm:"not null;default:0;index"`
 	ChannelId        int       `json:"channel_id" gorm:"type:bigint;not null;uniqueIndex:idx_asset_channel_channel_asset"`                                                          // 上游渠道ID
-	AssetId          string    `json:"asset_id" gorm:"type:varchar(1000);not null;index;uniqueIndex:idx_asset_channel_channel_asset"`                                               // 本地资源ID
+	AssetId          string    `json:"asset_id" gorm:"type:varchar(191);not null;index;uniqueIndex:idx_asset_channel_channel_asset"`                                                // 本地资源ID
 	Manual           bool      `json:"manual" gorm:"default:false;index:idx_asset_channel_manual_status_poll,priority:1"`                                                           //
 	UpstreamGroupId  string    `json:"upstream_group_id" gorm:"type:varchar(191);not null;index"`                                                                                   // 上游资源分组ID
-	UpstreamAssertId string    `json:"upstream_assert_id" gorm:"type:varchar(191);not null;index"`                                                                                  // 上游资源ID
+	UpstreamAssertId string    `json:"upstream_assert_id" gorm:"type:varchar(1000);not null;index"`                                                                                 // 上游资源ID
 	UpstreamStatus   string    `json:"upstream_status" gorm:"type:varchar(50);not null;index"`                                                                                      // 任务状态，如 Active、Processing、Failed
 	Reason           string    `json:"reason" gorm:"type:varchar(500);not null"`                                                                                                    // 失败原因
 	RetryCount       int       `json:"retry_count" gorm:"not null;default:0"`                                                                                                       // 同步请求连续失败次数，成功后清零。
