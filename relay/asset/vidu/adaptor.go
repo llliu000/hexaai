@@ -54,7 +54,7 @@ func (a *Adaptor) CreateAssets(req *dto.CreateAssetRequest) (*dto.CreateAssetRes
 	if err != nil {
 		return nil, err
 	}
-	mm := make(map[string]string)
+	mm := make(map[string]any)
 	if err = json.Unmarshal(marshal, &mm); err != nil {
 		return nil, err
 	}

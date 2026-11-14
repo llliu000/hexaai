@@ -69,6 +69,7 @@ func (a *Adaptor) GetAsset(req *dto.GetAssetRequest) (*dto.GetAssetResponse, err
 		Status:      resp.Data.Status,
 		CreateTime:  resp.Data.CreateTime,
 		UpdateTime:  resp.Data.UpdateTime,
+		Error:       resp.Data.Error,
 	}
 	if resp.Data.StatusCode != 0 || resp.Data.StatusMsg != "" {
 		marshal, _ := json.Marshal(map[string]string{

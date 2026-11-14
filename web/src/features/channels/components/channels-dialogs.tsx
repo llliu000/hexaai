@@ -17,6 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { useChannels } from './channels-provider'
+import { AssetSyncDetailsDialog } from './dialogs/asset-sync-details-dialog'
 import { BalanceQueryDialog } from './dialogs/balance-query-dialog'
 import { ChannelTestDialog } from './dialogs/channel-test-dialog'
 import { CopyChannelDialog } from './dialogs/copy-channel-dialog'
@@ -33,6 +34,14 @@ export function ChannelsDialogs() {
 
   return (
     <>
+      {currentRow && open === 'asset-sync-details' && (
+        <AssetSyncDetailsDialog
+          key={currentRow.id}
+          channel={currentRow}
+          open
+          onOpenChange={(v) => !v && setOpen(null)}
+        />
+      )}
       {/* Channel Create/Update Drawer */}
       <ChannelMutateDrawer
         open={open === 'create-channel' || open === 'update-channel'}

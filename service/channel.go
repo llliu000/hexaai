@@ -9,7 +9,6 @@ import (
 	"github.com/QuantumNous/new-api/relaykit/dto"
 	"github.com/QuantumNous/new-api/relaykit/types"
 	"github.com/QuantumNous/new-api/setting/operation_setting"
-	"github.com/samber/lo"
 )
 
 func formatNotifyType(channelId int, status int) string {
@@ -76,42 +75,4 @@ func ShouldEnableChannel(newAPIError *types.NewAPIError, status int) bool {
 		return false
 	}
 	return true
-}
-
-func BatchInsertChannels(channels []model.Channel) error {
-	if len(channels) == 0 {
-		return nil
-	}
-	tx := model.DB.Begin()
-	if tx.Error != nil {
-		return tx.Error
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
-	chchs := lo.Chunk(channels, 50)
-	for _, chunk := range chchs {
-		if err := tx.Create(&chunk).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-		for _, channel_ := range chunk {
-			if err := channel_.AddAbilities(tx); err != nil {
-				tx.Rollback()
-				return err
-			}
-		}
-	}
-	if err := tx.Commit().Error; err != nil {
-		return err
-	}
-	for i := range chchs {
-		for j := range chchs[i] {
-			EnqueueChannelAssetSync(chchs[i][j].Id)
-		}
-	}
-	return nil
 }

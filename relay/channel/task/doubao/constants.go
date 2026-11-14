@@ -269,6 +269,9 @@ func resolveAssetURL(channelId int, raw string) string {
 	if nil != err {
 		return raw
 	}
+	if strings.HasPrefix(ac.UpstreamAssertId, "http") {
+		return ac.UpstreamAssertId
+	}
 	return AssetPrefix + ac.UpstreamAssertId
 }
 

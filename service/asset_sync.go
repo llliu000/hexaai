@@ -1,246 +1,398 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
-	"github.com/QuantumNous/new-api/common"
-	"github.com/QuantumNous/new-api/constant"
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/model"
 	assetrelay "github.com/QuantumNous/new-api/relay/asset"
+	"golang.org/x/sync/errgroup"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
-var assetSyncWorkers = 12
-var assetSyncQueue = make(chan *assetSyncTask, 1024)
-var assetStatusSyncQueue = make(chan int, 1024)
-var assetChannelSyncQueue = make(chan int, 20)
-
-type assetSyncTask struct {
-	AssetId string
-	Update  bool
-}
+const (
+	assetSyncTaskType     = "asset_sync"
+	assetSyncBatchSize    = 200
+	assetSyncConcurrency  = 50
+	assetSyncMaxRetries   = 8
+	assetSyncPollInterval = 8 * time.Second
+)
 
 func init() {
-	for i := 0; i < assetSyncWorkers; i++ {
-		go func() {
-			for task := range assetSyncQueue {
-				log.Printf("新增豆包视频资源开始上游通过:local asset_id=%s\n", task.AssetId)
-				if err := syncAssetToUpstreams(task); err != nil {
-					common.SysError(fmt.Sprintf("asset sync failed, asset_id=%s: %s", task.AssetId, err.Error()))
+	RegisterSystemTaskHandler(assetSyncHandler{taskType: assetSyncTaskType, batchSize: assetSyncBatchSize})
+}
+
+type assetSyncHandler struct {
+	taskType  string
+	manual    bool
+	batchSize int
+}
+
+func (h assetSyncHandler) Type() string          { return h.taskType }
+func (assetSyncHandler) Enabled() bool           { return true }
+func (assetSyncHandler) Interval() time.Duration { return assetSyncPollInterval }
+func (assetSyncHandler) NewPayload() any         { return nil }
+
+func (h assetSyncHandler) Run(ctx context.Context, task *model.SystemTask, runnerID string) {
+	db := model.DB.WithContext(ctx)
+	err := errors.Join(
+		runAssetStatusSyncBatch(db, h.manual, h.batchSize),
+		runAssetUploadBatch(db, h.manual, h.batchSize),
+	)
+	status := model.SystemTaskStatusSucceeded
+	message := ""
+	if err != nil {
+		status = model.SystemTaskStatusFailed
+		message = err.Error()
+	}
+	if err = model.FinishSystemTask(task.TaskID, runnerID, status, nil, message); err != nil {
+		logSystemTaskLockError(ctx, task, err)
+	}
+}
+
+// Workers use persisted mappings, including backfills to disabled channels.
+func runAssetStatusSyncBatch(db *gorm.DB, manual bool, batchSize int) error {
+	var rows []model.AssertChannel
+	if err := db.Where("manual = ?", manual).
+		Where("upstream_status = ?", model.AssetStatusProcessing).
+		Where("upstream_assert_id <> ?", "").
+		Where("next_poll_at <= ?", time.Now().Unix()).
+		Order("next_poll_at ASC").Order("id ASC").
+		Limit(batchSize).Find(&rows).Error; err != nil {
+		return err
+	}
+	acm := make(map[int][]*model.AssertChannel)
+	for i := range rows {
+		acm[rows[i].ChannelId] = append(acm[rows[i].ChannelId], &rows[i])
+	}
+	for channelID, pending := range acm {
+		var (
+			adaptor assetrelay.Adaptor
+			channel model.Channel
+		)
+
+		err := db.First(&channel, channelID).Error
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			if err = deleteChannelAssetMappings(db, channelID, manual); err != nil {
+				return err
+			}
+			continue
+		}
+		if err == nil {
+			adaptor, err = assetrelay.GetAdaptor(&channel)
+			if err != nil {
+				if err = deleteChannelAssetMappings(db, channelID, manual); err != nil {
+					return err
+				}
+				continue
+			}
+		}
+
+		if err != nil {
+			for _, row := range pending {
+				if taskErr := saveAssetSyncFailure(db, row, err.Error()); taskErr != nil {
+					return taskErr
 				}
 			}
-		}()
-	}
-	go func() {
-		for abId := range assetStatusSyncQueue {
-			log.Printf("新增上游资源后开始同步上游状态到本地:asset_channel_id=%d\n", abId)
-			if err := syncAssetStatusToLocal(abId); err != nil {
-				common.SysError(fmt.Sprintf("asset url sync failed, ab_id=%d: %s", abId, err.Error()))
-			}
+			continue
 		}
-	}()
-	//go func() {
-	//	for chId := range assetChannelSyncQueue {
-	//		log.Printf("新增channel后开始同步豆包视频资源:channel_id=%d\n", chId)
-	//		if err := syncChannelAsset(chId); err != nil {
-	//			common.SysError(fmt.Sprintf("asset sync failed, ac_id=%d: %s", chId, err.Error()))
-	//		}
-	//	}
-	//}()
-}
 
-func enqueueAssetSync(assetId string, update bool) {
-	assetSyncQueue <- &assetSyncTask{AssetId: assetId, Update: update}
-}
-
-func EnqueueChannelAssetSync(chId int) {
-	assetChannelSyncQueue <- chId
-}
-
-func syncAssetToUpstreams(task *assetSyncTask) error {
-	// 获取本地资源信息
-	var localAsset model.Asset
-	localAsset, err := model.GetAssetById(task.AssetId)
-	if nil != err {
-		return err
-	}
-	// 如果是修改操作就删除映射关系后再新增
-	if task.Update {
-		if err = model.DeleteAssertChannelByAssetId(task.AssetId); nil != err {
+		var group errgroup.Group
+		group.SetLimit(assetSyncConcurrency)
+		for _, row := range pending {
+			group.Go(func() error {
+				if err := syncAssetChannelStatus(db, row, adaptor); err != nil {
+					return saveAssetSyncFailure(db, row, err.Error())
+				}
+				return nil
+			})
+		}
+		if err = group.Wait(); err != nil {
 			return err
 		}
 	}
-
-	// 查询用户可用豆包视频渠道
-	channel, err := getUserSeedanceChannel(localAsset.UserId)
-	if nil != err {
-		return err
-	}
-	err = createAssetOnChannel(&localAsset, channel)
-	return err
-}
-
-func syncAssetStatusToLocal(acId int) error {
-	ab, err := model.GetAssetChannelById(acId)
-	if err != nil {
-		return err
-	}
-	channel, err := model.GetChannelById(ab.ChannelId, true)
-	if err != nil {
-		return err
-	}
-	adaptor := assetrelay.GetAdaptor(channel)
-	if adaptor == nil {
-		return nil
-	}
-	request := dto.GetAssetRequest{
-		BaseAssetRequest: dto.BaseAssetRequest{
-			ProjectName: &ab.UpstreamGroupId,
-		},
-		Id: ab.UpstreamAssertId,
-	}
-	asset, err := adaptor.GetAsset(&request)
-	if err != nil {
-		return err
-	}
-	if asset.Status == "Processing" {
-		go func() {
-			<-time.After(time.Second)
-			assetStatusSyncQueue <- acId
-		}()
-		return nil
-	}
-	err = model.UpdateAssetById(ab.AssetId, asset.Status, asset.Error)
-	return err
-}
-
-func syncChannelAsset(chId int) error {
-	channel, err := model.GetChannelById(chId, true)
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil
-	}
-	if err != nil {
-		return err
-	}
-	if channel.Type != constant.ChannelTypeDoubaoVideo {
-		return nil
-	}
-	adaptor := assetrelay.GetAdaptor(channel)
-	if adaptor == nil {
-		return nil
-	}
-	upstreamAssetGroupId, err := getUpstreamAssetGroupId(adaptor, chId)
-	if err != nil {
-		return err
-	}
-
-	const pageSize = 100
-	pageNumber := 1
-	for {
-		assets, err := model.ListAssetsByPage(pageNumber, pageSize)
-		if err != nil {
-			return err
-		}
-		if len(assets) == 0 {
-			return nil
-		}
-		for i := range assets {
-			_ = createUpstreamAsset(adaptor, &assets[i], upstreamAssetGroupId, channel.Id)
-		}
-		if len(assets) < pageSize {
-			return nil
-		}
-		pageNumber++
-	}
-}
-
-func createAssetOnChannel(localAsset *model.Asset, channel *model.Channel) error {
-	adaptor := assetrelay.GetAdaptor(channel)
-	if adaptor == nil {
-		return nil
-	}
-	var group model.AssetGroup
-	err := model.DB.Where("id = ?", localAsset.GroupId).First(&group).Error
-	if nil != err {
-		return err
-	}
-	upstreamGroupId := group.Id
-	if !group.RealHuman {
-		// 上游资源分组ID处理
-		if upstreamGroupId, err = getUpstreamAssetGroupId(adaptor, channel.Id); err != nil {
-			return err
-		}
-	}
-	err = createUpstreamAsset(adaptor, localAsset, upstreamGroupId, channel.Id)
-	return err
-}
-
-func createUpstreamAsset(adaptor assetrelay.Adaptor, localAsset *model.Asset, upstreamAssetGroupId string, channelId int) error {
-	// 判断资源是否免审
-	if localAsset.ReviewSkip() && !adaptor.ReviewSkip() {
-		return nil
-	}
-	request := dto.CreateAssetRequest{
-		BaseAssetRequest: dto.BaseAssetRequest{
-			ProjectName: &localAsset.ProjectName,
-		},
-		URL:       localAsset.URL,
-		GroupId:   upstreamAssetGroupId,
-		Name:      localAsset.Name,
-		AssetType: localAsset.AssetType,
-	}
-	if localAsset.ReviewSkip() && adaptor.ReviewSkip() {
-		data := []byte(*localAsset.Moderation)
-		var moderation dto.AssetModeration
-		if err := json.Unmarshal(data, &moderation); err == nil {
-			request.Moderation = &moderation
-		}
-	}
-	response, err := adaptor.CreateAssets(&request)
-	if err != nil {
-		return err
-	}
-	ac := model.AssertChannel{
-		ChannelId:        channelId,
-		AssetId:          localAsset.Id,
-		UpstreamGroupId:  upstreamAssetGroupId,
-		UpstreamAssertId: response.Id,
-		CreateTime:       time.Now(),
-		UpdateTime:       time.Now(),
-	}
-	if err = ac.Create(); nil != err {
-		return err
-	}
-	assetStatusSyncQueue <- ac.Id
 	return nil
 }
 
-func getUpstreamAssetGroupId(adaptor assetrelay.Adaptor, channelId int) (string, error) {
-	channelUpstreamAssetGroup, err := model.GetChannelUpstreamAssetGroup(channelId)
+func runAssetUploadBatch(db *gorm.DB, manual bool, batchSize int) error {
+	var rows []model.AssertChannel
+	if err := db.Preload("Asset").
+		Where("manual = ?", manual).
+		Where("upstream_status = ?", model.AssetStatusPending).
+		Where("upstream_assert_id = ?", "").
+		Where("next_poll_at <= ?", time.Now().Unix()).
+		Order("next_poll_at ASC").
+		Order("id ASC").
+		Limit(batchSize).
+		Find(&rows).Error; err != nil {
+		return err
+	}
+	acm := make(map[int][]*model.AssertChannel)
+	for i := range rows {
+		acm[rows[i].ChannelId] = append(acm[rows[i].ChannelId], &rows[i])
+	}
+	for channelID, pending := range acm {
+		var (
+			adaptor assetrelay.Adaptor
+			channel model.Channel
+		)
+
+		err := db.First(&channel, channelID).Error
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			if err = deleteChannelAssetMappings(db, channelID, manual); err != nil {
+				return err
+			}
+			continue
+		}
+		if err == nil {
+			adaptor, err = assetrelay.GetAdaptor(&channel)
+			if err != nil {
+				if err = deleteChannelAssetMappings(db, channelID, manual); err != nil {
+					return err
+				}
+				continue
+			}
+		}
+		if err != nil {
+			for _, row := range pending {
+				if taskErr := saveAssetSyncFailure(db, row, err.Error()); taskErr != nil {
+					return taskErr
+				}
+			}
+			continue
+		}
+		groups := make(map[string][]*model.AssertChannel)
+		for _, row := range pending {
+			groups[row.Asset.GroupId] = append(groups[row.Asset.GroupId], row)
+		}
+		for groupID, members := range groups {
+			upstreamID, groupErr := upstreamAssetSyncGroup(db, adaptor, channelID, groupID)
+			if groupErr != nil {
+				for _, row := range members {
+					if err = saveAssetSyncFailure(db, row, groupErr.Error()); err != nil {
+						return err
+					}
+				}
+				continue
+			}
+			var group errgroup.Group
+			group.SetLimit(assetSyncConcurrency)
+			for _, row := range members {
+				group.Go(func() error {
+					if err := uploadAssetChannel(db, row, adaptor, upstreamID); err != nil {
+						return saveAssetSyncFailure(db, row, err.Error())
+					}
+					return nil
+				})
+			}
+			if err = group.Wait(); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func deleteChannelAssetMappings(db *gorm.DB, channelID int, manual bool) error {
+	return db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("channel_id = ?", channelID).Delete(&model.ChannelUpstreamAssetGroup{}).Error; err != nil {
+			return err
+		}
+		var rows []model.AssertChannel
+		return tx.Select("id", "asset_id", "manual").Where("channel_id = ?", channelID).
+			Where("manual = ?", manual).
+			FindInBatches(&rows, assetSyncBatchSize, func(batchTx *gorm.DB, _ int) error {
+				if err := batchTx.Delete(&rows).Error; err != nil {
+					return err
+				}
+				for _, row := range rows {
+					if row.Manual {
+						continue
+					}
+					if err := refreshAssetSyncStatus(batchTx, row.AssetId, ""); err != nil {
+						return err
+					}
+				}
+				return nil
+			}).Error
+	})
+}
+
+func syncAssetChannelStatus(db *gorm.DB, row *model.AssertChannel, adaptor assetrelay.Adaptor) error {
+	remote, err := adaptor.GetAsset(&dto.GetAssetRequest{Id: row.UpstreamAssertId})
 	if err != nil {
+		return fmt.Errorf("unable to retrieve asset: %v", err)
+	}
+	switch remote.Status {
+	case model.AssetStatusActive, model.AssetStatusProcessing:
+		var next int64
+		if remote.Status == model.AssetStatusProcessing {
+			next = time.Now().Add(assetSyncPollInterval).Unix()
+		}
+		return saveAssetChannelSyncResult(db, row, map[string]any{
+			"upstream_status": remote.Status,
+			"next_poll_at":    next,
+			"retry_count":     0,
+			"reason":          "",
+		})
+	case model.AssetStatusFailed:
+		failure := json.RawMessage(`{"Message":"Asset processing or moderation failed","Code":"AssetFailed"}`)
+		if remote.Error != nil {
+			failure = *remote.Error
+		}
+		return saveAssetChannelSyncResult(db, row, map[string]any{
+			"reason":          string(failure),
+			"upstream_status": model.AssetStatusFailed,
+			"next_poll_at":    0,
+		})
+	default:
+		return fmt.Errorf("unsupported status %v", remote.Status)
+	}
+}
+
+func uploadAssetChannel(db *gorm.DB, row *model.AssertChannel, adaptor assetrelay.Adaptor, groupID string) error {
+	request := dto.CreateAssetRequest{
+		AssetType: row.Asset.AssetType,
+		Name:      row.Asset.Name,
+		URL:       row.Asset.URL,
+		GroupId:   groupID,
+	}
+	if row.Asset.Moderation != nil {
+		var moderation dto.AssetModeration
+		if err := json.Unmarshal([]byte(*row.Asset.Moderation), &moderation); err == nil {
+			request.Moderation = &moderation
+		}
+	}
+	created, err := adaptor.CreateAssets(&request)
+	if err != nil {
+		return err
+	}
+	if created == nil || created.Id == "" {
+		return fmt.Errorf("unable to create upstream asset")
+	}
+	return saveAssetChannelSyncResult(db, row, map[string]any{
+		"next_poll_at":       time.Now().Add(assetSyncPollInterval).Unix(),
+		"upstream_status":    model.AssetStatusProcessing,
+		"upstream_assert_id": created.Id,
+		"upstream_group_id":  groupID,
+		"retry_count":        0,
+		"reason":             "",
+	})
+}
+
+func upstreamAssetSyncGroup(db *gorm.DB, adaptor assetrelay.Adaptor, channelID int, localGroupID string) (string, error) {
+	var group model.AssetGroup
+	if err := db.Select("id", "group_type", "region").First(&group, "id = ?", localGroupID).Error; err != nil {
 		return "", err
 	}
-	if channelUpstreamAssetGroup.UpstreamGroupId != "" {
-		return channelUpstreamAssetGroup.UpstreamGroupId, nil
+	groupID := ""
+	if group.GroupType == "LivenessFace" {
+		groupID = group.Id
 	}
-	group, err := adaptor.CreateAssetGroup(&dto.CreateAssetGroupRequest{
-		Name:      assetrelay.UpstreamAssetGroupName,
-		GroupType: assetrelay.GroupType,
+	var mapping model.ChannelUpstreamAssetGroup
+	err := db.Where("channel_id = ?", channelID).Where("group_id = ?", groupID).Take(&mapping).Error
+	if err == nil {
+		return mapping.UpstreamGroupId, nil
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) || group.GroupType == "LivenessFace" {
+		return "", err
+	}
+	created, err := adaptor.CreateAssetGroup(&dto.CreateAssetGroupRequest{
+		Name: generateAssetScopedID("666api-assets"), GroupType: "AIGC",
 	})
 	if err != nil {
 		return "", err
 	}
-	channelUpstreamAssetGroup = model.ChannelUpstreamAssetGroup{
-		UpdateTime:      time.Now(),
-		CreateTime:      time.Now(),
-		ChannelId:       channelId,
-		UpstreamGroupId: group.Id,
+	if created == nil || created.Id == "" {
+		return "", errors.New("empty upstream group response")
 	}
-	err = channelUpstreamAssetGroup.Create()
-	return group.Id, err
+	now := time.Now()
+	mapping = model.ChannelUpstreamAssetGroup{
+		ChannelId:       channelID,
+		UpstreamGroupId: created.Id,
+		Region:          group.Region,
+		CreateTime:      now,
+		UpdateTime:      now,
+	}
+	if err = db.Create(&mapping).Error; err != nil {
+		return "", err
+	}
+	return created.Id, nil
+}
+
+func saveAssetChannelSyncResult(db *gorm.DB, row *model.AssertChannel, updates map[string]any) error {
+	return db.Transaction(func(tx *gorm.DB) error {
+		updates["update_time"] = time.Now()
+		result := tx.Model(&model.AssertChannel{}).Where("id = ?", row.Id).Updates(updates)
+		if result.Error != nil {
+			return result.Error
+		}
+		if result.RowsAffected == 0 || row.Manual || updates["upstream_status"] == row.UpstreamStatus {
+			return nil
+		}
+		return refreshAssetSyncStatus(tx, row.AssetId, updates["reason"].(string))
+	})
+}
+
+func saveAssetSyncFailure(db *gorm.DB, row *model.AssertChannel, message string) error {
+	retries := row.RetryCount + 1
+	status := row.UpstreamStatus
+	next := time.Now().Add(min(15*time.Second*time.Duration(1<<min(retries-1, 5)), 5*time.Minute)).Unix()
+	if retries >= assetSyncMaxRetries {
+		status = model.AssetStatusFailed
+		next = 0
+	}
+	failure, _ := json.Marshal(map[string]string{"Code": "AssetSyncFailed", "Message": message})
+	return saveAssetChannelSyncResult(db, row, map[string]any{
+		"reason":      string(failure),
+		"retry_count": retries, "upstream_status": status, "next_poll_at": next,
+	})
+}
+
+// Only the initial snapshot affects availability. Backfills never revoke Active.
+func refreshAssetSyncStatus(tx *gorm.DB, assetID string, acError string) error {
+	var counts []struct {
+		Status string
+		Count  int64
+	}
+	if err := tx.Model(&model.AssertChannel{}).Select("upstream_status AS status, COUNT(*) AS count").
+		Where("asset_id = ?", assetID).Where("manual = ?", false).
+		Group("upstream_status").Scan(&counts).Error; err != nil {
+		return err
+	}
+	var total, active, failed int64
+	for _, count := range counts {
+		total += count.Count
+		switch count.Status {
+		case model.AssetStatusActive:
+			active += count.Count
+		case model.AssetStatusFailed:
+			failed += count.Count
+		}
+	}
+	status := model.AssetStatusProcessing
+	if total == 0 || failed > 0 {
+		status = model.AssetStatusFailed
+	} else if active == total {
+		status = model.AssetStatusActive
+	}
+	updates := map[string]any{"status": status, "error": nil, "update_time": time.Now()}
+	if status == model.AssetStatusFailed {
+		if acError == "" {
+			updates["error"] = datatypes.NewJSONType(map[string]string{
+				"Message": "Asset synchronization failed on a required channel",
+				"Code":    "AssetChannelSyncFailed",
+			})
+		} else {
+			updates["error"] = datatypes.JSON(acError)
+		}
+	}
+	return tx.Model(&model.Asset{}).Where("id = ?", assetID).
+		Where("status <> ?", model.AssetStatusActive).Where("status <> ?", status).
+		Updates(updates).Error
 }

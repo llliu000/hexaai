@@ -1,5 +1,18 @@
 {
   "translation": {
+    "Sync Assets": "素材を同期",
+    "Asset Sync Details": "素材同期の詳細",
+    "Failed to start asset sync": "素材同期を開始できませんでした",
+    "Asset sync task submitted": "素材同期タスクを送信しました",
+    "Failed to load asset sync details": "素材同期の詳細を読み込めませんでした",
+    "Manual asset sync results for {{name}}": "{{name}} の手動素材同期結果",
+    "Preparing assets for sync...": "同期する素材を準備しています…",
+    "Asset sync preparation failed": "素材同期の準備に失敗しました",
+    "Queued for upload": "アップロード待ち",
+    "Synced": "同期済み",
+    "Processing": "処理中",
+    "Asset sync progress": "素材同期の進捗",
+    "No assets queued for sync.": "同期する素材はありません。",
     "Video Enhancement": "動画の高画質化",
     "Volcengine": "Volcengine",
     "Enhancement version": "高画質化バージョン",

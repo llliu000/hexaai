@@ -1,5 +1,18 @@
 {
   "translation": {
+    "Sync Assets": "Синхронизировать материалы",
+    "Asset Sync Details": "Сведения о синхронизации материалов",
+    "Failed to start asset sync": "Не удалось запустить синхронизацию материалов",
+    "Asset sync task submitted": "Задача синхронизации материалов отправлена",
+    "Failed to load asset sync details": "Не удалось загрузить сведения о синхронизации",
+    "Manual asset sync results for {{name}}": "Результаты ручной синхронизации материалов для {{name}}",
+    "Preparing assets for sync...": "Подготовка материалов к синхронизации…",
+    "Asset sync preparation failed": "Не удалось подготовить синхронизацию материалов",
+    "Queued for upload": "Ожидают загрузки",
+    "Synced": "Синхронизировано",
+    "Processing": "Обработка",
+    "Asset sync progress": "Ход синхронизации материалов",
+    "No assets queued for sync.": "Нет материалов для синхронизации.",
     "Video Enhancement": "Улучшение видео",
     "Volcengine": "Volcengine",
     "Enhancement version": "Версия улучшения",

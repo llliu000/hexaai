@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/constant"
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/model"
 	assetrelay "github.com/QuantumNous/new-api/relay/asset"
@@ -21,23 +21,17 @@ const (
 	defaultAssetStatus      = "Processing"
 )
 
-func CreateAssetGroup(userId int, req *dto.CreateAssetGroupRequest) (*dto.CreateAssetGroupResponse, error) {
-	name := strings.TrimSpace(req.Name)
-	groupType := strings.TrimSpace(req.GroupType)
-	description := strings.TrimSpace(stringValue(req.Description))
-	projectName := normalizeAssetProjectName(stringValue(req.ProjectName))
-	if err := validateAssetGroupFields(name, description, groupType); err != nil {
-		return nil, err
-	}
+func CreateAssetGroup(ctx *gin.Context, req *dto.CreateAssetGroupRequest) (*dto.CreateAssetGroupResponse, error) {
 	group := &model.AssetGroup{
+		ProjectName: normalizeAssetProjectName(stringValue(req.ProjectName)),
 		Id:          generateAssetScopedID("group"),
-		UserId:      userId,
-		Name:        name,
-		Description: description,
-		GroupType:   groupType,
-		ProjectName: projectName,
+		Description: stringValue(req.Description),
+		UserId:      ctx.GetInt("id"),
+		Region:      getRegion(ctx),
+		GroupType:   req.GroupType,
 		CreateTime:  time.Now(),
 		UpdateTime:  time.Now(),
+		Name:        req.Name,
 	}
 	if err := model.DB.Create(group).Error; err != nil {
 		return nil, err
@@ -45,13 +39,15 @@ func CreateAssetGroup(userId int, req *dto.CreateAssetGroupRequest) (*dto.Create
 	return &dto.CreateAssetGroupResponse{Id: group.Id}, nil
 }
 
-func ListAssetGroups(userId int, req *dto.ListAssetGroupsRequest) (*dto.ListAssetGroupsResponse, error) {
+func ListAssetGroups(ctx *gin.Context, req *dto.ListAssetGroupsRequest) (*dto.ListAssetGroupsResponse, error) {
 	pageNumber, pageSize := normalizeAssetPage(req.PageNumber, req.PageSize)
 	sortColumn, sortOrder, err := normalizeAssetGroupSort(req.SortBy, req.SortOrder)
 	if err != nil {
 		return nil, err
 	}
-	query := model.DB.Model(&model.AssetGroup{}).Where("user_id = ?", userId)
+	query := model.DB.Model(&model.AssetGroup{}).
+		Where("user_id = ?", ctx.GetInt("id")).
+		Where("region = ?", getRegion(ctx))
 	if projectName := strings.TrimSpace(stringValue(req.ProjectName)); projectName != "" {
 		query = query.Where("project_name = ?", projectName)
 	} else {
@@ -96,8 +92,8 @@ func ListAssetGroups(userId int, req *dto.ListAssetGroupsRequest) (*dto.ListAsse
 	}, nil
 }
 
-func GetAssetGroup(userId int, req *dto.GetAssetGroupRequest) (*dto.GetAssetGroupResponse, error) {
-	group, err := getAssetGroupById(userId, req.Id)
+func GetAssetGroup(ctx *gin.Context, req *dto.GetAssetGroupRequest) (*dto.GetAssetGroupResponse, error) {
+	group, err := getAssetGroupById(ctx.GetInt("id"), getRegion(ctx), req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -112,23 +108,20 @@ func GetAssetGroup(userId int, req *dto.GetAssetGroupRequest) (*dto.GetAssetGrou
 	}, nil
 }
 
-func getAssetGroupById(userId int, id string) (*model.AssetGroup, error) {
-	id = strings.TrimSpace(id)
-	if id == "" {
-		return nil, errors.New("GroupId is required")
-	}
+func getAssetGroupById(userId int, region, id string) (*model.AssetGroup, error) {
 	var group model.AssetGroup
-	if err := model.DB.Where("user_id = ? AND id = ?", userId, id).First(&group).Error; err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, fmt.Errorf("asset group %s not found", id)
-		}
-		return nil, err
+	err := model.DB.Where("user_id = ?", userId).
+		Where("region = ?", region).
+		Where("id = ?", id).
+		First(&group).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("asset group %s not found", id)
 	}
-	return &group, nil
+	return &group, err
 }
 
-func UpdateAssetGroup(userId int, req *dto.UpdateAssetGroupRequest) (*dto.UpdateAssetGroupResponse, error) {
-	group, err := getAssetGroupById(userId, req.Id)
+func UpdateAssetGroup(ctx *gin.Context, req *dto.UpdateAssetGroupRequest) (*dto.UpdateAssetGroupResponse, error) {
+	group, err := getAssetGroupById(ctx.GetInt("id"), getRegion(ctx), req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -156,13 +149,21 @@ func UpdateAssetGroup(userId int, req *dto.UpdateAssetGroupRequest) (*dto.Update
 	return &dto.UpdateAssetGroupResponse{Id: group.Id}, nil
 }
 
-func DeleteAssetGroup(userId int, req *dto.DeleteAssetGroupRequest) (*dto.DeleteAssetGroupResponse, error) {
-	group, err := getAssetGroupById(userId, req.Id)
+func DeleteAssetGroup(ctx *gin.Context, req *dto.DeleteAssetGroupRequest) (*dto.DeleteAssetGroupResponse, error) {
+	userId, region := ctx.GetInt("id"), getRegion(ctx)
+	group, err := getAssetGroupById(userId, region, req.Id)
 	if err != nil {
 		return nil, err
 	}
 	if err := model.DB.Transaction(func(tx *gorm.DB) error {
+		assets := tx.Model(&model.Asset{}).Select("id").Where("user_id = ? AND group_id = ?", userId, group.Id)
+		if err := tx.Where("asset_id IN (?)", assets).Delete(&model.AssertChannel{}).Error; err != nil {
+			return err
+		}
 		if err := tx.Where("user_id = ? AND group_id = ?", userId, group.Id).Delete(&model.Asset{}).Error; err != nil {
+			return err
+		}
+		if err := tx.Where("group_id = ?", group.Id).Delete(&model.ChannelUpstreamAssetGroup{}).Error; err != nil {
 			return err
 		}
 		result := tx.Where("user_id = ? AND id = ?", userId, group.Id).Delete(&model.AssetGroup{})
@@ -173,18 +174,35 @@ func DeleteAssetGroup(userId int, req *dto.DeleteAssetGroupRequest) (*dto.Delete
 	return &dto.DeleteAssetGroupResponse{}, nil
 }
 
-func CreateAsset(userId int, req *dto.CreateAssetRequest) (*dto.CreateAssetResponse, error) {
+func CreateAsset(ctx *gin.Context, req *dto.CreateAssetRequest) (*dto.CreateAssetResponse, error) {
+	userId, region := ctx.GetInt("id"), getRegion(ctx)
+
 	url := strings.TrimSpace(req.URL)
 	name := strings.TrimSpace(req.Name)
 	groupId := strings.TrimSpace(req.GroupId)
 	assetType := strings.TrimSpace(req.AssetType)
 	projectName := normalizeAssetProjectName(stringValue(req.ProjectName))
-	if _, err := getAssetGroupById(userId, groupId); err != nil {
+	group, err := getAssetGroupById(userId, region, req.GroupId)
+	if err != nil {
 		return nil, err
 	}
 	if err := validateAssetFields(url, name, assetType); err != nil {
 		return nil, err
 	}
+	var chs []*model.Channel
+	if group.GroupType == "LivenessFace" {
+		query := model.DB.Model(&model.ChannelUpstreamAssetGroup{}).Select("channel_id").
+			Where("region = ?", region).Where("group_id = ?", req.GroupId)
+		if err = model.DB.Where("id IN (?)", query).Find(&chs).Error; err != nil {
+			return nil, err
+		}
+	} else {
+		if err = model.DB.Where("type = ?", constant.ChannelTypeDoubaoVideo).
+			Order("id ASC").Find(&chs).Error; err != nil {
+			return nil, err
+		}
+	}
+	now := time.Now()
 	asset := &model.Asset{
 		Id:          generateAssetScopedID("asset"),
 		UserId:      userId,
@@ -193,9 +211,10 @@ func CreateAsset(userId int, req *dto.CreateAssetRequest) (*dto.CreateAssetRespo
 		Name:        name,
 		AssetType:   assetType,
 		ProjectName: projectName,
+		Region:      region,
 		Status:      defaultAssetStatus,
-		CreateTime:  time.Now(),
-		UpdateTime:  time.Now(),
+		CreateTime:  now,
+		UpdateTime:  now,
 	}
 	if req.Moderation != nil {
 		marshal, err := json.Marshal(req.Moderation)
@@ -204,20 +223,55 @@ func CreateAsset(userId int, req *dto.CreateAssetRequest) (*dto.CreateAssetRespo
 			asset.Moderation = &moderation
 		}
 	}
-	if err := model.DB.Create(asset).Error; err != nil {
+	acs := make([]model.AssertChannel, 0, len(chs))
+	for _, ch := range chs {
+		var chRegion string
+		if remark := ch.Remark; remark != nil {
+			mm := make(map[string]any)
+			_ = json.Unmarshal([]byte(*remark), &mm)
+			chRegion, _ = mm["region"].(string)
+		}
+		if model.NormalizeAssetRegion(chRegion) != region {
+			continue
+		}
+		if _, err := assetrelay.GetAdaptor(ch); err != nil {
+			continue
+		}
+		acs = append(acs, model.AssertChannel{
+			CreateTime:     now,
+			UpdateTime:     now,
+			UpstreamStatus: model.AssetStatusPending,
+			Region:         region,
+			UserId:         asset.UserId,
+			AssetId:        asset.Id,
+			ChannelId:      ch.Id,
+			Manual:         false,
+		})
+	}
+	if len(acs) == 0 {
+		return nil, errors.New("no targets found")
+	}
+	err = model.DB.Transaction(func(tx *gorm.DB) error {
+		if err = tx.Create(&asset).Error; err != nil {
+			return err
+		}
+		return tx.Create(&acs).Error
+	})
+	if err != nil {
 		return nil, err
 	}
-	enqueueAssetSync(asset.Id, false)
-	return &dto.CreateAssetResponse{Id: asset.Id}, nil
+	_, _, err = EnqueueSystemTask(assetSyncTaskType, nil)
+	return &dto.CreateAssetResponse{Id: asset.Id}, err
 }
 
-func ListAssets(userId int, req *dto.ListAssetsRequest) (*dto.ListAssetsResponse, error) {
+func ListAssets(ctx *gin.Context, req *dto.ListAssetsRequest) (*dto.ListAssetsResponse, error) {
+	userId, region := ctx.GetInt("id"), getRegion(ctx)
 	pageNumber, pageSize := normalizeAssetPage(req.PageNumber, req.PageSize)
 	sortColumn, sortOrder, err := normalizeAssetSort(req.SortBy, req.SortOrder)
 	if err != nil {
 		return nil, err
 	}
-	query := model.DB.Model(&model.Asset{}).Where("user_id = ?", userId)
+	query := model.DB.Model(&model.Asset{}).Where("user_id = ?", userId).Where("region = ?", region)
 	if projectName := strings.TrimSpace(stringValue(req.ProjectName)); projectName != "" {
 		query = query.Where("project_name = ?", projectName)
 	} else {
@@ -269,8 +323,9 @@ func ListAssets(userId int, req *dto.ListAssetsRequest) (*dto.ListAssetsResponse
 	}, nil
 }
 
-func GetAsset(userId int, req *dto.GetAssetRequest) (*dto.GetAssetResponse, error) {
-	asset, err := getAssetById(userId, req.Id)
+func GetAsset(ctx *gin.Context, req *dto.GetAssetRequest) (*dto.GetAssetResponse, error) {
+	userId, region := ctx.GetInt("id"), getRegion(ctx)
+	asset, err := getAssetById(userId, region, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -288,9 +343,9 @@ func GetAsset(userId int, req *dto.GetAssetRequest) (*dto.GetAssetResponse, erro
 	}, nil
 }
 
-func getAssetById(userId int, id string) (*model.Asset, error) {
+func getAssetById(userId int, region, id string) (*model.Asset, error) {
 	var asset model.Asset
-	if err := model.DB.Where("user_id = ? AND id = ?", userId, id).First(&asset).Error; err != nil {
+	if err := model.DB.Where("user_id = ?", userId).Where("region = ?", region).Where("id = ?", id).First(&asset).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, fmt.Errorf("asset %s not found", id)
 		}
@@ -299,8 +354,9 @@ func getAssetById(userId int, id string) (*model.Asset, error) {
 	return &asset, nil
 }
 
-func UpdateAsset(userId int, req *dto.UpdateAssetRequest) (*dto.UpdateAssetResponse, error) {
-	asset, err := getAssetById(userId, req.Id)
+func UpdateAsset(ctx *gin.Context, req *dto.UpdateAssetRequest) (*dto.UpdateAssetResponse, error) {
+	userId, region := ctx.GetInt("id"), getRegion(ctx)
+	asset, err := getAssetById(userId, region, req.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -321,26 +377,42 @@ func UpdateAsset(userId int, req *dto.UpdateAssetRequest) (*dto.UpdateAssetRespo
 	return &dto.UpdateAssetResponse{Id: asset.Id}, nil
 }
 
-func DeleteAsset(userId int, req *dto.DeleteAssetRequest) (*dto.DeleteAssetResponse, error) {
-	err := model.DB.Where("user_id = ? AND id = ?", userId, req.Id).Delete(&model.Asset{}).Error
+func DeleteAsset(ctx *gin.Context, req *dto.DeleteAssetRequest) (*dto.DeleteAssetResponse, error) {
+	userId, region := ctx.GetInt("id"), getRegion(ctx)
+	err := model.DB.Transaction(func(tx *gorm.DB) error {
+		assets := tx.Model(&model.Asset{}).Select("id").Where("user_id = ?", userId).
+			Where("region = ?", region).Where("id = ?", req.Id)
+		if err := tx.Where("asset_id IN (?)", assets).Where("region = ?", region).
+			Delete(&model.AssertChannel{}).Error; err != nil {
+			return err
+		}
+		return tx.Where("user_id = ?", userId).Where("region = ?", region).
+			Where("id = ?", req.Id).Delete(&model.Asset{}).Error
+	})
 	return &dto.DeleteAssetResponse{}, err
 }
 
-func CreateVisualValidateSession(userId int, req *dto.CreateVisualValidateSessionRequest) (*dto.CreateVisualValidateSessionResponse, error) {
-	channel, err := getUserSeedanceChannel(userId)
+func CreateVisualValidateSession(ctx *gin.Context, req *dto.CreateVisualValidateSessionRequest) (*dto.CreateVisualValidateSessionResponse, error) {
+	channel, err := getUserSeedanceChannel(ctx)
 	if err != nil {
 		return nil, err
 	}
-	adaptor := assetrelay.GetAdaptor(channel)
+	adaptor, err := assetrelay.GetAdaptor(channel)
+	if err != nil {
+		return nil, err
+	}
 	return adaptor.CreateVisualValidateSession(req)
 }
 
-func GetVisualValidateResult(userId int, req *dto.GetVisualValidateResultRequest) (*dto.GetVisualValidateResultResponse, error) {
-	channel, err := getUserSeedanceChannel(userId)
+func GetVisualValidateResult(ctx *gin.Context, req *dto.GetVisualValidateResultRequest) (*dto.GetVisualValidateResultResponse, error) {
+	channel, err := getUserSeedanceChannel(ctx)
 	if err != nil {
 		return nil, err
 	}
-	adaptor := assetrelay.GetAdaptor(channel)
+	adaptor, err := assetrelay.GetAdaptor(channel)
+	if err != nil {
+		return nil, err
+	}
 	result, err := adaptor.GetVisualValidateResult(req)
 	if err != nil {
 		return nil, err
@@ -348,77 +420,45 @@ func GetVisualValidateResult(userId int, req *dto.GetVisualValidateResultRequest
 	if result.GroupId == "" {
 		return result, nil
 	}
+	userId, region := ctx.GetInt("id"), getRegion(ctx)
+	var count int64
+	if err = model.DB.Model(&model.AssetGroup{}).
+		Where("id = ?", result.GroupId).
+		Where("region = ?", region).
+		Count(&count).Error; err != nil || count > 0 {
+		return result, err
+	}
 	// 创建本地资源并返回
 	group := &model.AssetGroup{
 		Id:          result.GroupId,
+		GroupType:   "LivenessFace",
 		Name:        "real-human",
 		Description: "real-human",
 		CreateTime:  time.Now(),
 		UpdateTime:  time.Now(),
+		Region:      region,
 		ProjectName: "default",
-		GroupType:   "AIGC",
-		RealHuman:   true,
 		UserId:      userId,
 	}
-	if err = model.DB.Create(group).Error; err != nil {
-		return nil, err
+	groupChannel := model.ChannelUpstreamAssetGroup{
+		CreateTime:      time.Now(),
+		UpdateTime:      time.Now(),
+		UpstreamGroupId: result.GroupId,
+		Region:          region,
+		ChannelId:       channel.Id,
+		GroupId:         group.Id,
 	}
-	return result, nil
-}
-
-func UserAssetBindChannel(userid int) error {
-	user, err := model.GetUserById(userid, false)
-	if err != nil {
-		return err
-	}
-	channelId := user.GetSetting().SeedanceChannelId
-	if channelId == 0 {
-		return errors.New("no channel set")
-	}
-	channel, err := model.GetChannelById(channelId, false)
-	if err != nil {
-		return err
-	}
-	if channel.Id == 0 {
-		return errors.New("no channel set")
-	}
-	return nil
-}
-
-func ManualAsset(ctx *gin.Context) {
-	go func() {
-		for page := 1; ; page++ {
-			log.Printf("manual asset page: %d", page)
-			assets, err := model.ListProcessingAssetsByPage(page, 500)
-			if err != nil {
-				log.Printf("异常重启恢复资源同步任务错误:%v", err)
-				break
-			}
-			if len(assets) == 0 {
-				break
-			}
-
-			for i := range assets {
-				if assets[i].Status != "Processing" {
-					continue
-				}
-				ab, err := model.GetAssetChannelByAssetId(assets[i].Id)
-				if errors.Is(err, gorm.ErrRecordNotFound) {
-					enqueueAssetSync(assets[i].Id, false)
-					continue
-				}
-				if err != nil {
-					log.Printf("异常重启恢复资源同步任务错误:%v", err)
-					continue
-				}
-				assetStatusSyncQueue <- ab.Id
-			}
-			time.Sleep(time.Second * 3)
+	err = model.DB.Transaction(func(tx *gorm.DB) error {
+		if err = tx.Create(&group).Error; err != nil {
+			return err
 		}
-	}()
+		return tx.Create(&groupChannel).Error
+	})
+	return result, err
 }
 
-func getUserSeedanceChannel(userId int) (*model.Channel, error) {
+func getUserSeedanceChannel(ctx *gin.Context) (*model.Channel, error) {
+	userId := ctx.GetInt("id")
 	// 直接调用火山
 	var user model.User
 	if err := model.DB.Where("id = ?", userId).
@@ -432,22 +472,6 @@ func getUserSeedanceChannel(userId int) (*model.Channel, error) {
 		return nil, err
 	}
 	return &channel, nil
-}
-
-func validateAssetGroupFields(name string, description string, groupType string) error {
-	if name == "" {
-		return errors.New("Name is required")
-	}
-	if len([]rune(name)) > 64 {
-		return errors.New("Name must be no more than 64 characters")
-	}
-	if len([]rune(description)) > 300 {
-		return errors.New("Description must be no more than 300 characters")
-	}
-	if groupType == "" {
-		return errors.New("GroupType is required")
-	}
-	return nil
 }
 
 func validateAssetFields(url string, name string, assetType string) error {
@@ -529,6 +553,11 @@ func normalizeAssetSort(sortBy string, sortOrder string) (string, string, error)
 	default:
 		return "", "", fmt.Errorf("unsupported SortOrder: %s", sortOrder)
 	}
+}
+
+func getRegion(ctx *gin.Context) string {
+	region := ctx.Query("Region")
+	return model.NormalizeAssetRegion(region)
 }
 
 func normalizeNonEmptyStrings(values []string) []string {

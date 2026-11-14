@@ -1,5 +1,7 @@
 package token_mart
 
+import "encoding/json"
+
 type Response[T any] struct {
 	Success bool `json:"success"`
 	Data    T    `json:"data"`
@@ -16,13 +18,14 @@ type createResponse struct {
 
 type assetResponse struct {
 	BaseResp
-	Id          string `json:"Id"`
-	Name        string `json:"Name"`
-	URL         string `json:"URL"`
-	AssetType   string `json:"AssetType"`
-	GroupId     string `json:"GroupId"`
-	Status      string `json:"Status"`
-	ProjectName string `json:"ProjectName"`
-	CreateTime  string `json:"CreateTime"`
-	UpdateTime  string `json:"UpdateTime"`
+	Id          string           `json:"Id"`
+	Name        string           `json:"Name"`
+	URL         string           `json:"URL"`
+	AssetType   string           `json:"AssetType"`
+	GroupId     string           `json:"GroupId"`
+	Status      string           `json:"Status"`
+	ProjectName string           `json:"ProjectName"`
+	CreateTime  string           `json:"CreateTime"`
+	UpdateTime  string           `json:"UpdateTime"`
+	Error       *json.RawMessage `json:"Error"`
 }
