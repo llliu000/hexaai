@@ -67,7 +67,7 @@ type AssertChannel struct {
 	Region           string    `json:"region" gorm:"type:varchar(32);not null;default:cn-beijing;index"`
 	UserId           int       `json:"user_id" gorm:"not null;default:0;index"`
 	ChannelId        int       `json:"channel_id" gorm:"type:bigint;not null;uniqueIndex:idx_asset_channel_channel_asset"`                                                          // 上游渠道ID
-	AssetId          string    `json:"asset_id" gorm:"type:varchar(191);not null;index;uniqueIndex:idx_asset_channel_channel_asset"`                                                // 本地资源ID
+	AssetId          string    `json:"asset_id" gorm:"type:varchar(1000);not null;index;uniqueIndex:idx_asset_channel_channel_asset"`                                               // 本地资源ID
 	Manual           bool      `json:"manual" gorm:"default:false;index:idx_asset_channel_manual_status_poll,priority:1"`                                                           //
 	UpstreamGroupId  string    `json:"upstream_group_id" gorm:"type:varchar(191);not null;index"`                                                                                   // 上游资源分组ID
 	UpstreamAssertId string    `json:"upstream_assert_id" gorm:"type:varchar(191);not null;index"`                                                                                  // 上游资源ID
