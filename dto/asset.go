@@ -46,7 +46,7 @@ type AssetModeration struct {
 type ListAssetGroupsFilter struct {
 	GroupIds  []string `json:"GroupIds"`
 	Name      *string  `json:"Name"`
-	GroupType *string  `json:"GroupType" binding:"omitempty,oneof=AIGC"`
+	GroupType *string  `json:"GroupType" binding:"omitempty,oneof=AIGC LivenessFace"`
 }
 
 type ListAssetGroupsRequest struct {
@@ -60,7 +60,7 @@ type ListAssetGroupsRequest struct {
 
 type ListAssetsFilter struct {
 	GroupIds  []string `json:"GroupIds"`
-	GroupType *string  `json:"GroupType" binding:"omitempty,oneof=AIGC"`
+	GroupType *string  `json:"GroupType" binding:"omitempty,oneof=AIGC LivenessFace"`
 	Statuses  []string `json:"Statuses"`
 	Name      *string  `json:"Name"`
 }
