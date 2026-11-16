@@ -292,10 +292,17 @@ func (a *TaskAdaptor) ConvertToDoubaoVideo(originTask *model.Task) ([]byte, erro
 	var sbm tokenMartResponse
 	_ = common.Unmarshal(originTask.Data, &sbm)
 	if sbm.Task.Id != "" {
-		sbm.Task.Metadata.Model = originTask.Properties.OriginModelName
-		sbm.Task.Metadata.Content.VideoURL = originTask.GetResultURL()
-		a.DoubaoResponse(originTask, &sbm.Task.Metadata)
-		return common.Marshal(sbm.Task.Metadata)
+		metadata := sbm.Task.Metadata
+		metadata.ID = originTask.TaskID
+		metadata.CreatedAt = originTask.CreatedAt
+		metadata.UpdatedAt = originTask.UpdatedAt
+		metadata.Model = originTask.Properties.OriginModelName
+		metadata.Content.VideoURL = originTask.GetResultURL()
+		if metadata.Status == "" || strings.ToLower(metadata.Status) == "unknown" {
+			metadata.Status = "queued"
+		}
+		a.DoubaoResponse(originTask, &metadata)
+		return common.Marshal(metadata)
 	}
 
 	var responseItems taskdto.TaskResponse[model.Task]
