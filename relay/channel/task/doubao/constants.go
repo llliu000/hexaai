@@ -298,3 +298,8 @@ func containsEnhanceModel(modelName string) bool {
 	}
 	return false
 }
+func findDraftTask(taskId string) string {
+	var task model.Task
+	_ = model.DB.Where("id = ?", taskId).Find(&task).Error
+	return task.GetUpstreamTaskID()
+}

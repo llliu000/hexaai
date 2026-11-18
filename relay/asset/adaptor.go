@@ -7,6 +7,7 @@ import (
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/dto"
 	"github.com/QuantumNous/new-api/model"
+	"github.com/QuantumNous/new-api/relay/asset/cme"
 	"github.com/QuantumNous/new-api/relay/asset/kw"
 	"github.com/QuantumNous/new-api/relay/asset/mock"
 	"github.com/QuantumNous/new-api/relay/asset/realm_drama"
@@ -53,6 +54,8 @@ func GetAdaptor(ch *model.Channel) (Adaptor, error) {
 		a = &volc.Adaptor{}
 	case "anyfast":
 		a = &mock.Adaptor{}
+	case "cme":
+		a = &cme.Adaptor{}
 	default:
 		return nil, fmt.Errorf("unknown channel: %s", *ch.OpenAIOrganization)
 	}

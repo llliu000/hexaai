@@ -177,6 +177,10 @@ require (
 require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.32.0
 	github.com/QuantumNous/new-api/relaykit v0.0.0
+	gitlab.ecloud.com/ecloud/ecloudsdkcore v1.0.6
+	gitlab.ecloud.com/ecloud/ecloudsdkmaas v1.0.6
 )
 
 replace github.com/QuantumNous/new-api/relaykit => ./relaykit
+replace gitlab.ecloud.com/ecloud/ecloudsdkcore => ./lib/ecloudsdkcore@v1.0.6
+replace gitlab.ecloud.com/ecloud/ecloudsdkmaas => ./lib/ecloudsdkmaas@v1.0.6
