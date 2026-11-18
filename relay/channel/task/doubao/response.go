@@ -9,14 +9,19 @@ type responseTask struct {
 	Model   string `json:"model,omitempty"`
 	Status  string `json:"status,omitempty"`
 	Content struct {
-		VideoURL string `json:"video_url,omitempty"`
+		VideoURL     string `json:"video_url,omitempty"`
+		LastFrameURL string `json:"last_frame_url,omitempty"`
 	} `json:"content,omitempty"`
-	Seed            int    `json:"seed,omitempty"`
-	Resolution      string `json:"resolution,omitempty"`
-	Duration        int    `json:"duration,omitempty"`
-	Ratio           string `json:"ratio,omitempty"`
-	FramesPerSecond int    `json:"framespersecond,omitempty"`
-	ServiceTier     string `json:"service_tier,omitempty"`
+	Seed            int     `json:"seed,omitempty"`
+	Resolution      string  `json:"resolution,omitempty"`
+	Duration        int     `json:"duration,omitempty"`
+	Ratio           string  `json:"ratio,omitempty"`
+	FramesPerSecond int     `json:"framespersecond,omitempty"`
+	OutputFormat    *string `json:"output_format,omitempty"`
+	ServiceTier     string  `json:"service_tier,omitempty"`
+	GenerateAudio   *bool   `json:"generate_audio,omitempty"`
+	Draft           *bool   `json:"draft,omitempty"`
+	DraftTaskID     *string `json:"draft_task_id,omitempty"`
 	Tools           []struct {
 		Type string `json:"type,omitempty"`
 	} `json:"tools,omitempty"`

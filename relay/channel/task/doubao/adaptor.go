@@ -109,6 +109,9 @@ func (a *TaskAdaptor) BuildRequestBody(c *gin.Context, info *relaycommon.RelayIn
 		if audio := body.Content[i].AudioURL; audio != nil {
 			body.Content[i].AudioURL.URL = resolveAssetURL(info.ChannelId, audio.URL)
 		}
+		if draftTask := body.Content[i].DraftTask; draftTask != nil {
+			draftTask.ID = findDraftTask(draftTask.ID)
+		}
 	}
 	if info.IsModelMapped {
 		body.Model = info.UpstreamModelName
